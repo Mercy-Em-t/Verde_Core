@@ -720,3 +720,54 @@ def update_portfolio(p_id: int, data: PortfolioModel, user: dict = Depends(get_c
     mgr.update(p_id, data.dict())
     broker.publish({"type": "UPDATE_PORTFOLIO", "actor": user.get("userid"), "entity_id": p_id, "title": data.title, "is_active": data.is_active})
     return {"status": "success"}
+
+
+# --- NEW TELEMETRY ENDPOINTS ---
+from fastapi import Request
+from pg8000.native import Connection
+
+@app.post("/api/telemetry")
+async def receive_telemetry(request: Request):
+    """Catches Beacon API payloads and forwards them to AuditKeeper via Redis"""
+    try:
+        data = await request.json()
+        # Add the type for the broker to recognize it as a generic log
+        data["type"] = "UX_TELEMETRY"
+        broker.publish(data)
+        return {"status": "ok"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+@app.get("/api/telemetry/funnel")
+def get_funnel_analytics():
+    """Queries the JSONB AuditLogs table to calculate drop-offs"""
+    try:
+        # Re-using the db_params defined at the top of main_api.py
+        with Connection(**db_params) as conn:
+            # We use Postgres JSONB operators to extract the funnel numbers
+            # This is extremely fast because of the GIN index we added!
+            rows = conn.run("""
+                SELECT 
+                    COUNT(*) FILTER (WHERE "DeltaData"->>'event_type' = 'qualified') as qualified,
+                    COUNT(*) FILTER (WHERE "DeltaData"->>'event_type' = 'phase-selected') as phase_selected,
+                    COUNT(*) FILTER (WHERE "DeltaData"->>'event_type' = 'stage-changed') as stage_changed
+                FROM "AuditLogs"
+                WHERE "Entity" = 'Project'
+            """)
+            
+            if rows and len(rows) > 0:
+                qualified, phase_selected, stage_changed = rows[0]
+            else:
+                qualified, phase_selected, stage_changed = 0, 0, 0
+                
+            return {
+                "started": stage_changed, # Rough proxy for starts
+                "phase_selected": phase_selected,
+                "qualified": qualified,
+                "architecture": int(qualified * 0.3), # Dummy drop-off for demo
+                "closed": int(qualified * 0.1)        # Dummy drop-off for demo
+            }
+    except Exception as e:
+        print("Telemetry DB Error:", e)
+        return {"error": str(e)}
+# --- END TELEMETRY ENDPOINTS ---
