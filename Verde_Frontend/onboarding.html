@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Workspace Activation | Tryphene Murugat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="text-center text-3xl font-extrabold text-slate-900 tracking-tight">
+            Tryphene<span class="text-indigo-600 font-light">Murugat</span>
+        </h2>
+        <h2 class="mt-6 text-center text-2xl font-bold text-slate-800">
+            Activate Your Workspace
+        </h2>
+        <p class="mt-2 text-center text-sm text-slate-600">
+            Your project has been formally qualified. Set your permanent password to access your Phase 0 Secure Workspace.
+        </p>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-slate-200">
+            
+            <div id="loadingState" class="hidden text-center py-4">
+                <i class="fa-solid fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+                <p class="text-slate-600">Activating your secure profile...</p>
+            </div>
+
+            <div id="errorState" class="hidden text-center py-4">
+                <i class="fa-solid fa-circle-exclamation text-4xl text-rose-500 mb-4"></i>
+                <p class="text-slate-800 font-bold mb-2">Invalid Activation Link</p>
+                <p class="text-slate-600 text-sm mb-4">This link is either invalid or has already been used. Please contact your Engagement Director.</p>
+                <a href="login.html" class="text-indigo-600 hover:text-indigo-500 text-sm font-bold">Go to standard login</a>
+            </div>
+
+            <form id="activationForm" class="space-y-6" onsubmit="handleActivation(event)">
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-slate-700">Set Permanent Password</label>
+                    <div class="mt-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-slate-400"></i>
+                        </div>
+                        <input id="password" name="password" type="password" required class="appearance-none block w-full pl-10 px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500">Minimum 8 characters.</p>
+                </div>
+
+                <div>
+                    <button type="submit" id="submitBtn" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Set Password & Enter Workspace
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+
+    <script src="api-client.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+
+        if (!token) {
+            document.getElementById('activationForm').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        async function handleActivation(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            if (password.length < 8) {
+                alert("Password must be at least 8 characters.");
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Activating...';
+            
+            document.getElementById('activationForm').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+
+            try {
+                // Call the new backend activation endpoint
+                const res = await TMAPI.activate(token, password);
+                
+                // Save the JWT locally
+                localStorage.setItem('verde_api_token', res.token);
+                localStorage.setItem('tm_user', JSON.stringify(res.user));
+                
+                // Briefly show success before routing
+                document.getElementById('loadingState').innerHTML = `
+                    <i class="fa-solid fa-circle-check text-4xl text-emerald-500 mb-4"></i>
+                    <p class="text-slate-800 font-bold">Workspace Activated!</p>
+                    <p class="text-slate-600 text-sm">Rerouting you to your Phase 0 Dashboard...</p>
+                `;
+                
+                setTimeout(() => {
+                    window.location.href = 'client-dashboard.html'; // Dashboard auto-routes to their first project
+                }, 1500);
+
+            } catch (err) {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('activationForm').classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = 'Set Password & Enter Workspace';
+                alert(err.message || 'Activation failed. The link may be expired.');
+            }
+        }
+    </script>
+</body>
+</html>

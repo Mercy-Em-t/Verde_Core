@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  verde-postgres:
+    image: postgres:16-alpine
+    container_name: verde-postgres
+    environment:
+      POSTGRES_USER: verde_admin
+      POSTGRES_PASSWORD: verde_password
+      POSTGRES_DB: verde_db
+    ports:
+      - "5455:5432"
+    volumes:
+      - verde-pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  verde-redis:
+    image: redis:7-alpine
+    container_name: verde-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - verde-redisdata:/data
+    restart: unless-stopped
+
+volumes:
+  verde-pgdata:
+  verde-redisdata:

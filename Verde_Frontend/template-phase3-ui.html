@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3: User Interface Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mono-doc { font-family: "Courier New", Courier, monospace; font-size: 12px; }
+        .header-block { font-weight: bold; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .box { border: 1px solid #111; padding: 10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <header class="bg-[#0B1325] text-white p-4 shadow-md flex justify-between items-center">
+        <div><h1 class="text-xl font-bold"><i class="fa-solid fa-mobile-screen mr-2 text-fuchsia-400"></i> Phase 3: User Interface Design</h1></div>
+        <button onclick="window.print()" class="bg-fuchsia-600 px-4 py-2 rounded text-sm font-bold shadow hover:bg-fuchsia-700">Print</button>
+    </header>
+    <div class="flex-1 overflow-auto p-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white border shadow-xl p-12 mono-doc">
+            <div class="header-block">PHASE 3 TECHNICAL SPECIFICATION<br>PART 2: USER INTERFACE DESIGN & ERGONOMICS</div>
+            
+            <h3 class="font-bold bg-slate-200 p-1 mb-2 uppercase">1. Use Scenarios</h3>
+            <div class="box">
+                <p><strong>Scenario SCN-UI-01:</strong> Warehouse clerk receives 500 cartons on the physical dock. Wearing protective gloves, they must scan GS1-128 barcodes rapidly without relying on a soft keyboard. The UI must provide loud auditory feedback (beep/boop) for success/failure to overcome warehouse noise.</p>
+            </div>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">2. Interface Structure Diagram (ISD)</h3>
+            <div class="bg-slate-100 p-4 font-mono text-xs whitespace-pre border mb-6">
+[ Main Dashboard ]
+   ├── [ 1.0 Inbound Receiving ]
+   │      ├── [ 1.1 Scan PO ] --> [ 1.2 Line Item Tally ] --> [ 1.3 Exception Override ]
+   ├── [ 2.0 Floor Picking ]
+   │      ├── [ 2.1 Wave Route ] --> [ 2.2 Bin Scan ]
+   └── [ 3.0 Sync Status ]
+            </div>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">3. Interface Standards</h3>
+            <ul class="list-disc ml-6 space-y-2 mb-6">
+                <li><strong>Ergonomics (Touch Targets):</strong> Absolute minimum of 48x48 dp for all interactive elements to accommodate gloved hands.</li>
+                <li><strong>Color Palettes (Semantic):</strong> Status indicators strictly follow WCAG AA contrast. Green (#16a34a) for MATCHED. Red (#dc2626) for OVERAGE_HOLD.</li>
+                <li><strong>Typography:</strong> Roboto / Inter. Minimum 16sp for body text, 24sp for numerical quantities.</li>
+                <li><strong>Hardware Integration:</strong> UI input fields must natively intercept Zebra DataWedge intents to bypass the virtual keyboard.</li>
+            </ul>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">4. Prototyping Directive</h3>
+            <p class="ml-4 mb-4">UI/UX Subcontractor is authorized to commence Figma Low-Fidelity wireframes based on the above Interface Structure Diagram and Ergonomic Standards. Prototypes must be delivered in interactive click-through format for Client UAT sign-off.</p>
+        </div>
+    </div>
+</body>
+</html>

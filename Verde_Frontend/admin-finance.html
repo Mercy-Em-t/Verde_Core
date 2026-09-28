@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Ledger & Pacing - Tryphene Consulting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0B1325',
+                        primary: '#1E40AF',
+                        accent: '#38BDF8'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#0B1325] text-slate-300 flex flex-col h-screen sticky top-0 shrink-0 border-r border-slate-800">
+        <div class="p-4 border-b border-slate-700/50 flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white font-bold">TM</div>
+            <div>
+                <h1 class="text-sm font-bold text-white leading-tight">Tryphene Murugat</h1>
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest"><i class="fa-solid fa-anchor mr-1"></i> Orchestrator Mode</p>
+            </div>
+        </div>
+        
+        <div class="p-4 flex-1 overflow-y-auto space-y-6">
+            <!-- Business Dev -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Business Dev</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-5 text-center"></i> <span>Global HUD</span></a></li>
+                    <li><a href="admin-leads.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-funnel-dollar w-5 text-center"></i> <span>Lead Qualifiers</span></a></li>
+                    <li><a href="admin-services.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-emerald-400"><i class="fa-solid fa-layer-group w-5 text-center"></i> <span>Services Catalog</span></a></li>
+                    <li><a href="admin-portfolio.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-indigo-400"><i class="fa-solid fa-images w-5 text-center"></i> <span>Portfolio Matrix</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Operations -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Operations</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-analyst.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-microscope w-5 text-center"></i> <span>Systems Analyst</span></a></li>
+                    <li><a href="admin-jad-dashboard.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-users-rectangle w-5 text-center"></i> <span>JAD Facilitator</span></a></li>
+                    <li><a href="admin-engineering.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-code w-5 text-center"></i> <span>Engineering Portal</span></a></li>
+                    <li><a href="admin-finance.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-vault w-5 text-center"></i> <span>Financial Ledger</span></a></li>
+                </ul>
+            </div>
+
+            <!-- System -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">System</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-templates.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-folder-tree w-5 text-center"></i> <span>Template Library</span></a></li>
+                    <li><a href="#" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition opacity-50"><i class="fa-solid fa-shield-halved w-5 text-center"></i> <span>QA Gatekeeper</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50">
+            <button onclick="localStorage.removeItem('tm_role'); window.location.href='index.html'" class="flex items-center space-x-2 text-sm text-slate-400 hover:text-white transition w-full">
+                <i class="fa-solid fa-sign-out-alt w-5 text-center"></i> <span>Exit System</span>
+            </button>
+        </div>
+    </aside>
+
+    
+    <!-- Sidebar -->
+        <!-- Sidebar -->
+    
+
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+        
+        <!-- Top Nav -->
+        <header class="bg-white border-b border-slate-200 p-4 flex justify-between items-center shadow-sm z-10 shrink-0">
+            <div>
+                <h2 class="text-lg font-bold text-slate-800">Financial Ledger & Pacing</h2>
+                <p class="text-xs text-slate-500">Milestone projections, pipeline capacity, and cash-flow pacing.</p>
+            </div>
+            <div class="flex space-x-3 items-center">
+                <div class="text-right">
+                    <p class="text-[10px] uppercase font-bold text-emerald-600 tracking-widest">Monthly Gross Target</p>
+                    <p class="text-sm font-bold text-slate-800">KES 4,000,000</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            
+            <div class="grid grid-cols-3 gap-6">
+                <!-- Target Widget -->
+                <div class="bg-white border border-emerald-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Projected Gross (Current Cycle)</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">KES 4,100,000</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-emerald-600 font-bold mt-2"><i class="fa-solid fa-arrow-up mr-1"></i> +100,000 over target threshold</p>
+                </div>
+
+                <!-- Active Retainers -->
+                <div class="bg-white border border-rose-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Discovery Retainers</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">2 <span class="text-sm font-normal text-slate-500">/ 2 Max</span></h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
+                        <div class="bg-rose-500 h-full w-full"></div>
+                    </div>
+                    <p class="text-[10px] text-rose-600 font-bold mt-1 uppercase tracking-widest text-right">Capacity Locked</p>
+                </div>
+
+                <!-- Uncleared Tranches -->
+                <div class="bg-white border border-amber-200 rounded-xl p-5 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Escrow / Uncleared Tranches</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">KES 400,000</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-amber-600 font-bold mt-2 uppercase tracking-widest"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Phase 3 Mobilization Deposit Pending</p>
+                </div>
+            </div>
+
+            <!-- The Pacing Matrix -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-200 bg-slate-50">
+                    <h3 class="font-bold text-sm text-slate-800 uppercase tracking-wider">4-Week Active Billing Schedule (Pacing Matrix)</h3>
+                </div>
+                
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="py-3 px-4 text-left">Pipeline / Client</th>
+                            <th class="py-3 px-4 text-left">Week 1</th>
+                            <th class="py-3 px-4 text-left">Week 2</th>
+                            <th class="py-3 px-4 text-left">Week 3</th>
+                            <th class="py-3 px-4 text-left">Week 4</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-slate-800">Client A (Discovery)</td>
+                            <td class="py-3 px-4"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded">KES 350,000 (Ph 1)</span></td>
+                            <td class="py-3 px-4"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded">KES 350,000 (Ph 1)</span></td>
+                            <td class="py-3 px-4 text-slate-400 italic">Gate 1 Transition</td>
+                            <td class="py-3 px-4 text-slate-400 italic">-</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-slate-800">Client B (Modeling)</td>
+                            <td class="py-3 px-4 text-slate-400 italic">-</td>
+                            <td class="py-3 px-4 text-slate-400 italic">-</td>
+                            <td class="py-3 px-4"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded">KES 350,000 (Ph 2)</span></td>
+                            <td class="py-3 px-4"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded">KES 350,000 (Ph 2)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-slate-800">Client C (Architecture)</td>
+                            <td class="py-3 px-4"><span class="bg-fuchsia-100 text-fuchsia-800 text-xs px-2 py-1 rounded font-bold">KES 400,000 (T1)</span></td>
+                            <td class="py-3 px-4 text-slate-400 italic">Executing...</td>
+                            <td class="py-3 px-4"><span class="bg-fuchsia-100 text-fuchsia-800 text-xs px-2 py-1 rounded font-bold">KES 300,000 (T2)</span></td>
+                            <td class="py-3 px-4 text-slate-400 italic">Executing...</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-slate-800">Client D (Build)</td>
+                            <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-bold">KES 800,000 (Mob.)</span></td>
+                            <td class="py-3 px-4 text-slate-400 italic">Sprint 1</td>
+                            <td class="py-3 px-4 text-slate-400 italic">Sprint 2</td>
+                            <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-bold">KES 600,000 (Mid)</span></td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="py-3 px-4 font-bold text-slate-600">Recurring SLA Base</td>
+                            <td colspan="4" class="py-3 px-4 text-center text-slate-500 font-bold uppercase tracking-widest">
+                                Tier 2 Support × 2 Contracts = KES 500,000 Baseline
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Operational Guardrails -->
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-white border border-rose-300 rounded-xl p-5 shadow-sm relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-2 h-full bg-rose-500"></div>
+                    <h3 class="font-bold text-rose-800 uppercase tracking-wider mb-2 text-sm"><i class="fa-solid fa-ban mr-1"></i> Discovery Guardrail</h3>
+                    <p class="text-sm text-slate-700 text-justify">Maintain no more than <strong>two active T&M discovery retainers</strong> (Phases 1 & 2) simultaneously to avoid context switching and delivery bottlenecking.</p>
+                </div>
+
+                <div class="bg-white border border-amber-300 rounded-xl p-5 shadow-sm relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-2 h-full bg-amber-500"></div>
+                    <h3 class="font-bold text-amber-800 uppercase tracking-wider mb-2 text-sm"><i class="fa-solid fa-lock mr-1"></i> Tranche Escrow Buffer</h3>
+                    <p class="text-sm text-slate-700 text-justify">Mobilization deposits for Phase 4 builds must sit in escrow or bank settlement. <strong>Do not counter-sign Subcontractor Work Orders</strong> until cash is verified.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

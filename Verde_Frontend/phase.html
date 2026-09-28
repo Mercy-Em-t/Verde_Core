@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phase Explorer | Tryphen Emurugat</title>
+<style>
+:root{--navy:#0B1325;--blue:#2563EB;--blue2:#1E40AF;--surface:#F8FAFC;--line:#CBD5E1;--muted:#64748B;--amber:#D97706}
+*{box-sizing:border-box}body{margin:0;background:var(--surface);color:var(--navy);font:16px/1.65 Inter,system-ui,sans-serif}
+header{background:var(--navy);color:#fff;border-bottom:2px solid var(--blue2);padding:14px 18px;position:sticky;top:0;z-index:10}
+.header-inner{max-width:980px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border:1px solid #CBD5E1;border-radius:7px;display:grid;place-items:center;color:#BFDBFE;font-weight:700}.brand b{display:block;font-size:14px}.brand small{display:block;color:#94A3B8;font-size:10px;letter-spacing:.12em}
+.topcart{background:#2563EB;color:#fff;border:0;border-radius:7px;padding:10px 13px;font-weight:700}
+.wrap{max-width:980px;margin:auto;padding:24px 16px 110px}.back{color:var(--blue2);text-decoration:none;font-weight:700;font-size:14px}
+.hero,.section{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px}.hero{margin-top:18px}
+.tag{display:inline-block;background:#EFF6FF;color:var(--blue2);padding:5px 10px;border-radius:6px;font-size:12px;font-weight:800}.price{float:right;color:var(--amber);font-family:monospace;font-weight:800}
+h1{font-size:34px;line-height:1.15;margin:18px 0 10px}.lead{font-size:18px;color:var(--muted);max-width:800px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}.section h2{margin:0 0 10px;font-size:20px}.section p{color:var(--muted)}ul{padding-left:20px}li{margin:9px 0;color:var(--muted)}
+.gate{background:#FEF3C7;color:#92400E;padding:7px 10px;border-radius:6px;display:inline-block;font-family:monospace;font-size:12px;font-weight:700}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border-radius:8px;padding:12px 17px;font-weight:800;cursor:pointer;font-size:14px}.primary{background:var(--blue);color:#fff;border:1px solid var(--blue)}.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.cta{margin-top:16px;background:var(--navy);color:#fff;border-radius:14px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.cta h2{margin:0 0 4px}.cta p{margin:0;color:#94A3B8}
+.cartbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:20}.count{background:#EFF6FF;color:var(--blue2);padding:3px 8px;border-radius:20px}.toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 14px;border-radius:8px;display:none;z-index:30}.toast.show{display:block}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.price{float:none;display:block;margin-top:12px}h1{font-size:29px}.cta{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+<div class="brand"><div class="logo">TM</div><div><b>TRYPHEN EMURUGAT</b><small>SYSTEMS ARCHITECTURE & GOVERNANCE</small></div></div>
+<button class="topcart" onclick="goCart()">My Project / Cart <span id="cartCount">0</span></button>
+</div></header>
+<main class="wrap"><a class="back" href="tryphene-sdlc-commercial-platform-v1.html">← Back to framework</a><div id="content"></div></main>
+<div class="cartbar"><span>Project Cart <span class="count" id="barCount">0</span></span><button class="btn primary" onclick="goCart()">Open cart</button></div>
+<div id="toast" class="toast"></div>
+<script src="workflow-guards.js"></script>
+<script src="runtime-config.js"></script><script src="api-client.js"></script>
+<script src="project-state.js"></script><script>
+const phases=[
+{id:1,name:"Initiation & Feasibility",price:300000,priceLabel:"From KES 300k / wk",gate:"Weekly T&M Retainer",desc:"Establish the business need, operational viability, economic assumptions and project governance before capital allocation.",purpose:"Turn an initial idea or business problem into a decision-ready project foundation.",items:["System Request Document","Technical, economic & organizational feasibility","WBS & PERT critical path","Project staffing plan & risk matrix"],outputs:["Decision-ready feasibility pack","Initial delivery structure and dependencies","Risk and governance baseline"],fit:"Use this phase when the project is still being shaped, investment has not been fully committed, or key assumptions need validation."},
+{id:2,name:"Requirements Analysis",price:350000,priceLabel:"From KES 350k / wk",gate:"Scope Freeze Sign-Off",desc:"Formalize end-to-end operational logic, workflows, business rules and normalized data requirements.",purpose:"Convert business operations into a controlled, testable system scope.",items:["Functional & non-functional requirements","Use cases & operational scenarios","Context, Level 0 & Level 1 DFDs","3NF normalized ERD"],outputs:["Requirements baseline","Process and data models","Scope-freeze package"],fit:"Use this phase when the business knows what problem it wants solved but the detailed system scope, workflows or data model are not yet locked."},
+{id:3,name:"Architecture & Design",price:800000,priceLabel:"From KES 800k Fixed",gate:"Prerequisite: Phase 2 Scope Freeze",desc:"Engineer technical blueprints, physical database schemas, UI/UX interaction standards and system specifications.",purpose:"Translate an approved scope into implementation-ready technical design.",items:["System specification & cloud topology","UI/UX wireframes & prototypes","Program structure charts & specifications","Physical DDL schema & sizing calculations"],outputs:["Implementation-ready architecture pack","UI/UX design artefacts","Physical data and infrastructure specifications"],fit:"Use this phase when requirements are sufficiently stable and the team needs a technical blueprint before construction."},
+{id:4,name:"Implementation & Cutover",price:1500000,priceLabel:"From KES 1.5M Fixed",gate:"Milestone Tranches: 40% / 30% / 30%",desc:"Code construction, QA, migration, UAT sign-off and controlled production deployment.",purpose:"Build, validate, migrate and move the approved system into controlled production use.",items:["Production codebase & Git transfer","Unit, integration & load test reports","ETL migration & contingency runbook","UAT sign-off & post-implementation audit"],outputs:["Production release","Test evidence","Migration and rollback runbook","UAT and post-implementation records"],fit:"Use this phase when the scope and architecture are sufficiently mature to enter controlled implementation and deployment."}
+];
+const id=Number(new URLSearchParams(location.search).get("phase")||1),p=phases.find(x=>x.id===id)||phases[0];
+let cart=JSON.parse(localStorage.getItem("tm_cart")||"[]");
+document.getElementById("content").innerHTML=`
+<section class="hero"><span class="tag">PHASE ${String(p.id).padStart(2,"0")}</span><span class="price">${p.priceLabel}</span>
+<h1>${p.name}</h1><p class="lead">${p.desc}</p>
+<div class="actions"><button class="btn primary" onclick="add()">Add to project cart</button><button class="btn secondary" onclick="goCart()">Open project cart</button><a class="btn secondary" href="my-project.html">My Project</a></div></section>
+<div class="grid">
+<section class="section"><h2>What this phase does</h2><p>${p.purpose}</p></section>
+<section class="section"><h2>Commercial gate</h2><p><span class="gate">${p.gate}</span></p><p>This gate defines what must be established before the work moves into the next stage.</p></section>
+<section class="section"><h2>Core deliverables</h2><ul>${p.items.map(x=>`<li>${x}</li>`).join("")}</ul></section>
+<section class="section"><h2>Expected outputs</h2><ul>${p.outputs.map(x=>`<li>${x}</li>`).join("")}</ul></section>
+</div>
+<section class="section" style="margin-top:16px"><h2>When to use this phase</h2><p>${p.fit}</p></section>
+<section class="cta"><div><h2>Ready to discuss this phase?</h2><p>Add it to your project cart, then complete the project readiness qualifier.</p></div><button class="btn primary" onclick="addAndQualify()">Add & continue to qualification</button></section>`;
+function update(){cartCount.textContent=cart.length;barCount.textContent=cart.length}
+function add(){TM.addPhase(p.id);cart=TM.cart();toast("Phase added — your project journey is updated");update()}
+function addAndQualify(){add();setTimeout(()=>location.href="tryphene-sdlc-commercial-platform-v1.html#qualifier",100)}
+function goCart(){location.href="tryphene-sdlc-commercial-platform-v1.html#cart"}
+function toast(s){const t=document.getElementById("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+update();
+</script></body></html>

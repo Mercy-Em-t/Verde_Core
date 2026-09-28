@@ -1,0 +1,18 @@
+(function(){
+  const LEADS='tm_crm_leads_v1', USERS='tm_crm_users_v1';
+  const STATUSES=['New','Review','Contacted','Discovery booked','Qualified','Proposal','Won','Lost'];
+  const now=()=>new Date().toISOString();
+  function read(k,f){try{return JSON.parse(localStorage.getItem(k)||'null')??f}catch(e){return f}}
+  function write(k,v){localStorage.setItem(k,JSON.stringify(v));return v}
+  async function leads(){ if(window.TMAPI && TMAPI.enabled() && TMAPI.hasSession()) { try { const res = await TMAPI.leads(); if(res.leads) return res.leads; } catch(e){} } return read(LEADS,[])}
+  function saveLead(lead){const list=leads();const i=list.findIndex(x=>x.id===lead.id);lead.updated=now();if(i<0)list.push(lead);else list[i]=lead;write(LEADS,list);return lead}
+  function create(data){const t=now(), lead={id:data.id||'LEAD-'+Date.now().toString().slice(-7),created:t,updated:t,status:data.status||'New',owner:data.owner||'',source:data.source||'Website',org:data.org||'',industry:data.industry||'',contact:data.contact||'',email:data.email||'',phone:data.phone||'',stage:data.stage||'',budget:data.budget||'',timeline:data.timeline||'',docs:data.docs||'',goal:data.goal||'',selectedPhases:data.selectedPhases||[],score:data.score??null,route:data.route||'Nurture / discovery',signals:data.signals||[],notes:data.notes||'',tasks:[],activity:[{at:t,type:'created',text:'Lead captured from website'}]};return saveLead(lead)}
+  async function get(id){ if(window.TMAPI && TMAPI.enabled() && TMAPI.hasSession()){ try { const res = await TMAPI.lead(id); if(res) return res; } catch(e){} } return leads().find(x=>x.id===id)||null}
+  async function transition(id,status,note){ if(window.TMAPI && TMAPI.enabled() && TMAPI.hasSession()){ await TMAPI.updateLead(id, {status, notes:note||undefined}); } if(!STATUSES.includes(status))throw new Error('Unknown status');const l=get(id);if(!l)return null;const t=now();l.status=status;l.activity=l.activity||[];l.activity.push({at:t,type:'status',text:'Status changed to '+status,note:note||''});return saveLead(l)}
+  async function note(id,text){ if(window.TMAPI && TMAPI.enabled() && TMAPI.hasSession()){ await TMAPI.updateLead(id, {notes:text}); } const l=get(id);if(!l)return null;const t=now();l.notes=l.notes?l.notes+'\n['+t+'] '+text:'['+t+'] '+text;l.activity=l.activity||[];l.activity.push({at:t,type:'note',text});return saveLead(l)}
+  async function assign(id,owner){ if(window.TMAPI && TMAPI.enabled() && TMAPI.hasSession()){ await TMAPI.updateLead(id, {ownerId:owner}); } const l=get(id);if(!l)return null;l.owner=owner||'';l.activity=l.activity||[];l.activity.push({at:now(),type:'assignment',text:owner?'Assigned to '+owner:'Assignment cleared'});return saveLead(l)}
+  function task(id,text,due){const l=get(id);if(!l)return null;l.tasks=l.tasks||[];l.tasks.push({id:'TASK-'+Date.now().toString().slice(-6),text, due:due||'',done:false,created:now()});l.activity=l.activity||[];l.activity.push({at:now(),type:'task',text:'Task created: '+text});return saveLead(l)}
+  function completeTask(id,taskId){const l=get(id);if(!l)return null;const t=(l.tasks||[]).find(x=>x.id===taskId);if(t){t.done=true;t.completed=now();l.activity=l.activity||[];l.activity.push({at:now(),type:'task-complete',text:'Task completed: '+t.text})}return saveLead(l)}
+  async function stats(){ const ls=await leads(); return {total:ls.length,new:ls.filter(x=>x.status==='New').length,active:ls.filter(x=>!['Won','Lost'].includes(x.status)).length,won:ls.filter(x=>x.status==='Won').length,proposal:ls.filter(x=>x.status==='Proposal').length}}
+  window.TMCRM={LEADS,USERS,STATUSES,read,write,leads,create,get,transition,note,assign,task,completeTask,stats};
+})();

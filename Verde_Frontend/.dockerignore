@@ -1,0 +1,8 @@
+.git
+.github
+node_modules
+*.zip
+README-v5.md
+qa
+qa-sprint14-integration.mjs
+docs

@@ -1,0 +1,5 @@
+--- EMAIL TO: 1234 ---
+Your temporary password is: 1234
+Your Master Recovery Key is: VRD-NPM4FHM037ZC
+KEEP THIS SAFE.
+

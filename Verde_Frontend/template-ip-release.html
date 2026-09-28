@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2 IP Release & Termination</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .mono-doc {
+            font-family: "Courier New", Courier, monospace;
+            color: #111;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+        .header-block {
+            white-space: pre;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-file-contract mr-2 text-rose-500"></i> Phase 2 Acceptance, IP Release & Termination</h1>
+            <p class="text-xs text-slate-400">Path A: Commercial Drop-Off Artifact</p>
+        </div>
+        <button onclick="window.print()" class="bg-rose-600 hover:bg-rose-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print Document
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex gap-6 no-print">
+        
+        <!-- Left Panel: Input Form -->
+        <div class="w-[40%] bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Document Configuration</h2>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 space-y-6">
+                
+                <div>
+                    <h3 class="text-xs font-bold text-rose-700 uppercase mb-3 border-b pb-1">Contract Identity</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Project Name</label>
+                            <input type="text" id="inpProject" value="OmniLogix Multi-Branch Platform" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-rose-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Client Legal Name</label>
+                            <input type="text" id="inpClient" value="[Client Legal Name / Entity]" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-rose-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Consultancy Name</label>
+                            <input type="text" id="inpConsultancy" value="Tryphene Murugat Consultancy" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-rose-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Total Retainer Value (KES)</label>
+                            <input type="text" id="inpValue" value="800,000" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-rose-500" oninput="render()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-300 p-4 rounded">
+                    <p class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2"><i class="fa-solid fa-handshake-slash mr-2"></i> Clean Break Mandate</p>
+                    <p class="text-[11px] text-amber-900 text-justify">Use this document exclusively for <strong>Path A (The Drop-Off)</strong>. This severs your liability. If they take your blueprints to a cheap 3rd-party dev shop and the build fails, Section 3 explicitly legally protects you from the fallout.</p>
+                </div>
+
+            </div>
+            <div class="p-4 border-t border-slate-200">
+                <button onclick="render()" class="w-full bg-[#0B1325] text-white py-2 rounded font-bold text-sm shadow hover:bg-slate-800">Refresh Document</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Output -->
+        <div class="w-[60%] flex justify-center print-container overflow-y-auto">
+            <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[800px] w-full print:shadow-none print:border-none print:p-0 mono-doc h-max">
+                
+                <div class="header-block">================================================================================
+           PHASE 2 ACCEPTANCE, IP RELEASE & ENGAGEMENT TERMINATION
+================================================================================
+PROJECT:            <span id="outProject"></span>
+CLIENT LEGAL NAME:  <span id="outClient"></span>
+CONSULTANCY:        <span id="outConsultancy"></span>
+DATE:               <span id="outDate"></span>
+================================================================================</div>
+                
+                <div class="font-bold mb-2">1. ACKNOWLEDGMENT OF DELIVERABLES</div>
+                <div class="mb-6 ml-4">
+                    <p class="mb-2 text-justify">The Client certifies receipt and approval of all Phase 2 analysis deliverables:</p>
+                    <ul class="list-none space-y-1">
+                        <li>• Requirements Definition Document (FR-1.0 through FR-5.0; NFR-1.0 through NFR-4.0).</li>
+                        <li>• Formal Use Case Matrix (UC-01 through UC-12 with alternate exception flows).</li>
+                        <li>• Process Flow Models (Context, Level 0, and Level 1 Gane & Sarson DFDs).</li>
+                        <li>• Logical Data Architecture (Third Normal Form [3NF] Relational ERD).</li>
+                    </ul>
+                </div>
+
+                <div class="font-bold mb-2">2. INTELLECTUAL PROPERTY & IMPLEMENTATION RIGHTS</div>
+                <div class="mb-6 ml-4">
+                    <ul class="list-none space-y-3">
+                        <li class="text-justify">• The Consultancy hereby grants the Client a perpetual, exclusive, worldwide right to utilize these specifications to tender, design, and construct the system.</li>
+                        <li class="text-justify">• Underlying consultancy methodologies, metamodels, and delivery templates remain the exclusive property of Tryphene Murugat Consultancy.</li>
+                    </ul>
+                </div>
+
+                <div class="font-bold mb-2">3. THIRD-PARTY IMPLEMENTATION & LIABILITY DISCLAIMER</div>
+                <div class="mb-6 ml-4">
+                    <ul class="list-none space-y-3">
+                        <li class="text-justify">• The Consultancy provides these blueprints as vendor-neutral functional models.</li>
+                        <li class="text-justify font-bold underline">• The Consultancy expressly disclaims all liability for bugs, runtime regressions, security flaws, or deployment failures arising if the Client contracts an external third party or in-house engineering team to construct the system.</li>
+                    </ul>
+                </div>
+
+                <div class="font-bold mb-2">4. FINANCIAL RECONCILIATION</div>
+                <div class="mb-8 ml-4">
+                    <ul class="list-none space-y-3">
+                        <li class="text-justify">• All Phase 2 Time & Materials retainers (Weeks 1 & 2: KES <span id="outValue"></span>) are settled in full.</li>
+                        <li class="text-justify">• Zero accounts payable or receivable remain outstanding between the parties.</li>
+                    </ul>
+                </div>
+
+                <div class="flex justify-between mt-10">
+                    <div class="w-1/2 pr-4">
+                        <div class="font-bold mb-6">FOR THE CLIENT:</div>
+                        <div class="border-b border-black mb-2 h-8 relative">
+                            <span class="absolute bottom-0 text-[10px] text-gray-500">Signature:</span>
+                        </div>
+                        <div class="text-sm font-bold">Name/Title: ________________________</div>
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <div class="font-bold mb-6">FOR THE CONSULTANCY:</div>
+                        <div class="border-b border-black mb-2 h-8 relative">
+                            <span class="absolute bottom-0 text-[10px] text-gray-500">Signature:</span>
+                        </div>
+                        <div class="text-sm font-bold">Name/Title: ________________________</div>
+                    </div>
+                </div>
+
+                <div class="header-block mt-8">================================================================================</div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('outDate').innerText = new Date().toLocaleDateString('en-GB');
+
+        function render() {
+            document.getElementById('outProject').innerText = document.getElementById('inpProject').value;
+            document.getElementById('outClient').innerText = document.getElementById('inpClient').value;
+            document.getElementById('outConsultancy').innerText = document.getElementById('inpConsultancy').value;
+            document.getElementById('outValue').innerText = document.getElementById('inpValue').value;
+        }
+        
+        render();
+    </script>
+</body>
+</html>

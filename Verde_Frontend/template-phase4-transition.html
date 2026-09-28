@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: Transition & Change Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mono-doc { font-family: "Courier New", Courier, monospace; font-size: 13px; line-height: 1.6; }
+        .header-block { font-weight: bold; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <header class="bg-[#0B1325] text-white p-4 shadow-md flex justify-between items-center">
+        <div><h1 class="text-xl font-bold"><i class="fa-solid fa-people-arrows mr-2 text-orange-400"></i> Phase 4: Transition & Change Management</h1></div>
+        <button onclick="window.print()" class="bg-orange-600 px-4 py-2 rounded text-sm font-bold shadow hover:bg-orange-700">Print</button>
+    </header>
+    <div class="flex-1 overflow-auto p-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white border shadow-xl p-12 mono-doc">
+            <div class="header-block">PHASE 4 IMPLEMENTATION DELIVERABLE<br>PART 2: CONVERSION & CHANGE MANAGEMENT</div>
+            
+            <h3 class="font-bold bg-slate-200 p-1 mb-2 uppercase">1. System Conversion Strategy</h3>
+            <p class="ml-4 mb-4">Migrating from the legacy paper-based ERP to the new OmniLogix cloud platform.</p>
+            <ul class="list-disc ml-8 space-y-2 mb-6">
+                <li><strong>Conversion Style:</strong> Phased Rollout (Branch by Branch). <em>Rationale: Mitigates risk by isolating potential system failures to a single depot before scaling nationally.</em></li>
+                <li><strong>Data Migration:</strong> Legacy stock balances exported via CSV and mapped/seeded into the new PostgreSQL <code>TBL_ITEM</code> schema on Friday at 22:00 EAT.</li>
+                <li><strong>System Go-Live Date:</strong> Target Cutover is Monday 06:00 EAT. Legacy system becomes Read-Only.</li>
+            </ul>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">2. Change Management Plan</h3>
+            <p class="ml-4 mb-4">Managing the human element and organizational friction during cutover.</p>
+            <ul class="list-disc ml-8 space-y-2">
+                <li><strong>Training:</strong> Interactive mock-receiving sessions held in the cafeteria using the actual Zebra TC21 scanners.</li>
+                <li><strong>Management Sponsorship:</strong> The COO must send a mandatory company-wide memo enforcing the cutoff of the old paper system. Shadow IT (keeping parallel Excel sheets) is strictly forbidden.</li>
+                <li><strong>Incentive Alignment:</strong> Floor clerks given performance bonuses for achieving 99% scan accuracy during the first 14 days of Phase 4 Go-Live.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

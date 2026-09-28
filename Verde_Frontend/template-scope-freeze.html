@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Proposal & Scope Freeze</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .mono-doc {
+            font-family: "Courier New", Courier, monospace;
+            color: #111;
+            line-height: 1.4;
+            font-size: 13px;
+        }
+        .header-block {
+            white-space: pre;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-file-signature mr-2 text-indigo-400"></i> Phase Gate 2: System Proposal & Scope Freeze</h1>
+            <p class="text-xs text-slate-400">Commercial Closure Artifact</p>
+        </div>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print / Export to PDF
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex gap-6 no-print">
+        
+        <!-- Left Panel: Input Form -->
+        <div class="w-[45%] bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Proposal Configuration</h2>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 space-y-6">
+                
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">1. Contract Identity</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Project Name</label>
+                            <input type="text" id="inpProject" value="OmniLogix Multi-Branch Platform" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Client Legal Name</label>
+                            <input type="text" id="inpClient" value="[Client Organization Legal Name]" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Executive Sponsor</label>
+                            <input type="text" id="inpSponsor" value="David Kimani, Chief Operating Officer" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Engagement Director</label>
+                            <input type="text" id="inpDirector" value="Tryphene Murugat, Tryphene Murugat Consultancy" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500" oninput="render()">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-bold text-emerald-700 uppercase mb-3 border-b pb-1">2. Financial Transition (Phase 3 Activation)</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Phase 2 Reconciled (KES)</label>
+                            <input type="text" id="inpP2Val" value="800,000" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-emerald-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Phase 3 Fixed-Price Milestone (KES)</label>
+                            <input type="text" id="inpP3Val" value="1,000,000" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-emerald-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Phase 3 Mobilization Deposit (KES, 40%)</label>
+                            <input type="text" id="inpP3Dep" value="400,000" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-emerald-500" oninput="render()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-300 p-4 rounded">
+                    <p class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2"><i class="fa-solid fa-lock mr-2"></i> Immutable Baseline Active</p>
+                    <p class="text-[11px] text-amber-900 text-justify">By executing this document, you terminate Discovery. Any modification requested during Phase 3 (Design) or Phase 4 (Build) will be triaged as a Class B Scope Alteration, requiring a formal Change Order Request (COR) funded 100% upfront.</p>
+                </div>
+
+            </div>
+            <div class="p-4 border-t border-slate-200">
+                <button onclick="render()" class="w-full bg-[#0B1325] text-white py-2 rounded font-bold text-sm shadow hover:bg-slate-800">Refresh Document</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Output -->
+        <div class="w-[55%] flex justify-center print-container overflow-y-auto">
+            <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[800px] w-full print:shadow-none print:border-none print:p-0 mono-doc h-max">
+                
+                <div class="header-block">================================================================================
+                    PHASE GATE 2: SYSTEM PROPOSAL & SCOPE FREEZE
+================================================================================
+PROJECT:            <span id="outProject"></span>
+CLIENT:             <span id="outClient"></span>
+EXECUTIVE SPONSOR:  <span id="outSponsor"></span>
+ENGAGEMENT DIRECTOR:<span id="outDirector"></span>
+STATUS:             BASELINE SCOPE PERMANENTLY LOCKED
+================================================================================</div>
+                
+                <div class="font-bold mb-2">1. EXECUTIVE SUMMARY OF ACCEPTED SPECIFICATIONS</div>
+                <div class="mb-6 ml-4">
+                    <p class="mb-2 text-justify">By executing this document, the Client accepts the following deliverables as the definitive operational blueprint for engineering:</p>
+                    <ul class="list-none space-y-1">
+                        <li>• Requirements Definition Document (FR-1.0 through FR-5.0; NFR-1.0 through NFR-4.0).</li>
+                        <li>• Formal Use Case Matrix (UC-01 through UC-12 with all exception handlers).</li>
+                        <li>• Gane & Sarson Process Models (Context, Level 0, and Level 1 DFDs).</li>
+                        <li>• Relational Data Model normalized to Third Normal Form (3NF).</li>
+                    </ul>
+                </div>
+
+                <div class="font-bold mb-2">2. SCOPE FREEZE & CHANGE MANAGEMENT DEFENSE</div>
+                <div class="mb-6 ml-4">
+                    <ul class="list-none space-y-3">
+                        <li class="text-justify">• <strong class="underline">Immutable Baseline:</strong> The business logic, field definitions, and interface workflows contained herein are frozen. No additional fields, roles, or integrations will be accepted under the discovery retainer.</li>
+                        <li class="text-justify">• <strong class="underline">Scope Alteration Protocol:</strong> Any modification requested during Phase 3 (Design) or Phase 4 (Build) will be triaged as a Class B Scope Alteration, requiring a formal Change Order Request (COR) funded 100% upfront before engineering.</li>
+                    </ul>
+                </div>
+
+                <div class="font-bold mb-2">3. PHASE GATE 2 COMMERCIAL CLOSURE & TRANSITION</div>
+                <div class="mb-8 ml-4">
+                    <ul class="list-none space-y-3">
+                        <li class="text-justify">• <strong class="underline">Phase 2 Retainer Settlement:</strong> Week 1 and Week 2 Discovery Retainers (KES <span id="outP2Val"></span>) are certified fully delivered and reconciled.</li>
+                        <li class="text-justify">• <strong class="underline">Activation of Phase 3 (System Architecture & Technical Design):</strong>
+                            <ul class="ml-4 mt-1 space-y-1">
+                                <li>- Fixed-Price Milestone Fee: KES <span id="outP3Val"></span></li>
+                                <li>- Tranche 1 Mobilization Deposit (40%): KES <span id="outP3Dep"></span> due upon execution.</li>
+                                <li>- Physical DDL scripting and wireframing commence 48 hours after payment clearance.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="header-block mb-4">================================================================================
+SIGNATURES & EXECUTION
+================================================================================</div>
+                
+                <div class="flex justify-between mt-8">
+                    <div class="w-1/2 pr-4">
+                        <div class="font-bold mb-6">FOR THE CLIENT:</div>
+                        <div class="border-b border-black mb-2 h-8 relative">
+                            <span class="absolute bottom-0 text-[10px] text-gray-500">Signature:</span>
+                        </div>
+                        <div class="mb-4 text-sm">Date: [DD/MM/YYYY]</div>
+                        <div class="text-sm font-bold" id="outSigClient"></div>
+                    </div>
+                    <div class="w-1/2 pl-4">
+                        <div class="font-bold mb-6">FOR THE CONSULTANCY:</div>
+                        <div class="border-b border-black mb-2 h-8 relative">
+                            <span class="absolute bottom-0 text-[10px] text-gray-500">Signature:</span>
+                        </div>
+                        <div class="mb-4 text-sm">Date: [DD/MM/YYYY]</div>
+                        <div class="text-sm font-bold" id="outSigDir"></div>
+                    </div>
+                </div>
+
+                <div class="header-block mt-8">================================================================================</div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function render() {
+            document.getElementById('outProject').innerText = document.getElementById('inpProject').value;
+            document.getElementById('outClient').innerText = document.getElementById('inpClient').value;
+            document.getElementById('outSponsor').innerText = document.getElementById('inpSponsor').value;
+            document.getElementById('outDirector').innerText = document.getElementById('inpDirector').value;
+            
+            document.getElementById('outP2Val').innerText = document.getElementById('inpP2Val').value;
+            document.getElementById('outP3Val').innerText = document.getElementById('inpP3Val').value;
+            document.getElementById('outP3Dep').innerText = document.getElementById('inpP3Dep').value;
+
+            document.getElementById('outSigClient').innerText = "Name/Title: " + document.getElementById('inpSponsor').value;
+            document.getElementById('outSigDir').innerText = "Name/Title: " + document.getElementById('inpDirector').value;
+        }
+        
+        render();
+    </script>
+</body>
+</html>
