@@ -28,7 +28,15 @@ class AuditKeeper:
         entity_id = None
         
         # Heuristically determine the entity from the message
-        if "project_id" in msg:
+        # --- NEW STANDARDIZED SCHEMA (CloudEvents-like) ---
+        if "entity_type" in msg and "entity_id" in msg:
+            entity = msg["entity_type"]
+            entity_id = str(msg["entity_id"])
+        # --- END NEW SCHEMA ---
+        
+        # --- LEGACY HEURISTIC FALLBACK ---
+        elif "project_id" in msg:
+
             entity = "Project"
             entity_id = str(msg["project_id"])
         elif "lead_id" in msg:

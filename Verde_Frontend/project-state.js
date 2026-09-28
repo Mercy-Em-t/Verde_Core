@@ -23,7 +23,30 @@
     return {id:"TM-"+Date.now().toString().slice(-6),created:now,updated:now,name:"Your project",stage:"explore",selectedPhases:cart(),qualifierComplete:false,nextAction:"Tell us what you're trying to achieve",status:"Exploring",engagementId:"",proposalId:"",proposalNumber:"",qualification:{},history:[],decisions:[],checklist:{},notes:[]};
   }
   async function save(p){p.updated=new Date().toISOString();write(KEY,p); if(window.TMAPI && TMAPI.enabled() && TMAPI.hasSession()){ try{ await TMAPI.updateProject(p.id, p); }catch(e){} } return p}
-  function record(p,type,data){p.history=p.history||[];p.history.push(Object.assign({at:new Date().toISOString(),type},data||{}));}
+  function record(p,type,data){
+    const eventData = Object.assign({at:new Date().toISOString(),type},data||{});
+    p.history=p.history||[];
+    p.history.push(eventData);
+    
+    // -- NEW TELEMETRY (BEACON API) --
+    // Dispatch to a telemetry endpoint to ensure we don't lose data on tab close
+    try {
+        if(navigator && navigator.sendBeacon) {
+            const payload = JSON.stringify({
+                entity_type: "Project", 
+                entity_id: p.id, 
+                event_type: type, 
+                actor: "Client", 
+                data: eventData
+            });
+            // We use Blob to ensure content-type is application/json if needed, 
+            // though sendBeacon with string defaults to text/plain.
+            const blob = new Blob([payload], {type: 'application/json'});
+            navigator.sendBeacon('/api/telemetry', blob);
+        }
+    } catch(e) {}
+    // -- END NEW TELEMETRY --
+  }
   async function setStage(stage,next,status){
     const p=await get(), old=p.stage; p.stage=stage||p.stage; if(next)p.nextAction=next; if(status)p.status=status;
     if(old!==p.stage)record(p,"stage-changed",{from:old,to:p.stage}); return await save(p)
