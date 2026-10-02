@@ -5,6 +5,7 @@ import axios from 'axios';
 export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
 
@@ -47,11 +48,13 @@ export default function Dashboard() {
 
   const submitCreate = () => {
     if (!createId || !createName) return alert('ID and Name are required');
+    setIsSubmitting(true);
     axios.post('/api/projects', { id: createId, name: createName }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setShowCreateModal(false);
         fetchProjects();
-      }).catch(err => alert("Failed: " + err.message));
+      }).catch(err => alert("Failed: " + err.message))
+      .finally(() => setIsSubmitting(false));
   };
 
   const openEditModal = (project) => {
@@ -63,17 +66,21 @@ export default function Dashboard() {
 
   const submitEdit = () => {
     if (!editSponsor || !editNeed) return alert("Please fill in both fields.");
+    setIsSubmitting(true);
     axios.put(`/api/projects/${editTargetId}`, { sponsor: editSponsor, need: editNeed }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         fetchProjects();
         setShowEditModal(false);
       })
-      .catch(err => alert("Failed: " + err.message));
+      .catch(err => alert("Failed: " + err.message))
+      .finally(() => setIsSubmitting(false));
   };
 
   const handleAction = (id, action) => {
+    setIsSubmitting(true);
     axios.post(`/api/projects/${id}/action`, { action }, { headers: { Authorization: `Bearer ${token}` } })
-      .then(fetchProjects).catch(err => alert("Failed: " + err.message));
+      .then(fetchProjects).catch(err => alert("Failed: " + err.message))
+      .finally(() => setIsSubmitting(false));
   };
 
   if (loading) return <div className="loading">Initializing Secure Pipeline...</div>;
@@ -141,8 +148,10 @@ export default function Dashboard() {
             />
 
             <div className="modal-actions">
-              <button className="btn secondary" onClick={() => setShowCreateModal(false)}>Cancel</button>
-              <button className="btn primary" onClick={submitCreate} style={{ background: '#27ae60' }}>Create Project</button>
+              <button className="btn secondary" disabled={isSubmitting} onClick={() => setShowCreateModal(false)}>Cancel</button>
+              <button className="btn primary" disabled={isSubmitting} onClick={submitCreate} style={{ background: isSubmitting ? '#7f8c8d' : '#27ae60' }}>
+                {isSubmitting ? '⌛ Processing...' : 'Create Project'}
+              </button>
             </div>
           </div>
         </div>
@@ -173,8 +182,10 @@ export default function Dashboard() {
             />
 
             <div className="modal-actions">
-              <button className="btn secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
-              <button className="btn primary" onClick={submitEdit} style={{ background: '#3b82f6' }}>Save Data</button>
+              <button className="btn secondary" disabled={isSubmitting} onClick={() => setShowEditModal(false)}>Cancel</button>
+              <button className="btn primary" disabled={isSubmitting} onClick={submitEdit} style={{ background: isSubmitting ? '#7f8c8d' : '#3b82f6' }}>
+                {isSubmitting ? '⌛ Saving...' : 'Save Data'}
+              </button>
             </div>
           </div>
         </div>
