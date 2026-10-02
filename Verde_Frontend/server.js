@@ -1,13 +1,35 @@
 import http from 'http';
+import fs from 'fs';
+import path from 'path';
 import { generateProject } from './simulator.js';
 
 const PORT = process.env.PORT || 3000;
+const DB_FILE = path.join(process.cwd(), 'data', 'projects.json');
 
 // In-Memory Database of isolated projects
-// When a request comes in, the server compiles the SDLC logic in total isolation.
-const projectsDB = new Map();
+let projectsDB = new Map();
+
+function saveDatabase() {
+    const obj = Object.fromEntries(projectsDB);
+    fs.writeFileSync(DB_FILE, JSON.stringify(obj, null, 2));
+    console.log(`💾 Saved ${projectsDB.size} projects to persistent storage (projects.json)`);
+}
+
+function loadDatabase() {
+    if (fs.existsSync(DB_FILE)) {
+        const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+        projectsDB = new Map(Object.entries(data));
+        console.log(`📂 Loaded ${projectsDB.size} projects from persistent storage.`);
+        return true;
+    }
+    return false;
+}
 
 function initializeProjects() {
+    if (loadDatabase()) {
+        return; // Skip generation if we already have persistent data
+    }
+
     console.log('Seeding memory with isolated projects...');
     // Project 1: Complete 5-Phase HR Project
     projectsDB.set('PRJ-HR-2026', {
@@ -29,6 +51,9 @@ function initializeProjects() {
         pm: 'Charlie Root (CISO)',
         data: generateProject('PRJ-SEC-0001', 5, 'Charlie Root (CISO)')
     });
+
+    // Persist to disk immediately after generation
+    saveDatabase();
 }
 
 const server = http.createServer((req, res) => {
