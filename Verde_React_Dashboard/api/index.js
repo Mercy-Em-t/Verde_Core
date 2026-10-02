@@ -23,12 +23,20 @@ const usersDB = [
 ];
 
 app.post('/api/auth/login', (req, res) => {
-    const { email, password } = req.body;
-    const user = usersDB.find(u => u.email === email);
-    if (!user || !bcrypt.compareSync(password, user.passwordHash)) return res.status(401).json({ error: 'Invalid credentials' });
-    const token = jwt.sign({ id: user.id, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, role: user.role, name: user.name });
+    try {
+        if (!req.body) req.body = {};
+        const { email, password } = req.body;
+        const user = usersDB.find(u => u.email === email);
+        if (!user || !password || !bcrypt.compareSync(password, user.passwordHash)) return res.status(401).json({ error: 'Invalid credentials' });
+        const token = jwt.sign({ id: user.id, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token, role: user.role, name: user.name });
+    } catch (error) {
+        console.error('Login Error:', error);
+        res.status(500).json({ error: error.message, stack: error.stack });
+    }
 });
+app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'API is running' }));
+
 
 function requireRole(roles) {
     return (req, res, next) => {
