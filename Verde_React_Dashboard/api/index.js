@@ -12,8 +12,10 @@ app.use(express.json());
 const JWT_SECRET = process.env.JWT_SECRET || 'verde_super_secret_key_2026';
 
 // PostgreSQL Client
-const db = new pg.Client({ connectionString: process.env.DATABASE_URL || 'postgresql://postgres.yjgskbdtnyzsmuzvnrsz:tryphen100%25@aws-0-eu-west-1.pooler.supabase.com:6543/postgres' });
-db.connect().catch(console.error);
+const db = new pg.Pool({ 
+  connectionString: process.env.DATABASE_URL || 'postgresql://postgres.yjgskbdtnyzsmuzvnrsz:tryphen100%25@aws-0-eu-west-1.pooler.supabase.com:6543/postgres' 
+});
+db.on('error', (err) => console.error('Unexpected error on idle client', err));
 
 const usersDB = [
     { id: '1', email: 'admin@verde.com', passwordHash: bcrypt.hashSync('admin123', 10), role: 'SYS_ADMIN', name: 'System Admin' },
