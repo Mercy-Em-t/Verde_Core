@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  verde-sdlc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: verde-sdlc-production
+    ports:
+      - "3000:3000"
+    volumes:
+      # Map the local host 'data' directory to the container's 'data' directory.
+      # This guarantees that the JSON flat-file persistence survives container destruction and re-deployments!
+      - ./data:/usr/src/app/data
+    environment:
+      - PORT=3000
+    restart: unless-stopped
