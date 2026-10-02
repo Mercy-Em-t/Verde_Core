@@ -412,3 +412,115 @@ const auditHtmlOutput = `
     return { binderHtml: binderHtmlOutput, auditHtml: auditHtmlOutput };
 }
 
+export function generateEmptyProject(PROJECT_ID, projectName) {
+    const logger = new ApiService.AuditLogger(PROJECT_ID);
+    
+    // Initialize Blank Phase 1
+    const sr = new ApiService.SystemRequest(PROJECT_ID);
+    sr.setProjectSponsor('TBD');
+    sr.setBusinessNeed('TBD');
+    
+    const fsStudy = new ApiService.FeasibilityStudy(PROJECT_ID);
+    
+    // STRICT SDLC RULE: We cannot instantiate ProjectPlanning because
+    // sr and fsStudy are not yet approved! The engine blocked us with a 500.
+
+    logger.logEvent('System', 'PROJECT_CREATED', `Project ${projectName} initialized with blank slate.`);
+
+    const commonHead = `
+    <style>
+        body { background: #f4f7f6; padding: 20px; font-family: sans-serif; }
+        .document-container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+        details { border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; margin-bottom: 20px; background: #fff; }
+        summary { font-weight: bold; margin: -0.5em -0.5em 0; padding: 1em; cursor: pointer; border-radius: 4px; background: #3498db; color: white; font-size: 1.2em; transition: background 0.2s; }
+        summary:hover { background: #2980b9; }
+        details[open] { padding: 0.5em; }
+        details[open] summary { border-bottom: 1px solid #aaa; margin-bottom: 1em; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+        .phase-summary { background: #eef; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #3498db; }
+    </style>
+    `;
+
+    const binderHtmlOutput = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Verde SDLC - Fresh Project</title>
+        ${commonHead}
+    </head>
+    <body>
+        <div class="document-container">
+            <h1 style="text-align: center; color: #2c3e50;">Verde SDLC: Master Output Binder</h1>
+            <p style="text-align: center; color: #7f8c8d; font-weight: bold; font-size: 1.2em;">Project: ${PROJECT_ID}</p>
+            <h2 style="text-align: center; color: #e67e22;">Status: FRESH DRAFT</h2>
+            <hr style="margin-bottom: 30px;"/>
+            
+            <details open>
+                <summary>Phase 1: Planning Phase</summary>
+                <div class="phase-summary">
+                    <p><strong>System Request Status:</strong> ${sr.status}</p>
+                    <p><strong>Feasibility Study Verdict:</strong> ${fsStudy.finalVerdict}</p>
+                    <p><strong>Project Manager:</strong> Unassigned</p>
+                </div>
+                ${sr.renderAsHTML()}
+                ${fsStudy.renderAsHTML()}
+                <div style="padding: 20px; background: #ffeaa7; border-left: 4px solid #fdcb6e; margin-top: 20px;">
+                    <strong>Project Planning Blocked:</strong> Cannot commence project planning until System Request and Feasibility Study are approved.
+                </div>
+            </details>
+            
+            <details>
+                <summary>Phase 2: Analysis Phase (LOCKED)</summary>
+                <p style="padding: 20px; color: #666;">Complete and approve Phase 1 to unlock Phase 2 documentation.</p>
+            </details>
+            <details>
+                <summary>Phase 3: Design Phase (LOCKED)</summary>
+                <p style="padding: 20px; color: #666;">Locked.</p>
+            </details>
+            <details>
+                <summary>Phase 4: Implementation Phase (LOCKED)</summary>
+                <p style="padding: 20px; color: #666;">Locked.</p>
+            </details>
+            <details>
+                <summary>Phase 5: Support & Maintenance Phase (LOCKED)</summary>
+                <p style="padding: 20px; color: #666;">Locked.</p>
+            </details>
+        </div>
+    </body>
+    </html>
+    `;
+
+    const auditHtmlOutput = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Verde SDLC - Project Audit Trail</title>
+        ${commonHead}
+    </head>
+    <body>
+        <div class="document-container">
+            <h1 style="text-align: center; color: #2c3e50;">Verde SDLC: Security & Audit Portal</h1>
+            <p style="text-align: center; color: #7f8c8d; font-weight: bold; font-size: 1.2em;">Project: ${PROJECT_ID}</p>
+            <hr style="margin-bottom: 30px;"/>
+            ${logger.renderAuditReportHTML()}
+        </div>
+    </body>
+    </html>
+    `;
+
+    return { binderHtml: binderHtmlOutput, auditHtml: auditHtmlOutput };
+}
+
+export function generateDynamicProject(state) {
+    const logger = new ApiService.AuditLogger(state.id);
+    const sr = new ApiService.SystemRequest(state.id);
+    sr.setProjectSponsor(state.sponsor || 'TBD');
+    sr.setBusinessNeed(state.need || 'TBD');
+    const fsStudy = new ApiService.FeasibilityStudy(state.id);
+    if (state.status === 'TERMINATED') { sr.status = 'TERMINATED'; fsStudy.finalVerdict = 'HALTED'; logger.logEvent(state.pm || 'System', 'PROJECT_HALTED', 'Terminated'); } else if (state.status === 'PHASE_1_APPROVED') { sr.approve('System Admin'); fsStudy.setVerdict(true); fsStudy.approve('System Admin'); logger.logEvent(state.pm || 'System', 'SYS_REQ_APPROVED', 'Approved'); }
+    let ppHtml = '';
+    if (state.status === 'PHASE_1_APPROVED') { const pp = new ApiService.ProjectPlanning(state.id, sr, fsStudy); ppHtml = pp.renderAsHTML(); }
+    const binderHtmlOutput = '<!DOCTYPE html><html><head></head><body><h1>Project ' + state.id + '</h1><h2>Status: ' + state.status + '</h2>' + sr.renderAsHTML() + fsStudy.renderAsHTML() + ppHtml + '</body></html>';
+    const auditHtmlOutput = '<!DOCTYPE html><html><head></head><body><h1>Audit: ' + state.id + '</h1>' + logger.renderAuditReportHTML() + '</body></html>';
+    return { binderHtml: binderHtmlOutput, auditHtml: auditHtmlOutput };
+}
+
