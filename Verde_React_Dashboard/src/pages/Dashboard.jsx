@@ -8,6 +8,12 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
 
+  // Modal State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTargetId, setEditTargetId] = useState(null);
+  const [editSponsor, setEditSponsor] = useState('');
+  const [editNeed, setEditNeed] = useState('');
+
   const fetchProjects = () => {
     axios.get('http://localhost:3000/api/projects')
       .then(res => setProjects(res.data))
@@ -36,12 +42,21 @@ export default function Dashboard() {
       .then(fetchProjects).catch(err => alert("Failed: " + err.message));
   };
 
-  const handleEdit = (id) => {
-    const sponsor = prompt("Enter Project Sponsor:");
-    const need = prompt("Enter Business Need:");
-    if (!sponsor || !need) return;
-    axios.put(`http://localhost:3000/api/projects/${id}`, { sponsor, need }, { headers: { Authorization: `Bearer ${token}` } })
-      .then(fetchProjects).catch(err => alert("Failed: " + err.message));
+  const openEditModal = (project) => {
+    setEditTargetId(project.id);
+    setEditSponsor('');
+    setEditNeed('');
+    setShowEditModal(true);
+  };
+
+  const submitEdit = () => {
+    if (!editSponsor || !editNeed) return alert("Please fill in both fields.");
+    axios.put(`http://localhost:3000/api/projects/${editTargetId}`, { sponsor: editSponsor, need: editNeed }, { headers: { Authorization: `Bearer ${token}` } })
+      .then(() => {
+        fetchProjects();
+        setShowEditModal(false);
+      })
+      .catch(err => alert("Failed: " + err.message));
   };
 
   const handleAction = (id, action) => {
@@ -81,7 +96,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="card-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-              <button className="btn secondary" onClick={() => handleEdit(project.id)}>✏️ Edit Data</button>
+              <button className="btn secondary" onClick={() => openEditModal(project)}>✏️ Edit Data</button>
               <button className="btn success" onClick={() => handleAction(project.id, 'APPROVE')} style={{background: '#27ae60', color: 'white'}}>✅ Approve</button>
               <button className="btn" onClick={() => handleAction(project.id, 'TERMINATE')} style={{background: '#c0392b', color: 'white'}}>🛑 Halt</button>
               <Link to={`/project/${project.id}/binder`} className="btn primary" style={{ width: '100%', marginTop: '5px' }}>📄 Master Binder</Link>
@@ -89,6 +104,38 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Edit Project Data</h3>
+            <p style={{ color: '#64748b', marginBottom: '20px', fontSize: '0.9em' }}>Project ID: <strong>{editTargetId}</strong></p>
+            
+            <label>Project Sponsor</label>
+            <input 
+              type="text" 
+              className="modal-input" 
+              placeholder="e.g. John Doe, HR Director"
+              value={editSponsor} 
+              onChange={e => setEditSponsor(e.target.value)} 
+            />
+
+            <label>Business Need</label>
+            <textarea 
+              className="modal-input" 
+              rows="4" 
+              placeholder="Explain why this project is necessary..."
+              value={editNeed} 
+              onChange={e => setEditNeed(e.target.value)} 
+            />
+
+            <div className="modal-actions">
+              <button className="btn secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
+              <button className="btn primary" onClick={submitEdit} style={{ background: '#3b82f6' }}>Save Data</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
