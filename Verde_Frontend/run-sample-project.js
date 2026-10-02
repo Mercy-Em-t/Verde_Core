@@ -8,6 +8,7 @@ const ADMIN = 'System Admin';
 const PM = 'Alice Smith (Project Manager)';
 
 const logger = new ApiService.AuditLogger(PROJECT_ID);
+const workflow = ApiService.createWorkflow(PROJECT_ID);
 
 // ============================================================================
 // PHASE 1: PLANNING
@@ -208,13 +209,42 @@ implPhase.approveFinalSystem(ADMIN);
 logger.logEvent(ADMIN, 'SYSTEM_DEPLOYED', 'Final System deployed into production environment.');
 
 // ============================================================================
+// PHASE 5: SUPPORT & MAINTENANCE
+// ============================================================================
+console.log('\n--- PHASE 5: SUPPORT & MAINTENANCE ---');
+console.log('1. Generating Phase 4 Binder and Booting Support Phase...');
+const supportPhase = new ApiService.SupportPhase(implPhase);
+
+console.log('2. System Support (Help Desk)...');
+supportPhase.systemSupport.addTicket('TK-001', 'Login page loads slowly on mobile', 'High', 'Jane Doe');
+supportPhase.systemSupport.addTicket('TK-002', 'Cannot export timesheet to PDF', 'Medium', 'John Smith');
+supportPhase.systemSupport.resolveTicket('TK-001');
+logger.logEvent(PM, 'SUPPORT_TICKET_RESOLVED', 'Resolved TK-001: Mobile login optimization.');
+
+console.log('3. System Maintenance...');
+supportPhase.systemMaintenance.addTask('M-001', 'BUG_FIX', 'Patch PDF export library version');
+supportPhase.systemMaintenance.addTask('M-002', 'ENHANCEMENT', 'Add dark mode toggle');
+supportPhase.systemMaintenance.completeTask('M-001');
+logger.logEvent(PM, 'MAINTENANCE_APPLIED', 'Applied patch M-001 to production environment.');
+
+console.log('4. Project Assessment (Post-Mortem)...');
+supportPhase.projectAssessment.addTeamReview('Alice Smith', 'Excellent', 'Managed agile sprints perfectly.');
+supportPhase.projectAssessment.addTeamReview('Bob Developer', 'Good', 'Struggled initially with CI/CD but adapted well.');
+supportPhase.projectAssessment.addLessonLearned('Communication', 'Need clearer requirements gathering for edge cases.');
+supportPhase.projectAssessment.addLessonLearned('Tech Stack', 'React worked well, but state management was complex.');
+supportPhase.projectAssessment.finalizeAssessment();
+
+console.log('5. Closing the Project...');
+supportPhase.closeProject(ADMIN);
+logger.logEvent(ADMIN, 'PROJECT_CLOSED', 'All SDLC phases completed. Project officially closed and retired.');
+
+// ============================================================================
 // WORKFLOW VERIFICATION
 // ============================================================================
 console.log('\n--- VERIFICATION ---');
-const exitGate = implPhase.canProceedToSupport();
-console.log('Can Proceed to Phase 5 (Support/Maintenance)?', exitGate.allowed ? '✅ YES' : '❌ NO');
+const exitGate = workflow.isProjectClosed(supportPhase);
+console.log('Is Project Officially Closed?', exitGate.allowed ? '✅ YES' : '❌ NO');
 console.log('Gate Reason:', exitGate.reason);
-console.log('Final Binder ID:', exitGate.binderId);
 
 const navBar = `
         <div class="no-print" style="background: #2c3e50; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 5px; font-weight: bold;">
@@ -346,9 +376,14 @@ const binderHtmlOutput = `
             ${designPhase.renderAsHTML()}
         </details>
 
-        <details open style="page-break-before: always;">
+        <details style="page-break-before: always;">
             <summary>Phase 4: Implementation Phase</summary>
             ${implPhase.renderAsHTML()}
+        </details>
+
+        <details open style="page-break-before: always;">
+            <summary>Phase 5: Support & Maintenance Phase</summary>
+            ${supportPhase.renderAsHTML()}
         </details>
     </div>
 </body>

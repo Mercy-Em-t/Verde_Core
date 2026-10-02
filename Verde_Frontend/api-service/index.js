@@ -13,6 +13,8 @@ import DesignPhase from './design/designPhase.js';
 import Phase2Binder from './design/phase2Binder.js';
 import ImplementationPhase from './implementation/implementationPhase.js';
 import Phase3Binder from './implementation/phase3Binder.js';
+import SupportPhase from './support/supportPhase.js';
+import Phase4Binder from './support/phase4Binder.js';
 
 /**
  * Verde SDLC API Service
@@ -33,6 +35,8 @@ const ApiService = {
     Phase2Binder: Phase2Binder,
     ImplementationPhase: ImplementationPhase,
     Phase3Binder: Phase3Binder,
+    SupportPhase: SupportPhase,
+    Phase4Binder: Phase4Binder,
 
     // Factory method to create a workflow engine for a specific project
     createWorkflow: (projectId, initialState = null) => {

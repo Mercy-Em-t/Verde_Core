@@ -73,6 +73,17 @@ class WorkflowEngine {
         return implementationPhaseObject.canProceedToSupport();
     }
 
+    // --- GATE POINT: Final Project Closure ---
+    isProjectClosed(supportPhaseObject) {
+        if (!supportPhaseObject) {
+            return { allowed: false, reason: 'GATE BLOCKED: No Support Phase object found.' };
+        }
+        if (supportPhaseObject.isClosed) {
+            return { allowed: true, reason: 'GATE PASSED: Project successfully closed.' };
+        }
+        return { allowed: false, reason: 'GATE BLOCKED: Project Assessment is not signed off by Admin.' };
+    }
+
     markStepComplete(stepId) {
         if (!this.state.completedSteps.includes(stepId)) {
             this.state.completedSteps.push(stepId);
