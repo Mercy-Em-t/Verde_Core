@@ -15,16 +15,16 @@ export default function Dashboard() {
   const [editNeed, setEditNeed] = useState('');
 
   const fetchProjects = () => {
-    axios.get('http://localhost:3000/api/projects')
+    axios.get('/api/projects')
       .then(res => setProjects(res.data))
       .catch(console.error);
   };
 
   useEffect(() => {
-    axios.post('http://localhost:3000/api/auth/login', { email: 'pm@verde.com', password: 'pm123' })
+    axios.post('/api/auth/login', { email: 'pm@verde.com', password: 'pm123' })
       .then(authRes => {
         setToken(authRes.data.token);
-        return axios.get('http://localhost:3000/api/projects');
+        return axios.get('/api/projects');
       })
       .then(response => {
         setProjects(response.data);
@@ -38,7 +38,7 @@ export default function Dashboard() {
 
   const handleCreateProject = () => {
     const newId = `PRJ-NEW-${Math.floor(Math.random() * 10000)}`;
-    axios.post('http://localhost:3000/api/projects', { id: newId, name: 'New Interactive Project' }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.post('/api/projects', { id: newId, name: 'New Interactive Project' }, { headers: { Authorization: `Bearer ${token}` } })
       .then(fetchProjects).catch(err => alert("Failed: " + err.message));
   };
 
@@ -51,7 +51,7 @@ export default function Dashboard() {
 
   const submitEdit = () => {
     if (!editSponsor || !editNeed) return alert("Please fill in both fields.");
-    axios.put(`http://localhost:3000/api/projects/${editTargetId}`, { sponsor: editSponsor, need: editNeed }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.put(`/api/projects/${editTargetId}`, { sponsor: editSponsor, need: editNeed }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         fetchProjects();
         setShowEditModal(false);
@@ -60,7 +60,7 @@ export default function Dashboard() {
   };
 
   const handleAction = (id, action) => {
-    axios.post(`http://localhost:3000/api/projects/${id}/action`, { action }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.post(`/api/projects/${id}/action`, { action }, { headers: { Authorization: `Bearer ${token}` } })
       .then(fetchProjects).catch(err => alert("Failed: " + err.message));
   };
 

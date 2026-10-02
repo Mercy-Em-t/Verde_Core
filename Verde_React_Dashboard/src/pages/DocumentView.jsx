@@ -8,7 +8,7 @@ export default function DocumentView() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/api/projects/${id}/${type}`)
+    axios.get(`/api/projects/${id}/${type}`)
       .then(response => {
         setHtmlContent(response.data.html);
         setLoading(false);
