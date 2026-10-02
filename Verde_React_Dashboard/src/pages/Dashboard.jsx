@@ -10,6 +10,9 @@ export default function Dashboard() {
 
   // Modal State
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createId, setCreateId] = useState('');
+  const [createName, setCreateName] = useState('');
   const [editTargetId, setEditTargetId] = useState(null);
   const [editSponsor, setEditSponsor] = useState('');
   const [editNeed, setEditNeed] = useState('');
@@ -36,10 +39,19 @@ export default function Dashboard() {
       });
   }, []);
 
-  const handleCreateProject = () => {
-    const newId = `PRJ-NEW-${Math.floor(Math.random() * 10000)}`;
-    axios.post('/api/projects', { id: newId, name: 'New Interactive Project' }, { headers: { Authorization: `Bearer ${token}` } })
-      .then(fetchProjects).catch(err => alert("Failed: " + err.message));
+  const openCreateModal = () => {
+    setCreateId(`PRJ-SEC-${Math.floor(Math.random() * 10000)}`);
+    setCreateName('');
+    setShowCreateModal(true);
+  };
+
+  const submitCreate = () => {
+    if (!createId || !createName) return alert('ID and Name are required');
+    axios.post('/api/projects', { id: createId, name: createName }, { headers: { Authorization: `Bearer ${token}` } })
+      .then(() => {
+        setShowCreateModal(false);
+        fetchProjects();
+      }).catch(err => alert("Failed: " + err.message));
   };
 
   const openEditModal = (project) => {
@@ -74,7 +86,7 @@ export default function Dashboard() {
           <h2>Active SDLC Projects</h2>
           <p>Real-time telemetry and cryptographic binder tracking across all enterprise environments.</p>
         </div>
-        <button className="btn primary" onClick={handleCreateProject} style={{ padding: '15px 30px', fontSize: '1.1em' }}>
+        <button className="btn primary" onClick={openCreateModal} style={{ padding: '15px 30px', fontSize: '1.1em' }}>
           ➕ Create New Project
         </button>
       </div>
@@ -104,6 +116,37 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      {showCreateModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Initiate New SDLC Project</h3>
+            <p style={{ color: '#64748b', marginBottom: '20px', fontSize: '0.9em' }}>Fill out the details below to start a new project workflow.</p>
+            
+            <label>Project ID (Auto-generated)</label>
+            <input 
+              type="text" 
+              className="modal-input" 
+              value={createId} 
+              onChange={e => setCreateId(e.target.value)} 
+            />
+
+            <label>Project Name</label>
+            <input 
+              type="text" 
+              className="modal-input" 
+              placeholder="e.g. Enterprise Firewall Upgrade"
+              value={createName} 
+              onChange={e => setCreateName(e.target.value)} 
+            />
+
+            <div className="modal-actions">
+              <button className="btn secondary" onClick={() => setShowCreateModal(false)}>Cancel</button>
+              <button className="btn primary" onClick={submitCreate} style={{ background: '#27ae60' }}>Create Project</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showEditModal && (
         <div className="modal-overlay">
