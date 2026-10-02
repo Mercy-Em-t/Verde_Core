@@ -1,48 +1,39 @@
-# Verde SDLC API Service
+# Verde SDLC API Service 🟢
 
-Verde SDLC is a rigorous, object-oriented System Development Life Cycle (SDLC) engine built in Node.js/JavaScript. It forces strict adherence to waterfall/iterative documentation phases by utilizing a "Binder" chain-of-custody pattern. You cannot progress to the next phase without cryptographically sound approvals from the previous phases.
+[![Verde SDLC Engine CI/CD](https://github.com/Mercy-Em-t/Verde_Core/actions/workflows/ci.yml/badge.svg)](https://github.com/Mercy-Em-t/Verde_Core/actions/workflows/ci.yml)
+
+Verde SDLC is a rigorous, object-oriented System Development Life Cycle (SDLC) engine built in native Node.js. It forces strict adherence to waterfall/iterative documentation phases by utilizing a "Binder" chain-of-custody pattern. You cannot progress to the next phase without cryptographically sound approvals from the previous phases.
 
 ## 🚀 Features
 
-- **Strict Gating:** Workflow Engine blocks progression if critical documents (System Requests, Feasibility Studies, Binders) lack Administrator approvals.
-- **Phase Passports (Binders):** Binders (e.g., `Phase1Binder`, `Phase2Binder`) act as immutable birth certificates for subsequent phases. They take a frozen snapshot of key metrics to prevent historical tampering.
-- **Stateful Document Lifecycle:** Documents transition seamlessly from `PENDING` -> `IN_PROGRESS` -> `COMPLETED` as teams incrementally add tasks, test plans, and system requirements.
-- **Built-in Audit Logger:** An embedded `AuditLogger` provides a third-person, timestamped timeline of every major mutation or approval across the project.
-- **Printable A4 HTML Generator:** Includes built-in HTML compilation capable of exporting massive physical booklets, complete with auto-expanding accordions and strict CSS print media rules for binding.
+- **Strict Gating & Binders:** Binders act as immutable birth certificates for subsequent phases, taking frozen snapshots of key metrics to prevent historical tampering.
+- **Concurrent Multi-Project Support:** The production server handles unlimited isolated SDLC pipelines simultaneously via an in-memory Map structure.
+- **Persistent Flat-File JSON:** Deep integration with local volume storage ensures server restarts automatically hydrate your projects without needing PostgreSQL or MongoDB.
+- **Printable A4 HTML Generator:** Includes built-in HTML compilation capable of exporting massive physical booklets, complete with strict CSS print media rules for physical binding.
 
-## 📁 Architecture
+## 📚 Documentation
+- [Architecture & Design Patterns](docs/ARCHITECTURE.md)
+- [The 5-Phase API Workflow](docs/API_WORKFLOW.md)
 
-The engine is split into the standard SDLC phases:
-- `api-service/`
-  - `systemRequest.js`, `feasibilityStudy.js`, `projectPlanning.js` (Phase 1: Planning)
-  - `analysis/` (Phase 2: Analysis & System Proposal)
-  - `design/` (Phase 3: Design & System Specification)
-  - `implementation/` (Phase 4: Implementation & Deployment)
-  - `auditLogger.js` (Security & Timeline tracking)
-  - `workflow.js` (The core state machine and validation gates)
+## 🐳 Running with Docker (Recommended)
 
-## 🛠️ Getting Started
-
-### Prerequisites
-- Node.js (v14+)
-
-### Running the Simulator
-You can simulate an entire project moving through all 4 phases by running the sample project script. This script will mock an HR System project, run it through the API gates, log the audit trail, and export the physical documents.
+Deploying Verde in production is fully automated via Docker Compose. The persistent database volume is automatically mapped to ensure data survival.
 
 ```bash
-node run-sample-project.js
+docker-compose up -d --build
 ```
+Once running, the central dashboard is available at: **http://localhost:3000/**
 
-This will produce two files in your root directory:
-1. `Sample_Project_Output.html` - The Master Project Binder (With an A4 Print button).
-2. `Sample_Project_Audit_Trail.html` - The chronological security timeline.
+## 🛠️ Running Locally (Native Node)
 
-### Running the Test Suite
-The Verde SDLC API includes 289 automated tests ensuring phase gates, logic, and snapshotting work flawlessly.
-
+If you prefer to run it without Docker:
 ```bash
+# Start the production server
+node server.js
+
+# Or run the manual terminal simulator
+node run-sample-project.js
+
+# Run the 289-test verification suite
 node run-tests-node.js
 ```
-
-## 🔒 Security & Document Export
-The application features an interactive document export pool. Attempting to download the final HTML binder securely strikes a unique Document ID off a predefined allowed list, assigning that tracking ID directly to the PDF/HTML export to prevent file collision and track custody.
