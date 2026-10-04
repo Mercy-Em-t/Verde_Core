@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./Verde_CSharp_Stack/Verde_Enterprise
+    ports:
+      - "127.0.0.1:8001:8000"
+    depends_on:
+      - redis
+
+  frontend:
+    build: 
+      context: ./Verde_React_Dashboard
+    ports:
+      - "127.0.0.1:5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8001/api
+    depends_on:
+      - backend
+    volumes:
+      - ./Verde_React_Dashboard:/app
+      - /app/node_modules
+
+  redis:
+    image: "redis:alpine"

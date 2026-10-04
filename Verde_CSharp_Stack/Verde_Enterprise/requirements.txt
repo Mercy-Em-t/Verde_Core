@@ -5,3 +5,9 @@ httpx
 pydantic
 redis
 pg8000
+sqlalchemy
+alembic
+fastapi-mail
+python-multipart
+
+psycopg2-binary

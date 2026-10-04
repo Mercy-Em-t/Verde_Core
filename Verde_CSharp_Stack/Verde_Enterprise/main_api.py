@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Header
+from fastapi import FastAPI, Depends, HTTPException, Header, BackgroundTasks
 from pydantic import BaseModel
 import uvicorn
 import uuid
@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Import our modular enterprise components
 from broker import RedisBroker
+import models
 
 app = FastAPI(title="Verde Enterprise API")
 
@@ -459,7 +460,8 @@ class CommissionPhaseModel(BaseModel):
 def commission_phase(project_id: int, data: CommissionPhaseModel, user: dict = Depends(get_current_user)):
     if user.get("role") != "Admin": raise HTTPException(status_code=403, detail="Forbidden")
     
-    template = PHASE_TEMPLATES.get(data.template_id)
+    import phase_templates
+    template = phase_templates.TEMPLATES.get(data.template_id)
     if not template: raise HTTPException(status_code=400, detail="Invalid phase template")
     
     with Connection(**db_params) as conn:
@@ -788,6 +790,21 @@ def action_react_project(id: str, payload: ReactProjectActionModel, authorizatio
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return {"id": id, "action": payload.action}
+
+class EmailPayload(BaseModel):
+    to: str
+    subject: str
+    body: str
+
+def send_email_background(payload: EmailPayload):
+    # Mock the SMTP connection
+    print(f"Mock SMTP: Sending email to {payload.to} with subject '{payload.subject}'")
+    # print(f"Body: {payload.body}")
+
+@app.post("/api/communications/email")
+def send_email(payload: EmailPayload, background_tasks: BackgroundTasks):
+    background_tasks.add_task(send_email_background, payload)
+    return {"status": "success", "message": "Email queued for sending"}
 
 if __name__ == "__main__":
     uvicorn.run("main_api:app", host="127.0.0.1", port=8000, reload=True)
