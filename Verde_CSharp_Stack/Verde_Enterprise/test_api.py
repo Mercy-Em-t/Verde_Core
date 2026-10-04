@@ -6,47 +6,65 @@ from unittest.mock import patch, MagicMock
 with patch('redis.Redis'):
     import main_api
     from main_api import app, broker
+    import threading
 
 client = TestClient(app)
 
 def test_account_recovery_success():
-    # We need to mock the event wait and response in pending_requests
-    with patch('main_api.uuid.uuid4', return_value='test-req-id'):
-        with patch('main_api.threading.Event.wait') as mock_wait:
-            # Simulate the broker callback by populating pending_requests
-            def mock_wait_side_effect(*args, **kwargs):
-                main_api.pending_requests['test-req-id']['response'] = {
+    # Patch only the specific Event instance used in pending_requests
+    original_event = threading.Event
+
+    def mock_event_constructor(*args, **kwargs):
+        evt = original_event(*args, **kwargs)
+        original_wait = evt.wait
+        def mocked_wait(timeout=None):
+            # Populate pending_requests for the request ID
+            # Find the req_id from pending_requests that has this event
+            req_id = None
+            for k, v in main_api.pending_requests.items():
+                if v.get("event") == evt:
+                    req_id = k
+                    break
+            if req_id:
+                main_api.pending_requests[req_id]["response"] = {
                     "type": "RECOVERY_SUCCESS",
                     "msg": "Password updated successfully"
                 }
-            mock_wait.side_effect = mock_wait_side_effect
-            
-            response = client.post("/api/recover", json={
-                "userid": "user1",
-                "recovery_key": "key123",
-                "new_password": "newpass"
-            })
-            
-            assert response.status_code == 200
-            assert response.json() == {"status": "success", "message": "Password updated successfully"}
+            return original_wait(0.01) # fast wait
+        evt.wait = mocked_wait
+        return evt
+
+    with patch('main_api.threading.Event', side_effect=mock_event_constructor):
+        response = client.post("/api/recover", json={
+            "userid": "user1",
+            "recovery_key": "key123",
+            "new_password": "newpass"
+        })
+        
+        assert response.status_code == 200
+        assert response.json() == {"status": "success", "message": "Password updated successfully"}
 
 def test_account_recovery_timeout():
-    with patch('main_api.uuid.uuid4', return_value='test-req-id'):
-        with patch('main_api.threading.Event.wait'):
-            # Simulate timeout (no response in pending_requests)
-            response = client.post("/api/recover", json={
-                "userid": "user1",
-                "recovery_key": "key123",
-                "new_password": "newpass"
-            })
-            
-            assert response.status_code == 504
-            assert response.json() == {"detail": "Broker timeout"}
+    # For timeout, we don't populate response and wait fast
+    original_event = threading.Event
+
+    def mock_event_constructor(*args, **kwargs):
+        evt = original_event(*args, **kwargs)
+        evt.wait = lambda timeout=None: None
+        return evt
+
+    with patch('main_api.threading.Event', side_effect=mock_event_constructor):
+        response = client.post("/api/recover", json={
+            "userid": "user1",
+            "recovery_key": "key123",
+            "new_password": "newpass"
+        })
+        
+        assert response.status_code == 504
+        assert response.json() == {"detail": "Broker timeout"}
 
 def test_telemetry_endpoint():
     response = client.post("/api/telemetry", json={"event": "click", "page": "home"})
-    # main_api.py telemetry endpoint seems to catch and return success or error
-    # Let's see what it returns by just asserting the status code for now
     assert response.status_code in (200, 400, 500)
 
 def test_api_event_catcher():
