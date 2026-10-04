@@ -8,7 +8,11 @@ import string
 import json
 import threading
 import uuid
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import asyncio
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
 
 # --- MESSAGING ARCHITECTURE ---
 class MessageBroker:
@@ -235,248 +239,171 @@ class GateKeeper:
             if "req_id" in msg: response["req_id"] = msg["req_id"]
             self.broker.publish(response)
 
-class VerdeAPIHandler(BaseHTTPRequestHandler):
-    broker = None
-    pending_requests = {} # req_id -> {"event": threading.Event(), "response": None}
-
-    def _send_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self._send_cors_headers()
-        self.end_headers()
-
-    def _validate_token(self):
-        auth_header = self.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "): return False
-        token = auth_header.split(" ")[1]
-        
-        req_id = str(uuid.uuid4())
-        event = threading.Event()
-        VerdeAPIHandler.pending_requests[req_id] = {"event": event, "response": None}
-        
-        VerdeAPIHandler.broker.publish({"type": "VALIDATE_TOKEN", "token": token, "req_id": req_id})
-        event.wait(2.0)
-        
-        result = VerdeAPIHandler.pending_requests.pop(req_id, None)
-        return result is not None and result["response"] is not None
-
-    def do_GET(self):
-        if self.path.startswith("/api/data"):
-            session = self._validate_token()
-            if not session:
-                self.send_response(401)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(b'{"error": "Unauthorized"}')
-                return
-                
-            req_id = str(uuid.uuid4())
-            event = threading.Event()
-            VerdeAPIHandler.pending_requests[req_id] = {"event": event, "response": None}
-            
-            req_msg = {"type": "RETRIEVE", "table": "VerdeData", "req_id": req_id}
-            # Enforce ACL
-            if session["role"] != "Admin":
-                req_msg["owner_filter"] = session["userid"]
-                
-            VerdeAPIHandler.broker.publish(req_msg)
-            event.wait(5.0)
-            
-            result = VerdeAPIHandler.pending_requests.pop(req_id, None)
-            
-            if result and result["response"] is not None:
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(json.dumps(result["response"]).encode())
-            else:
-                self.send_response(504)
-                self.end_headers()
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-    def do_POST(self):
-        if self.path.startswith("/api/login"):
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            try:
-                data = json.loads(post_data)
-                uid, pwd = data.get("userid"), data.get("password")
-                if not uid or not pwd: raise ValueError("userid and password required")
-
-                req_id = str(uuid.uuid4())
-                event = threading.Event()
-                VerdeAPIHandler.pending_requests[req_id] = {"event": event, "response": None}
-                
-                # Send Auth attempt to the Broker
-                VerdeAPIHandler.broker.publish({"type": "AUTH_ATTEMPT", "userid": uid, "password": pwd, "req_id": req_id})
-                event.wait(5.0)
-                
-                result = VerdeAPIHandler.pending_requests.pop(req_id, None)
-                if result and result["response"]:
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self._send_cors_headers()
-                    self.end_headers()
-                    self.wfile.write(json.dumps(result["response"]).encode())
-                else:
-                    self.send_response(401)
-                    self._send_cors_headers()
-                    self.end_headers()
-                    self.wfile.write(b'{"error": "Authentication failed or timeout"}')
-            except Exception as e:
-                self.send_response(400)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode())
-                
-        elif self.path.startswith("/api/store"):
-            session = self._validate_token()
-            if not session:
-                self.send_response(401)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(b'{"error": "Unauthorized"}')
-                return
-                
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            try:
-                data = json.loads(post_data)
-                if not isinstance(data, dict): raise ValueError("Payload must be a JSON object")
-                if "key" not in data or not isinstance(data["key"], str) or not data["key"].strip():
-                    raise ValueError("Missing or invalid 'key' string")
-                if "value" not in data or not isinstance(data["value"], str) or not data["value"].strip():
-                    raise ValueError("Missing or invalid 'value' string")
-                    
-                VerdeAPIHandler.broker.publish({"type": "STORE", "key": data["key"].strip(), "val": data["value"].strip(), "owner_id": session["userid"]})
-                
-                self.send_response(201)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(b'{"status": "success"}')
-            except Exception as e:
-                self.send_response(400)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode())
-                
-        elif self.path.startswith("/api/upload"):
-            session = self._validate_token()
-            if not session:
-                self.send_response(401)
-                self._send_cors_headers()
-                self.end_headers()
-                return
-                
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            try:
-                data = json.loads(post_data)
-                file_id = data.get("file_id")
-                
-                if "chunk" in data:
-                    VerdeAPIHandler.broker.publish({"type": "FILE_CHUNK", "file_id": file_id, "chunk_data": data["chunk"]})
-                elif data.get("finalize"):
-                    VerdeAPIHandler.broker.publish({"type": "FINALIZE_FILE", "file_id": file_id, "filename": data["filename"], "owner_id": session["userid"]})
-                    
-                self.send_response(200)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(b'{"status": "success"}')
-            except Exception as e:
-                self.send_response(400)
-                self._send_cors_headers()
-                self.end_headers()
-                
-        elif self.path.startswith("/api/transition"):
-            session = self._validate_token()
-            if not session:
-                self.send_response(401)
-                self._send_cors_headers()
-                self.end_headers()
-                return
-                
-            content_length = int(self.headers.get('Content-Length', 0))
-            post_data = self.rfile.read(content_length)
-            try:
-                data = json.loads(post_data)
-                VerdeAPIHandler.broker.publish({"type": "REQUEST_TRANSITION", "item_id": data["item_id"], "new_state": data["new_state"]})
-                
-                self.send_response(200)
-                self._send_cors_headers()
-                self.end_headers()
-                self.wfile.write(b'{"status": "processing"}')
-            except Exception as e:
-                self.send_response(400)
-                self._send_cors_headers()
-                self.end_headers()
-                
-        elif self.path.startswith("/api/logout"):
-            auth_header = self.headers.get("Authorization")
-            if auth_header and auth_header.startswith("Bearer "):
-                token = auth_header.split(" ")[1]
-                VerdeAPIHandler.broker.publish({"type": "LOGOUT_REQUEST", "token": token})
-                
-            self.send_response(200)
-            self._send_cors_headers()
-            self.end_headers()
-            self.wfile.write(b'{"status": "logged_out"}')
-            
-        else:
-            self.send_response(404)
-            self.end_headers()
-
 class WebConnector:
     def __init__(self, broker, port=8080):
         self.broker = broker
         self.port = port
         self.broker.subscribe(self)
         
-        # Pass broker reference to the handler class
-        VerdeAPIHandler.broker = broker
+        self.app = FastAPI()
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
         
-        # Start server in a background daemon thread so it doesn't freeze Tkinter
-        self.server = HTTPServer(('127.0.0.1', self.port), VerdeAPIHandler)
-        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.pending_requests = {}
+        self._setup_routes()
+        
+        def run_server():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            config = uvicorn.Config(app=self.app, host="127.0.0.1", port=self.port, loop="asyncio", log_level="warning")
+            server = uvicorn.Server(config)
+            loop.run_until_complete(server.serve())
+
+        self.thread = threading.Thread(target=run_server, daemon=True)
         self.thread.start()
         self.broker.publish({"type": "LOG", "msg": f"WebConnector running on http://127.0.0.1:{self.port}"})
 
+    async def _wait_for_response(self, req_id, timeout=5.0):
+        event = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        self.pending_requests[req_id] = {"event": event, "loop": loop, "response": None}
+        try:
+            await asyncio.wait_for(event.wait(), timeout=timeout)
+            return self.pending_requests[req_id]["response"]
+        except asyncio.TimeoutError:
+            return None
+        finally:
+            self.pending_requests.pop(req_id, None)
+
+    async def _validate_token(self, request: Request):
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        token = auth_header.split(" ")[1]
+        
+        req_id = str(uuid.uuid4())
+        self.broker.publish({"type": "VALIDATE_TOKEN", "token": token, "req_id": req_id})
+        
+        response = await self._wait_for_response(req_id, timeout=2.0)
+        if not response:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        return response
+
+    def _setup_routes(self):
+        @self.app.get("/api/data")
+        async def get_data(request: Request):
+            session = await self._validate_token(request)
+            req_id = str(uuid.uuid4())
+            req_msg = {"type": "RETRIEVE", "table": "VerdeData", "req_id": req_id}
+            if session["role"] != "Admin":
+                req_msg["owner_filter"] = session["userid"]
+                
+            self.broker.publish(req_msg)
+            response = await self._wait_for_response(req_id, timeout=5.0)
+            
+            if response is not None:
+                return response
+            raise HTTPException(status_code=504, detail="Timeout")
+
+        @self.app.post("/api/login")
+        async def login(request: Request):
+            try:
+                data = await request.json()
+            except:
+                raise HTTPException(status_code=400, detail="Invalid JSON")
+                
+            uid, pwd = data.get("userid"), data.get("password")
+            if not uid or not pwd:
+                raise HTTPException(status_code=400, detail="userid and password required")
+
+            req_id = str(uuid.uuid4())
+            self.broker.publish({"type": "AUTH_ATTEMPT", "userid": uid, "password": pwd, "req_id": req_id})
+            
+            response = await self._wait_for_response(req_id, timeout=5.0)
+            if response:
+                return response
+            raise HTTPException(status_code=401, detail="Authentication failed or timeout")
+
+        @self.app.post("/api/store")
+        async def store_data(request: Request):
+            session = await self._validate_token(request)
+            try:
+                data = await request.json()
+            except:
+                raise HTTPException(status_code=400, detail="Invalid JSON")
+                
+            if not isinstance(data, dict):
+                raise HTTPException(status_code=400, detail="Payload must be a JSON object")
+            if "key" not in data or not isinstance(data["key"], str) or not data["key"].strip():
+                raise HTTPException(status_code=400, detail="Missing or invalid 'key' string")
+            if "value" not in data or not isinstance(data["value"], str) or not data["value"].strip():
+                raise HTTPException(status_code=400, detail="Missing or invalid 'value' string")
+                
+            self.broker.publish({"type": "STORE", "key": data["key"].strip(), "val": data["value"].strip(), "owner_id": session["userid"]})
+            return JSONResponse(status_code=201, content={"status": "success"})
+
+        @self.app.post("/api/upload")
+        async def upload_file(request: Request):
+            session = await self._validate_token(request)
+            try:
+                data = await request.json()
+            except:
+                raise HTTPException(status_code=400, detail="Invalid JSON")
+                
+            file_id = data.get("file_id")
+            if "chunk" in data:
+                self.broker.publish({"type": "FILE_CHUNK", "file_id": file_id, "chunk_data": data["chunk"]})
+            elif data.get("finalize"):
+                self.broker.publish({"type": "FINALIZE_FILE", "file_id": file_id, "filename": data["filename"], "owner_id": session["userid"]})
+                
+            return {"status": "success"}
+
+        @self.app.post("/api/transition")
+        async def transition_state(request: Request):
+            session = await self._validate_token(request)
+            try:
+                data = await request.json()
+            except:
+                raise HTTPException(status_code=400, detail="Invalid JSON")
+                
+            self.broker.publish({"type": "REQUEST_TRANSITION", "item_id": data["item_id"], "new_state": data["new_state"]})
+            return {"status": "processing"}
+
+        @self.app.post("/api/logout")
+        async def logout(request: Request):
+            auth_header = request.headers.get("Authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                token = auth_header.split(" ")[1]
+                self.broker.publish({"type": "LOGOUT_REQUEST", "token": token})
+            return {"status": "logged_out"}
+
     def receive_message(self, msg):
-        # If we see retrieved data meant for an API request, fulfill it!
+        def set_response(req_id, response):
+            if req_id in self.pending_requests:
+                req = self.pending_requests[req_id]
+                req["response"] = response
+                req["loop"].call_soon_threadsafe(req["event"].set)
+                
         if msg["type"] == "DATA_RETRIEVED" and "req_id" in msg:
-            req_id = msg["req_id"]
-            if req_id in VerdeAPIHandler.pending_requests:
-                # Format into JSON dict
-                formatted_data = [dict(zip(msg["columns"], row)) for row in msg["rows"]]
-                VerdeAPIHandler.pending_requests[req_id]["response"] = formatted_data
-                VerdeAPIHandler.pending_requests[req_id]["event"].set()
-                
-        # If we see auth responses meant for an API request, fulfill it!
+            formatted_data = [dict(zip(msg["columns"], row)) for row in msg["rows"]]
+            set_response(msg["req_id"], formatted_data)
+            
         elif msg["type"] in ("AUTH_SUCCESS", "AUTH_FAILED", "AUTH_LOCKED") and "req_id" in msg:
-            req_id = msg["req_id"]
-            if req_id in VerdeAPIHandler.pending_requests:
-                if msg["type"] == "AUTH_SUCCESS":
-                    VerdeAPIHandler.pending_requests[req_id]["response"] = {"token": msg["token"], "role": msg["role"]}
-                else:
-                    VerdeAPIHandler.pending_requests[req_id]["response"] = None # Will cause a 401
-                VerdeAPIHandler.pending_requests[req_id]["event"].set()
+            if msg["type"] == "AUTH_SUCCESS":
+                set_response(msg["req_id"], {"token": msg["token"], "role": msg["role"]})
+            else:
+                set_response(msg["req_id"], None)
                 
-        # If we see token validation responses meant for an API request, fulfill it!
         elif msg["type"] in ("TOKEN_VALID", "TOKEN_INVALID") and "req_id" in msg:
-            req_id = msg["req_id"]
-            if req_id in VerdeAPIHandler.pending_requests:
-                if msg["type"] == "TOKEN_VALID":
-                    VerdeAPIHandler.pending_requests[req_id]["response"] = {"role": msg["role"], "userid": msg["userid"]}
-                else:
-                    VerdeAPIHandler.pending_requests[req_id]["response"] = None
-                VerdeAPIHandler.pending_requests[req_id]["event"].set()
+            if msg["type"] == "TOKEN_VALID":
+                set_response(msg["req_id"], {"role": msg["role"], "userid": msg["userid"]})
+            else:
+                set_response(msg["req_id"], None)
 
 class StateMachineManager:
     def __init__(self, broker):
