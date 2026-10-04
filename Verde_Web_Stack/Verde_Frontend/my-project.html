@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryphene Commercial Platform - Client Workspace</title>
+    <script src="https://cdn.tailwindcss.com">
+        async function loadVault() {
+            try {
+                if (!window.projectId) return;
+                const token = localStorage.getItem('verde_api_token');
+                const data = await window.TMAPI.listDocuments(window.projectId).catch(() => ({documents:[]}));
+if (Array.isArray(data)) data = {documents: data};
+                
+                const vault = document.getElementById('documentVaultList');
+                if (!data.documents || data.documents.length === 0) {
+                    vault.innerHTML = '<div class="text-sm text-slate-500 italic py-4 col-span-2 bg-slate-50 border border-slate-200 rounded p-4 text-center">No documents have been uploaded to your vault yet.</div>';
+                    return;
+                }
+                
+                vault.innerHTML = data.documents.map(d => `
+                    <div class="border border-slate-200 rounded bg-white p-4 flex items-center justify-between hover:border-indigo-300 transition-colors shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded bg-indigo-50 flex items-center justify-center">
+                                <i class="fa-solid ${d.url && d.url.startsWith('http') ? 'fa-link' : 'fa-file-pdf'} text-indigo-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">${d.title}</h3>
+                                <p class="text-[10px] text-slate-500 uppercase tracking-wider">${new Date(d.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <a href="${d.url}" ${d.url && d.url.startsWith('http') ? 'target="_blank"' : 'download'} class="text-indigo-600 hover:text-indigo-800 px-3 py-1 bg-indigo-50 rounded text-xs font-bold transition-colors">
+                            ${d.url && d.url.startsWith('http') ? 'Open Link' : 'Download'}
+                        </a>
+                    </div>
+                `).join('');
+                
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
+        .stepper-line { position: absolute; top: 12px; left: 0; right: 0; height: 4px; z-index: 0; }
+        .step-circle { position: relative; z-index: 10; transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <div class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+        <nav class="w-full max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+            <div class="text-2xl font-bold tracking-tight text-[#0B1325] cursor-pointer" onclick="window.location.href='client-dashboard.html'">
+                Tryphene<span class="font-light">Murugat</span>
+            </div>
+            <div class="flex items-center space-x-6 text-sm font-bold text-slate-600">
+                <a href="client-dashboard.html" class="hover:text-[#0B1325] transition-colors"><i class="fa-solid fa-layer-group mr-1"></i> Dashboard</a>
+                <a href="mailto:admin@tryphen.com" class="hover:text-[#0B1325] transition-colors"><i class="fa-solid fa-headset mr-1"></i> Support</a>
+                <button onclick="logout()" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded text-red-500 hover:bg-red-50 hover:border-red-200 transition-colors">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Log Out
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <div>
+                <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2 block">Secure Project Workspace</span>
+                <h1 id="projName" class="text-4xl font-bold text-[#0B1325]">Loading...</h1>
+                <p id="projId" class="text-slate-500 mt-2 font-mono text-sm">PRJ-XXX</p>
+            </div>
+            <div id="projStatusBadge" class="px-4 py-2 rounded-full font-bold text-sm uppercase tracking-wider border">
+                Loading...
+            </div>
+        </div>
+
+        <!-- Phase Progression Stepper -->
+        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-8 mb-8 relative">
+            <h2 class="text-lg font-bold text-slate-800 mb-6">Delivery Progression Snapshot</h2>
+            <div class="relative w-full">
+                <!-- Background Line -->
+                <div class="stepper-line bg-slate-100 rounded-full"></div>
+                <!-- Progress Line -->
+                <div id="stepperProgress" class="stepper-line bg-indigo-600 rounded-full w-0 transition-all duration-1000"></div>
+                
+                <!-- Steps Container -->
+                <div class="flex justify-between relative" id="stepperNodes">
+                    <!-- Nodes injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Action & Comms -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Next Action Callout -->
+                <div class="bg-[#0B1325] rounded-xl shadow-lg p-8 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <i class="fa-solid fa-rocket text-8xl"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded uppercase tracking-wider border border-indigo-500/30">Action Required</span>
+                        <h2 class="text-2xl font-bold mt-4 mb-2" id="nextActionTitle">Checking project status...</h2>
+                        <p class="text-slate-400 mb-6 max-w-xl" id="nextActionDesc">Please wait while we sync with the Governance Engine.</p>
+                        <button id="nextActionBtn" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded shadow-md transition-colors">
+                            Proceed <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Communication & Blockers Log -->
+                <div class="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden">
+                    <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-800"><i class="fa-regular fa-comments mr-2 text-indigo-600"></i> Project Communications Log</h3>
+                    </div>
+                    <div class="p-0" id="commsList">
+                        <div class="p-12 text-center text-slate-500"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Loading communications...</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Governance & Vault -->
+            <div class="space-y-8">
+                
+                <!-- Document Vault -->
+                <div class="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden">
+                    <div class="p-5 border-b border-slate-200 bg-slate-50">
+                        <h3 class="font-bold text-slate-800"><i class="fa-solid fa-vault mr-2 text-emerald-600"></i> Artifact Vault</h3>
+                        <p class="text-xs text-slate-500 mt-1">Official signed deliverables and specs.</p>
+                    </div>
+                    <div class="p-4 space-y-3" id="docsList">
+                        <div class="text-center py-6 text-slate-400">Loading documents...</div>
+                    </div>
+                </div>
+
+                <!-- Financial & Phase Snapshot -->
+                <div class="bg-white border border-slate-200 shadow-sm rounded-xl overflow-hidden">
+                    <div class="p-5 border-b border-slate-200 bg-slate-50">
+                        <h3 class="font-bold text-slate-800"><i class="fa-solid fa-layer-group mr-2 text-indigo-600"></i> Retained Phases</h3>
+                    </div>
+                    <div class="p-4" id="phasesList">
+                        <div class="text-center py-6 text-slate-400">Loading phases...</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+
+    <!-- Document Viewer Modal -->
+    <div id="docViewerModal" class="fixed inset-0 bg-slate-900 bg-opacity-75 hidden flex items-center justify-center z-[60]">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col h-[80vh]">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 id="docViewerTitle" class="font-bold text-slate-800 text-lg">Document Viewer</h3>
+                <button onclick="closeDocViewer()" class="text-slate-400 hover:text-slate-600 focus:outline-none"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div class="p-8 overflow-y-auto flex-1 bg-white font-serif text-slate-700 space-y-4" id="docViewerContent">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end space-x-3" id="docViewerActions">
+                <button onclick="closeDocViewer()" class="px-6 py-2 bg-white border border-slate-300 text-slate-600 rounded font-bold hover:bg-slate-50 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script>
+        const stages = ['explore', 'define', 'design', 'build', 'launch', 'improve'];
+        const stageNames = ['Explore', 'Define', 'Design', 'Build', 'Launch', 'Improve'];
+
+        async function init() {
+            const token = localStorage.getItem('verde_api_token');
+            if (!token) { window.location.href = 'login.html'; return; }
+            
+            const params = new URLSearchParams(window.location.search);
+            const projectId = params.get('projectId');
+            if (!projectId) {
+                document.getElementById('projName').textContent = 'Project ID Missing';
+                return;
+            }
+
+            try {
+                // Fetch all data in parallel
+                if (!window.TMAPI) throw new Error("TMAPI not loaded");
+                const [projData, phasesData, commsData, docsRes] = await Promise.all([
+                    window.TMAPI.getProject(projectId),
+                    window.TMAPI.getProjectPhases(projectId),
+                    window.TMAPI.getProjectCommunications(projectId),
+                    window.TMAPI.listDocuments(projectId).catch(() => ({documents:[]}))
+                ]);
+                
+                const project = projData.project || projData;
+                const phases = phasesData.phases || [];
+                const communications = commsData.communications || [];
+                const documents = docsRes.documents || docsRes || [];
+
+                renderHeader(project);
+                renderStepper(project.stage || 'explore');
+                renderNextAction(project);
+                renderCommunications(communications);
+                renderDocuments(documents);
+                renderPhases(project);
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('projName').textContent = 'Error Loading Project';
+                document.getElementById('projId').textContent = e.message;
+            }
+        }
+
+        function renderHeader(p) {
+            document.getElementById('projName').textContent = p.name;
+            document.getElementById('projId').textContent = p.id;
+            
+            const badge = document.getElementById('projStatusBadge');
+            badge.textContent = p.status || 'Active';
+            if (p.status === 'Completed') {
+                badge.className = 'px-4 py-2 rounded-full font-bold text-sm uppercase tracking-wider border bg-green-50 text-green-700 border-green-200';
+            } else {
+                badge.className = 'px-4 py-2 rounded-full font-bold text-sm uppercase tracking-wider border bg-indigo-50 text-indigo-700 border-indigo-200';
+            }
+        }
+
+        function renderStepper(currentStage) {
+            const idx = stages.indexOf(currentStage) === -1 ? 0 : stages.indexOf(currentStage);
+            
+            // Calculate width for progress bar
+            const progressPercent = (idx / (stages.length - 1)) * 100;
+            document.getElementById('stepperProgress').style.width = `${progressPercent}%`;
+
+            const container = document.getElementById('stepperNodes');
+            let html = '';
+            
+            stages.forEach((stage, i) => {
+                const isCompleted = i < idx;
+                const isCurrent = i === idx;
+                
+                let circleClasses = 'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 bg-white ';
+                if (isCompleted) circleClasses += 'border-indigo-600 text-indigo-600';
+                else if (isCurrent) circleClasses += 'border-indigo-600 bg-indigo-600 text-white ring-4 ring-indigo-100';
+                else circleClasses += 'border-slate-300 text-slate-400';
+
+                let labelClasses = 'absolute top-9 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-wide ';
+                if (isCurrent) labelClasses += 'text-indigo-600';
+                else if (isCompleted) labelClasses += 'text-slate-700';
+                else labelClasses += 'text-slate-400';
+
+                html += `
+                    <div class="step-circle flex flex-col items-center">
+                        <div class="${circleClasses}">
+                            ${isCompleted ? '<i class="fa-solid fa-check"></i>' : (i + 1)}
+                        </div>
+                        <span class="${labelClasses}">${stageNames[i]}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderNextAction(p) {
+            document.getElementById('nextActionTitle').textContent = p.next_action || 'Phase Kickoff Pending';
+            document.getElementById('nextActionDesc').textContent = 'Your Engagement Director is preparing the workspace artifacts. You will receive an email once the next action is required.';
+            document.getElementById('nextActionBtn').textContent = 'View Client Portal Guide';
+            document.getElementById('nextActionBtn').onclick = () => window.location.href = 'journey.html';
+        }
+
+        function renderCommunications(comms) {
+            const cList = document.getElementById('commsList');
+            if (!comms || comms.length === 0) {
+                cList.innerHTML = `<div class="p-8 text-center text-slate-500">No project communications logged yet.</div>`;
+                return;
+            }
+
+            const html = comms.slice(0, 5).map(c => `
+                <div class="p-5 border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${new Date(c.created_at).toLocaleDateString()} &bull; ${c.author_name || 'System'}</span>
+                        <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase">${c.type}</span>
+                    </div>
+                    <p class="text-sm text-slate-800">${c.body}</p>
+                </div>
+            `).join('');
+            cList.innerHTML = html;
+        }
+
+        function renderDocuments(docs) {
+            const dList = document.getElementById('docsList');
+            // We'll mock a few core docs if empty for visual demo, but show real ones if they exist
+            if (!docs || docs.length === 0) {
+                dList.innerHTML = `
+                    <div class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-file-signature text-amber-500 text-xl"></i>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Master Services Agreement</p>
+                                <p class="text-xs text-amber-600 font-bold">Needs Signature</p>
+                            </div>
+                        </div>
+                        <button id="msaBtn" onclick="openDocViewer('msa')" class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded hover:bg-amber-200">Sign</button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-file-pdf text-emerald-500 text-xl"></i>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Discovery SLA & Intake</p>
+                                <p class="text-xs text-emerald-600 font-bold">Generated</p>
+                            </div>
+                        </div>
+                        <button onclick="openDocViewer('sla')" class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded hover:bg-slate-200">View</button>
+                    </div>
+                `;
+                return;
+            }
+
+            dList.innerHTML = docs.map(d => `
+                <div class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white hover:border-indigo-300 transition-colors cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-file-lines text-indigo-500 text-xl"></i>
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">${d.title}</p>
+                            <p class="text-xs text-slate-500">${new Date(d.created_at).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-download text-slate-300"></i>
+                </div>
+            `).join('');
+        }
+
+        const PHASE_NAMES = {
+            1: "Initiation & Feasibility",
+            2: "Requirements Analysis",
+            3: "Architecture & Design",
+            4: "Implementation & Cutover",
+            5: "Launch & Hypercare"
+        };
+
+        function renderPhases(project) {
+            const pList = document.getElementById('phasesList');
+            const selPhases = project.selected_phases || [];
+            
+            if (selPhases.length === 0) {
+                pList.innerHTML = `
+    <div class="text-sm text-slate-500 italic py-2 mb-3">No phases retained yet.</div>
+    <div class="p-3 bg-indigo-50 border border-indigo-100 rounded text-xs text-indigo-700">
+        Ready to formally begin? <a href="services.html" class="font-bold underline hover:text-indigo-900">Browse the Catalog</a> to retain a Phase.
+    </div>`;
+                return;
+            }
+
+            pList.innerHTML = selPhases.map(id => `
+                <div class="flex items-center justify-between mb-3 last:mb-0">
+                    <div class="flex items-center space-x-3 text-sm text-slate-800">
+                        <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                        <span class="font-bold">Phase ${id}: ${PHASE_NAMES[id] || 'Selected'}</span>
+                    </div>
+                    <span class="text-xs font-bold text-slate-500 uppercase">ACTIVE</span>
+                </div>
+            `).join('');
+        }
+
+        
+        function openDocViewer(type) {
+            const title = document.getElementById('docViewerTitle');
+            const content = document.getElementById('docViewerContent');
+            const actions = document.getElementById('docViewerActions');
+            
+            if (type === 'msa') {
+                title.textContent = "Master Services Agreement (MSA)";
+                content.innerHTML = `
+                    <h2 class="font-bold text-2xl text-center mb-6">MASTER SERVICES AGREEMENT</h2>
+                    <p><strong>1. ENGAGEMENT OF SERVICES</strong><br>
+                    Tryphene Murugat agrees to provide software engineering and consulting services as defined in individual Statements of Work (SOW) executed under this MSA.</p>
+                    <p><strong>2. INTELLECTUAL PROPERTY</strong><br>
+                    Upon full and final payment of all invoices related to a specific Phase or SOW, all custom source code, documentation, and specific deliverables developed exclusively for the Client shall become the sole property of the Client.</p>
+                    <p><strong>3. CONFIDENTIALITY</strong><br>
+                    Both parties agree to hold all proprietary or confidential information in strict confidence and to not disclose such information to any third parties without prior written consent.</p>
+                    <p><strong>4. LIMITATION OF LIABILITY</strong><br>
+                    In no event shall either party be liable for any indirect, incidental, or consequential damages. Tryphene Murugat's total liability under this MSA shall not exceed the total fees paid by the Client under the applicable SOW.</p>
+                `;
+                actions.innerHTML = `
+                    <button onclick="closeDocViewer()" class="px-6 py-2 bg-white border border-slate-300 text-slate-600 rounded font-bold hover:bg-slate-50 transition">Cancel</button>
+                    <button onclick="signMSA()" class="px-6 py-2 bg-[#0B1325] text-white rounded font-bold hover:bg-slate-800 transition">Accept & Sign</button>
+                `;
+            } else if (type === 'sla') {
+                title.textContent = "Discovery SLA & Intake";
+                content.innerHTML = `
+                    <h2 class="font-bold text-2xl text-center mb-6">PHASE 1: DISCOVERY SLA</h2>
+                    <p><strong>1. OVERVIEW</strong><br>
+                    This document defines the Service Level Agreement for the Phase 1 Discovery & Feasibility stage.</p>
+                    <p><strong>2. CLIENT RESPONSIBILITIES</strong><br>
+                    The client must provide access to all necessary stakeholders for a mandatory 45-minute JAD (Joint Application Design) workshop. Failure to schedule this workshop within 14 days will pause the timeline.</p>
+                    <p><strong>3. DELIVERABLES</strong><br>
+                    At the conclusion of Phase 1, the client will receive a System Architecture Blueprint, a formal Data Flow Diagram, and a Phase 2 cost estimation.</p>
+                `;
+                actions.innerHTML = `
+                    <button onclick="closeDocViewer()" class="px-6 py-2 bg-[#0B1325] text-white rounded font-bold hover:bg-slate-800 transition">Close Document</button>
+                `;
+            }
+            
+            document.getElementById('docViewerModal').classList.remove('hidden');
+        }
+
+        function closeDocViewer() {
+            document.getElementById('docViewerModal').classList.add('hidden');
+        }
+
+        function signMSA() {
+            closeDocViewer();
+            const btn = document.getElementById('msaBtn');
+            if (btn) {
+                btn.textContent = "Signed";
+                btn.className = "px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded";
+                btn.onclick = null; // Disable clicking again
+                
+                // Update the text beside it
+                const statusText = btn.parentElement.querySelector('.text-amber-600');
+                if (statusText) {
+                    statusText.textContent = "Fully Executed";
+                    statusText.className = "text-xs text-green-600 font-bold";
+                }
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('verde_api_token');
+            localStorage.removeItem('tm_user');
+            window.location.href = 'login.html';
+        }
+
+        init();
+    
+        async function loadVault() {
+            try {
+                if (!window.projectId) return;
+                const token = localStorage.getItem('verde_api_token');
+                const data = await window.TMAPI.listDocuments(window.projectId).catch(() => ({documents:[]}));
+if (Array.isArray(data)) data = {documents: data};
+                
+                const vault = document.getElementById('documentVaultList');
+                if (!data.documents || data.documents.length === 0) {
+                    vault.innerHTML = '<div class="text-sm text-slate-500 italic py-4 col-span-2 bg-slate-50 border border-slate-200 rounded p-4 text-center">No documents have been uploaded to your vault yet.</div>';
+                    return;
+                }
+                
+                vault.innerHTML = data.documents.map(d => `
+                    <div class="border border-slate-200 rounded bg-white p-4 flex items-center justify-between hover:border-indigo-300 transition-colors shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded bg-indigo-50 flex items-center justify-center">
+                                <i class="fa-solid ${d.url && d.url.startsWith('http') ? 'fa-link' : 'fa-file-pdf'} text-indigo-500"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">${d.title}</h3>
+                                <p class="text-[10px] text-slate-500 uppercase tracking-wider">${new Date(d.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <a href="${d.url}" ${d.url && d.url.startsWith('http') ? 'target="_blank"' : 'download'} class="text-indigo-600 hover:text-indigo-800 px-3 py-1 bg-indigo-50 rounded text-xs font-bold transition-colors">
+                            ${d.url && d.url.startsWith('http') ? 'Open Link' : 'Download'}
+                        </a>
+                    </div>
+                `).join('');
+                
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+    </script>
+</body>
+</html>

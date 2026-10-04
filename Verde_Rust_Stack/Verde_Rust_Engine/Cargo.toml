@@ -1,0 +1,16 @@
+[package]
+name = "verde_sdlc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Serialization and Deserialization for the persistence layer
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Async runtime and Web Framework
+tokio = { version = "1", features = ["full"] }
+axum = "0.6"
+
+# Date and time handling
+chrono = { version = "0.4", features = ["serde"] }

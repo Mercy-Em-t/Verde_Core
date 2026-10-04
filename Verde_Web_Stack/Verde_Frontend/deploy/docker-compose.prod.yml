@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: tryphene-prod-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tryphene}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-tryphene}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../backend/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    networks:
+      - tryphene-network
+
+  api:
+    build: 
+      context: ../
+      dockerfile: Dockerfile
+    container_name: tryphene-prod-api
+    restart: always
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-tryphene}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-tryphene}
+      - JWT_SECRET=${JWT_SECRET}
+      - QB_WEBHOOK_SECRET=${QB_WEBHOOK_SECRET}
+      - NODE_ENV=production
+    depends_on:
+      - db
+    networks:
+      - tryphene-network
+
+  web:
+    build:
+      context: ../
+      dockerfile: Dockerfile.web
+    container_name: tryphene-prod-web
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - certbot-www:/var/www/certbot
+      - certbot-conf:/etc/letsencrypt
+    depends_on:
+      - api
+    networks:
+      - tryphene-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: tryphene-prod-certbot
+    restart: unless-stopped
+    volumes:
+      - certbot-www:/var/www/certbot
+      - certbot-conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  tryphene-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  certbot-www:
+  certbot-conf:

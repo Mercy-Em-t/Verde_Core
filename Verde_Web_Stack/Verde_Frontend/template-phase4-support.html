@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: Support & Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mono-doc { font-family: "Courier New", Courier, monospace; font-size: 13px; line-height: 1.6; }
+        .header-block { font-weight: bold; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <header class="bg-[#0B1325] text-white p-4 shadow-md flex justify-between items-center">
+        <div><h1 class="text-xl font-bold"><i class="fa-solid fa-headset mr-2 text-orange-400"></i> Phase 4: Support & Assessment</h1></div>
+        <button onclick="window.print()" class="bg-orange-600 px-4 py-2 rounded text-sm font-bold shadow hover:bg-orange-700">Print</button>
+    </header>
+    <div class="flex-1 overflow-auto p-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white border shadow-xl p-12 mono-doc">
+            <div class="header-block">PHASE 4 IMPLEMENTATION DELIVERABLE<br>PART 3: SUPPORT PLAN & PROJECT ASSESSMENT</div>
+            
+            <h3 class="font-bold bg-slate-200 p-1 mb-2 uppercase">1. System Support Plan</h3>
+            <p class="ml-4 mb-4">Post-Go-Live operational maintenance and SLA definitions.</p>
+            <ul class="list-disc ml-8 space-y-2 mb-6">
+                <li><strong>Tier 1 Support (Help Desk):</strong> Client's internal IT team handles password resets and basic hardware troubleshooting.</li>
+                <li><strong>Tier 2 Support (Agency Retainer):</strong> Tryphene Murugat Consultancy handles database indexing issues, API regressions, and cloud infrastructure scaling under a KES 250,000/month recurring SLA.</li>
+                <li><strong>Incident Escalation:</strong> Priority 1 (System Down) triggers immediate PagerDuty alerts to the AWS DevOps team.</li>
+            </ul>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">2. Project Assessment</h3>
+            <p class="ml-4 mb-4">Formal Retrospective and ROI validation.</p>
+            <ul class="list-disc ml-8 space-y-2">
+                <li><strong>Commercial Reconciliation:</strong> Ensuring Phase 3 Tranche 3 (Final 30%) and Phase 4 deployment fees are fully settled.</li>
+                <li><strong>Performance vs ROI:</strong> Evaluating if the system successfully eliminated the 70% transit shrinkage gap identified in Phase 1.</li>
+                <li><strong>Post-Mortem:</strong> Internal agency review assessing subcontractor efficiency, ticket velocity, and margin capture.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

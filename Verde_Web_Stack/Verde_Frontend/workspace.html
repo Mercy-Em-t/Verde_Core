@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tryphen SDLC Workspace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0F172A;
+      --panel-bg: #1E293B;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --accent: #3B82F6;
+      --border: #334155;
+      --success: #10B981;
+    }
+    body {
+      margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif;
+      display: flex; height: 100vh; overflow: hidden;
+    }
+    
+    /* SIDEBAR */
+    #sidebar {
+      width: 320px; background: var(--panel-bg); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+    }
+    .header { padding: 16px; border-bottom: 1px solid var(--border); font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .header button { background: none; border: none; color: var(--text-muted); cursor: pointer; }
+    #tree { flex: 1; overflow-y: auto; padding: 16px; }
+    .phase-block { margin-bottom: 16px; }
+    .phase-title { font-weight: 600; color: var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .week-block { margin-left: 8px; border-left: 1px solid var(--border); padding-left: 12px; margin-bottom: 12px; }
+    .week-title { font-weight: 500; font-size: 13px; color: #E2E8F0; margin-bottom: 4px; }
+    .step-item { font-size: 13px; color: var(--text-muted); padding: 6px 8px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+    .step-item:hover { background: rgba(255,255,255,0.05); color: white; }
+    .step-item.active { background: var(--accent); color: white; }
+    .step-item i { font-size: 10px; }
+    
+    /* MAIN CANVAS */
+    #main { flex: 1; display: flex; flex-direction: column; }
+    #topbar { padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    #topbar h1 { margin: 0 0 8px 0; font-size: 20px; }
+    .meta { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    
+    #content-split { flex: 1; display: flex; overflow: hidden; }
+    
+    /* INGESTION PANEL */
+    #ingestion { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; border-right: 1px solid var(--border); }
+    .card { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .card h3 { margin: 0 0 12px 0; font-size: 14px; color: #E2E8F0; display: flex; align-items: center; gap: 8px; }
+    
+    textarea { width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 6px; font-family: inherit; resize: vertical; }
+    
+    .dropzone { border: 2px dashed var(--border); border-radius: 8px; padding: 32px; text-align: center; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+    .dropzone:hover { border-color: var(--accent); color: white; background: rgba(59, 130, 246, 0.05); }
+    .dropzone i { font-size: 24px; margin-bottom: 8px; }
+    
+    /* AI ASSISTANT */
+    #ai-panel { background: linear-gradient(180deg, var(--panel-bg) 0%, rgba(30,41,59,0.5) 100%); border: 1px solid var(--accent); }
+    #ai-panel h3 { color: var(--accent); }
+    .ai-btn { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 14px; transition: 0.2s; }
+    .ai-btn:hover { background: #2563EB; }
+    .ai-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    /* TEMPLATE PANEL */
+    #template-panel { flex: 1; display: flex; flex-direction: column; background: var(--panel-bg); }
+    .pane-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 600; }
+    .editor-container { flex: 1; padding: 16px; }
+    #template-editor { width: 100%; height: 100%; background: #0B1325; border: 1px solid var(--border); color: #10B981; font-family: monospace; font-size: 13px; line-height: 1.6; padding: 16px; border-radius: 6px; box-sizing: border-box; }
+    
+    .btn-save { background: var(--success); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    
+  </style>
+</head>
+<body>
+<script>
+  const verde_api_token = localStorage.getItem('verde_api_token');
+  const tm_user = JSON.parse(localStorage.getItem('tm_user') || 'null');
+  if (!verde_api_token || !tm_user || (tm_user.role !== 'admin' && tm_user.role !== 'consultant')) {
+    window.location.href = 'login.html';
+  }
+</script>
+
+  <div id="sidebar">
+    <div class="header">
+      <span>SDLC Workspace</span>
+      <button onclick="window.location.href='my-project.html'"><i class="fa-solid fa-arrow-left"></i> Exit</button>
+    </div>
+    <div id="tree">Loading framework...</div>
+  </div>
+
+  <div id="main">
+    <div id="topbar">
+      <h1 id="step-title">Select a Step</h1>
+      <div class="meta" id="step-meta"></div>
+    </div>
+    
+    <div id="content-split" style="display: none;">
+      <!-- Ingestion Left -->
+      <div id="ingestion">
+        
+        <div class="card">
+          <h3><i class="fa-solid fa-microphone"></i> Client Interview / Raw Context</h3>
+          <p class="meta" style="margin-bottom:12px; font-size:12px;">Paste transcripts, stakeholder emails, or rough notes here.</p>
+          <textarea id="raw-notes" rows="8" placeholder="e.g., The COO mentioned they are losing 3 days a month to manual warehouse tracking..."></textarea>
+        </div>
+        
+        <div class="card">
+          <h3><i class="fa-solid fa-file-arrow-up"></i> Document Ingestion (Simulated)</h3>
+          <div class="dropzone" onclick="alert('File uploads simulated for prototype. Use the text box above.')">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <div>Drop client PDFs, spreadsheets, or images here</div>
+            <div style="font-size: 11px; margin-top: 4px;">(Max 50MB per file)</div>
+          </div>
+        </div>
+        
+        <div class="card" id="ai-panel">
+          <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Tryphen Intelligence</h3>
+          <p class="meta" style="margin-bottom:16px; font-size:12px; color: #cbd5e1;">The AI Assistant is context-aware of this step's mechanical requirements. It will synthesize your raw context and auto-populate the master deliverable.</p>
+          <button class="ai-btn" id="btn-compile" onclick="compileDeliverable()">
+            <i class="fa-solid fa-bolt"></i> Compile Deliverable
+          </button>
+        </div>
+
+      </div>
+      
+      <!-- Template Right -->
+      <div id="template-panel">
+        <div class="pane-header">
+          <span><i class="fa-solid fa-file-code" style="color:var(--text-muted); margin-right:6px;"></i> Master Template Draft</span>
+          <button class="btn-save" onclick="saveWorkspace()"><i class="fa-solid fa-floppy-disk"></i> Save Progress</button>
+        </div>
+        <div class="editor-container">
+          <textarea id="template-editor" spellcheck="false"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="api-client.js"></script>
+  <script>
+    if(!window.TMAPI || !TMAPI.enabled() || !TMAPI.hasSession()) {
+      window.location.href = 'login.html';
+    }
+
+    const projectId = new URLSearchParams(window.location.search).get('projectId') || new URLSearchParams(window.location.search).get('project');
+    if(!projectId) {
+      alert("No project ID specified");
+      window.location.href = 'admin.html';
+    }
+
+    let frameworkData = [];
+    let currentStep = null;
+    let currentWeekId = null;
+
+    async function init() {
+      try {
+        const res = await fetch('http://127.0.0.1:8081/api/framework', { headers: { 'Authorization': 'Bearer ' + TMAPI.getToken() } });
+        frameworkData = await res.json();
+        renderTree();
+      } catch(e) {
+        document.getElementById('tree').innerHTML = '<div style="color:red">Error loading framework</div>';
+      }
+    }
+
+    function renderTree() {
+      let html = '';
+      frameworkData.forEach(phase => {
+        html += `<div class="phase-block">`;
+        html += `<div class="phase-title">Phase ${phase.phase}: ${phase.phaseName}</div>`;
+        phase.weeks.forEach(week => {
+          html += `<div class="week-block">`;
+          html += `<div class="week-title">Week ${week.week}: ${week.title}</div>`;
+          week.steps.forEach(step => {
+            html += `<div class="step-item" id="step-${step.stepId}" onclick="loadStep('${step.stepId}', ${week.week})">
+              <i class="fa-regular fa-circle"></i>
+              ${step.title}
+            </div>`;
+          });
+          html += `</div>`;
+        });
+        html += `</div>`;
+      });
+      document.getElementById('tree').innerHTML = html;
+    }
+
+    async function loadStep(stepId, weekId) {
+      document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('step-' + stepId).classList.add('active');
+      
+      let stepData = null;
+      for(const p of frameworkData) {
+        for(const w of p.weeks) {
+          const s = w.steps.find(x => x.stepId === stepId);
+          if(s) { stepData = s; break; }
+        }
+      }
+      
+      currentStep = stepData;
+      currentWeekId = weekId;
+
+      document.getElementById('step-title').textContent = stepData.title;
+      document.getElementById('step-meta').innerHTML = `
+        <strong>Techniques Applied:</strong> ${stepData.techniques}<br>
+        <strong style="color:var(--accent)">Execution Mechanics:</strong> ${stepData.mechanics}
+      `;
+      
+      document.getElementById('content-split').style.display = 'flex';
+      
+      // Load saved state from DB
+      document.getElementById('raw-notes').value = "Loading...";
+      document.getElementById('template-editor').value = "Loading...";
+      
+      try {
+        const res = await fetch(`http://127.0.0.1:8081/api/projects/${projectId}/workspace/${stepId}`, {
+          headers: { 'Authorization': 'Bearer ' + TMAPI.getToken() }
+        });
+        const saved = await res.json();
+        
+        document.getElementById('raw-notes').value = saved.raw_material || '';
+        document.getElementById('template-editor').value = saved.generated_template || stepData.template || '';
+        
+        if(saved.generated_template) {
+          document.getElementById('step-' + stepId).innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--success)"></i> ' + stepData.title;
+        }
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    async function saveWorkspace() {
+      if(!currentStep) return;
+      const raw = document.getElementById('raw-notes').value;
+      const tpl = document.getElementById('template-editor').value;
+      
+      try {
+        await fetch(`http://127.0.0.1:8081/api/projects/${projectId}/workspace/${currentStep.stepId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TMAPI.getToken()
+          },
+          body: JSON.stringify({ raw_material: raw, generated_template: tpl, week_id: currentWeekId })
+        });
+        
+        // Mark tree node complete locally
+        document.getElementById('step-' + currentStep.stepId).innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--success)"></i> ' + currentStep.title;
+        
+        // Brief button color flash
+        const btn = document.querySelector('.btn-save');
+        const oldText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+        setTimeout(() => btn.innerHTML = oldText, 1500);
+      } catch(e) {
+        alert("Error saving: " + e.message);
+      }
+    }
+
+    async function compileDeliverable() {
+      if(!currentStep) return;
+      const btn = document.getElementById('btn-compile');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+      
+      const raw = document.getElementById('raw-notes').value;
+      const tpl = document.getElementById('template-editor').value;
+      
+      try {
+        const res = await fetch('http://127.0.0.1:8081/api/ai/generate-template', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + TMAPI.getToken()
+          },
+          body: JSON.stringify({ stepId: currentStep.stepId, rawData: raw, baseTemplate: currentStep.template })
+        });
+        
+        const data = await res.json();
+        document.getElementById('template-editor').value = data.generated;
+        
+        // Auto-save
+        await saveWorkspace();
+        
+      } catch(e) {
+        alert("Compilation failed: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Compile Deliverable';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
+

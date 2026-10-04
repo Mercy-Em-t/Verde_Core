@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Catalog | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; scroll-behavior: smooth; }
+        
+        .hero-bg { background: #0B1325; color: #ffffff; }
+        .catalog-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 12px; transition: all 0.2s ease; display: flex; flex-direction: column; }
+        .catalog-card:hover { transform: translateY(-3px); border-color: #CBD5E1; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+        .card-header { border-bottom: 1px solid #F1F5F9; padding: 20px; }
+        .card-body { padding: 20px; flex-grow: 1; }
+        .card-footer { padding: 16px 20px; background: #F8FAFC; border-top: 1px solid #F1F5F9; border-radius: 0 0 12px 12px; }
+        
+        .badge { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+        .badge-addon { background: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
+        .badge-product { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+        .badge-labs { background: #FAF5FF; color: #9333EA; border: 1px solid #E9D5FF; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center w-full">
+
+    <!-- Navigation (Sticky) -->
+    <div class="w-full sticky top-0 z-50 bg-[#F8FAFC]/90 backdrop-blur-md border-b border-slate-200 shadow-sm flex justify-center">
+        <nav class="w-full max-w-6xl flex justify-between items-center px-6 py-4">
+            <div class="text-2xl font-bold tracking-tight text-[#0B1325] cursor-pointer" onclick="window.location.href='index.html'">
+                Tryphene<span class="font-light">Murugat</span>
+            </div>
+            <div id="dynamicNav" class="space-x-6 text-sm font-semibold text-slate-600 flex items-center">
+                <!-- Injected via JS -->
+            </div>
+            
+            <script>
+                // Instantly swap the navigation before the rest of the page renders to prevent flickering
+                const nav = document.getElementById('dynamicNav');
+                if (localStorage.getItem('verde_api_token')) {
+                    nav.innerHTML = `
+                        <a href="client-dashboard.html" class="hover:text-[#0B1325] transition-colors flex items-center"><i class="fa-solid fa-gauge mr-2"></i> Dashboard</a>
+                        <button onclick="logoutCatalog()" class="px-4 py-2 bg-red-50 border border-red-200 rounded text-red-600 hover:bg-red-100 transition-colors shadow-sm font-bold ml-4"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Log Out</button>
+                    `;
+                } else {
+                    nav.innerHTML = `
+                        <a href="portfolio.html" class="hover:text-[#0B1325] transition-colors">Portfolio</a>
+                        <a href="services.html" class="hover:text-[#0B1325] transition-colors">Catalog</a>
+                        <a href="library.html" class="hover:text-[#0B1325] transition-colors">Insights</a>
+                        <a href="index.html#framework" class="hover:text-[#0B1325] transition-colors">SDLC Framework</a>
+                        <a href="login.html" class="px-4 py-2 bg-white border border-slate-300 rounded text-[#0B1325] hover:bg-slate-50 transition-colors shadow-sm ml-2">Client Login</a>
+                    `;
+                }
+                
+                function logoutCatalog() {
+                    localStorage.removeItem('verde_api_token');
+                    window.location.href = 'login.html';
+                }
+            </script>
+        </nav>
+    </div>
+
+    <!-- HERO SECTION -->
+    <header class="hero-bg w-full flex flex-col items-center text-center py-20 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="relative z-10 max-w-4xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight text-white">Solution Catalog</h1>
+            <p class="text-slate-300 text-lg mx-auto leading-relaxed font-light">
+                Browse our standalone engineering services, off-the-shelf products, and experimental infrastructure available through Emurugat Labs.
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl px-4 py-16">
+        
+        <!-- Section 1: Services & Addons -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-[#0B1325] mb-2 border-l-4 border-[#0B1325] pl-4">Engineering Services & Add-ons</h2>
+            <p class="text-slate-500 mb-8 ml-5">Standalone technical interventions you can procure outside of our core SDLC framework.</p>
+            
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-5"></div>
+<!-- Section 2: Off-The-Shelf & Labs -->
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-[#0B1325] mb-2 border-l-4 border-emerald-600 pl-4">Products & Emurugat Labs</h2>
+            <p class="text-slate-500 mb-8 ml-5">Pre-built software solutions and experimental architecture available for live demo.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 ml-5">
+                <!-- Product 1 -->
+                <div class="catalog-card border-emerald-100 relative overflow-hidden group">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-50 rounded-full z-0 transition-transform group-hover:scale-150"></div>
+                    <div class="card-header relative z-10">
+                        <span class="badge badge-product mb-2">SaaS License</span>
+                        <h3 class="font-bold text-xl">Nueve Streaming Core</h3>
+                        <p class="text-emerald-700 text-sm font-semibold mt-1"><i class="fa-solid fa-play-circle mr-1"></i> Available for Demo in Labs</p>
+                    </div>
+                    <div class="card-body relative z-10 text-slate-600 text-sm">
+                        <p>Our proprietary, low-latency media streaming architecture. License the core engine to build your own live broadcasting platforms, webinars, or OTT services without relying on third-party CDNs.</p>
+                    </div>
+                    <div class="card-footer relative z-10 flex justify-between items-center bg-white border-t border-slate-100">
+                        <a href="#" class="text-emerald-600 font-bold text-sm hover:underline"><i class="fa-solid fa-flask mr-1"></i> View Lab Demo</a>
+                        <a href="start-project.html" class="px-4 py-2 bg-emerald-600 text-white rounded text-sm font-bold shadow hover:bg-emerald-700">Inquire License</a>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="catalog-card border-purple-100 relative overflow-hidden group">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-purple-50 rounded-full z-0 transition-transform group-hover:scale-150"></div>
+                    <div class="card-header relative z-10">
+                        <span class="badge badge-labs mb-2">Microservice</span>
+                        <h3 class="font-bold text-xl">Identity Access Manager (IAM)</h3>
+                        <p class="text-purple-700 text-sm font-semibold mt-1"><i class="fa-solid fa-code mr-1"></i> API Sandbox Available</p>
+                    </div>
+                    <div class="card-body relative z-10 text-slate-600 text-sm">
+                        <p>A drop-in, highly secure authentication microservice featuring JWT-based SSO, role-based access control (RBAC), and hardware key integration. Built in Rust for zero-latency verifications.</p>
+                    </div>
+                    <div class="card-footer relative z-10 flex justify-between items-center bg-white border-t border-slate-100">
+                        <a href="#" class="text-purple-600 font-bold text-sm hover:underline"><i class="fa-solid fa-flask mr-1"></i> View Lab Demo</a>
+                        <a href="start-project.html" class="px-4 py-2 bg-[#0B1325] text-white rounded text-sm font-bold shadow hover:bg-slate-800">Purchase Integration</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Custom Solution CTA -->
+        <div class="mt-20 p-12 bg-[#0B1325] rounded-2xl text-center relative overflow-hidden border border-slate-700 shadow-2xl">
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/30 to-transparent"></div>
+            <div class="relative z-10">
+                <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-6">
+                    <i class="fa-solid fa-sitemap"></i>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Need a Custom Enterprise Solution?</h2>
+                <p class="text-slate-300 text-lg max-w-2xl mx-auto mb-8">
+                    Don't see what you need in the catalog? Let's design an absolute blueprint tailored strictly to your business logic. 
+                </p>
+                <a href="start-project.html" class="inline-block px-8 py-4 bg-white text-[#0B1325] font-bold rounded-lg hover:bg-slate-100 transition-transform hover:-translate-y-1 shadow-lg">
+                    Start Project Assessment <i class="fa-solid fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-8 text-center text-slate-500 text-sm border-t border-slate-200 bg-white mt-auto">
+        <p>&copy; 2026 Tryphene Murugat Consultancy. Built for scale.</p>
+        <p class="mt-4 space-x-4 font-semibold" id="footerLinks">
+            <a href="login.html" class="hover:text-[#0B1325] transition-colors" id="footerLogin">Client Login</a>
+            <span class="text-slate-300">|</span>
+            <a href="admin.html" class="hover:text-[#0B1325] transition-colors">Admin Console</a>
+        </p>
+    </footer>
+
+    <script>
+        // Authentication Awareness
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('verde_api_token');
+            const userRaw = localStorage.getItem('tm_user');
+            
+            if (token && userRaw) {
+                const user = JSON.parse(userRaw);
+                const isClient = user.role === 'client';
+                const hubUrl = isClient ? 'client-dashboard.html' : 'admin.html';
+                
+                // Update Top Nav
+                const navLoginBtn = document.getElementById('navLoginBtn');
+                if (navLoginBtn) {
+                    navLoginBtn.textContent = 'Back to Hub';
+                    navLoginBtn.href = hubUrl;
+                    navLoginBtn.classList.add('bg-indigo-50', 'border-indigo-200', 'text-indigo-700');
+                }
+
+                // Update Footer
+                const footerLogin = document.getElementById('footerLogin');
+                if (footerLogin) {
+                    footerLogin.textContent = 'Back to Hub';
+                    footerLogin.href = hubUrl;
+                }
+            }
+        });
+    </script>
+<script src="api-client.js"></script>
+<script>
+    const PHASE_NAMES = {
+        1: "Phase 1: Initiation & Feasibility",
+        2: "Phase 2: Requirements Analysis",
+        3: "Phase 3: Architecture & Design",
+        4: "Phase 4: Implementation & Cutover",
+        5: "Phase 5: Launch & Hypercare"
+    };
+
+    // If the user is logged in, change the buttons to "Request to Begin"
+    const token = localStorage.getItem('verde_api_token');
+    let userProjId = null;
+    
+    if (token) {
+        // Fetch their project ID quietly
+        TMAPI.projects().then(res => {
+            if (res.projects && res.projects.length > 0) {
+                userProjId = res.projects[0].id;
+            }
+        }).catch(err => console.log(err));
+    } else {
+        // If not logged in, revert them to hyperlinks
+        document.querySelectorAll('.req-phase-btn').forEach(btn => {
+            btn.onclick = () => window.location.href = 'tryphene-sdlc-commercial-platform-v1.html#qualifier';
+        });
+    }
+
+    async function requestPhase(btn) {
+        if (!token) {
+            window.location.href = 'tryphene-sdlc-commercial-platform-v1.html#qualifier';
+            return;
+        }
+        
+        if (!userProjId) {
+            alert("No active project found. Please contact support.");
+            return;
+        }
+
+        const phaseNum = btn.getAttribute('data-phase');
+        const phaseName = PHASE_NAMES[phaseNum];
+        const originalText = btn.innerHTML;
+        
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...';
+        btn.disabled = true;
+
+        try {
+            // Post a communication to the CRM to alert the Engagement Director
+            await fetch('http://127.0.0.1:8081/api/projects/' + userProjId + '/communications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    type: 'phase_request',
+                    body: `Client requested to formally begin ${phaseName}. Please generate the SLA and Phase Proposal for signature.`
+                })
+            });
+            
+            btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Request Submitted';
+            btn.classList.replace('bg-[#0B1325]', 'bg-emerald-600');
+            btn.classList.replace('hover:bg-slate-800', 'hover:bg-emerald-700');
+            
+            setTimeout(() => {
+                alert(`Your request to begin ${phaseName} has been submitted! Tryphene Murugat will prepare your workspace and SLA for signature.`);
+                window.location.href = 'journey.html';
+            }, 1000);
+            
+        } catch (err) {
+            alert('Failed to submit request: ' + err.message);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
+

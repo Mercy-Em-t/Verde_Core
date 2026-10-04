@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2 Administrative Closing Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .mono-doc {
+            font-family: "Courier New", Courier, monospace;
+            color: #111;
+            line-height: 1.5;
+            font-size: 13px;
+        }
+        .header-block {
+            white-space: pre;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-file-invoice-dollar mr-2 text-green-400"></i> Phase 2 Administrative Closing Protocol</h1>
+            <p class="text-xs text-slate-400">Internal Runbook & Invoice Generator</p>
+        </div>
+        <button onclick="window.print()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print Runbook
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex justify-center print-container">
+        <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[850px] w-full print:shadow-none print:border-none print:p-0 mono-doc h-max">
+            
+            <div class="header-block text-center text-green-900 border-2 border-green-900 p-2 bg-green-50/50">================================================================================
+                    PHASE 2 ADMINISTRATIVE CLOSING PROTOCOL
+================================================================================</div>
+            
+            <p class="mb-8 text-justify italic">To close Phase 2 on the business and administrative side, execute this three-step management sequence. Do not permit engineers to begin coding until Step 2 is financially cleared.</p>
+
+            <div class="mb-8">
+                <div class="font-bold text-sm bg-slate-100 p-2 mb-3 border-l-4 border-slate-800">
+                    Step 1: Issue the Phase Gate 2 Acceptance Notice & Scope Freeze
+                </div>
+                <div class="ml-6 space-y-2">
+                    <p>Deliver the System Proposal & Scope Freeze Form to the Client Project Sponsor (COO).</p>
+                    <p class="bg-red-50 border border-red-200 p-3 text-red-900 text-sm">
+                        <span class="font-bold uppercase"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Key Policy Notice:</span> "Executing this form closes Phase 2 Discovery and declares the business workflows, data elements, and Level 1/2 process models immutable. Any subsequent changes to attributes or workflows will be handled via a formal Change Order Request (COR)."
+                    </p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <div class="font-bold text-sm bg-green-50 p-2 mb-3 border-l-4 border-green-600">
+                    Step 2: Discovery Retainer Reconciliation & Milestone Invoice Issuance
+                </div>
+                <div class="ml-6 space-y-4">
+                    <p><span class="font-bold underline">1. Reconcile Retainers:</span> Certify completion of the 2-week Phase 2 discovery sprint (KES 800,000 gross fees fully earned).</p>
+                    
+                    <div class="border border-slate-300 p-4">
+                        <p class="font-bold underline mb-2">2. Issue Phase 3 Work Order & Tranche 1 Invoice:</p>
+                        <ul class="list-disc ml-6 space-y-1 text-sm">
+                            <li>Total Fixed-Price Fee: KES 1,000,000</li>
+                            <li>Tranche 1 Initiation Deposit (40%): KES 400,000 due upon signing.</li>
+                            <li>State KRA PIN and clear tax withholding instructions (5% WHT under Kenyan law).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <div class="font-bold text-sm bg-blue-50 p-2 mb-3 border-l-4 border-blue-600">
+                    Step 3: Specialist Agent Mobilization Schedule
+                </div>
+                <div class="ml-6 space-y-3">
+                    <p><strong>Systems Analyst:</strong> Demobilized from discovery; hours capped and final sprint payout issued (net of 5% WHT).</p>
+                    <p><strong>Database Architect & UI Designer:</strong> Place on 48-hour standby.</p>
+                    
+                    <p class="bg-amber-100 border border-amber-300 p-3 text-amber-900 text-sm font-bold">
+                        <i class="fa-solid fa-hand mr-1"></i> Hard Stop Rule: Physical PostgreSQL DDL scripting and Figma wireframing do not commence until the KES 400,000 deposit has cleared in full.
+                    </p>
+                </div>
+            </div>
+
+            <div class="header-block text-center mt-12 mb-4 border-t-2 border-black pt-4">================================================================================</div>
+            <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest">Authorized by: Tryphene Murugat Consultancy</p>
+
+        </div>
+    </div>
+</body>
+</html>

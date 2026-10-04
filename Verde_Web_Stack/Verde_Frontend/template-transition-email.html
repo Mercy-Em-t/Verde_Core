@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2 Transition Cover Email</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .email-body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-envelope-open-text mr-2 text-blue-400"></i> Phase 2 Transition Cover Email</h1>
+            <p class="text-xs text-slate-400">Communication & Framing Artifact</p>
+        </div>
+        <button onclick="copyEmail()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-copy mr-2"></i> Copy Email to Clipboard
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex gap-6">
+        
+        <!-- Left Panel: Input Form -->
+        <div class="w-[35%] bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Email Variables</h2>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Client First Name</label>
+                    <input type="text" id="inpName" value="David" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-blue-500" oninput="render()">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Project Name</label>
+                    <input type="text" id="inpProject" value="OmniLogix Platform" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-blue-500" oninput="render()">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">P3 Mobilization Deposit (KES)</label>
+                    <input type="text" id="inpDeposit" value="400,000" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-blue-500" oninput="render()">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Engagement Director</label>
+                    <input type="text" id="inpDir" value="Tryphene Murugat" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-blue-500" oninput="render()">
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6">
+                    <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-2">Psychological Framing</h3>
+                    <p class="text-[11px] text-blue-800 text-justify">This email normalizes dropping off. By explicitly offering Path A (handing them the blueprints to build in-house) alongside Path B (hiring you to build it), you remove all sales pressure. If they drop off, you keep your massive Phase 2 margin. If they stay, you get the Phase 3 build.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Output -->
+        <div class="w-[65%] flex justify-center overflow-y-auto">
+            <div class="bg-white border border-slate-200 shadow-xl p-10 w-full h-max">
+                
+                <div class="mb-6 border-b border-gray-200 pb-4">
+                    <p class="text-sm"><span class="font-bold text-gray-500">Subject:</span> <span class="font-bold" id="outSubject"></span></p>
+                </div>
+
+                <div class="email-body" id="emailContent">
+                    <p>Dear <span id="outName" class="font-bold text-blue-700"></span>,</p>
+                    
+                    <p>We have officially concluded our Phase 2 Requirements Analysis and Business Modeling sprint. Over the past two weeks, our systems analysts have mapped your end-to-end warehouse workflows, balanced your data flow diagrams (Context through Level 1), and normalized your relational data architecture to Third Normal Form (3NF).</p>
+                    
+                    <p>Attached to this email, and available in your secure Client Hub, you will find:</p>
+                    <ol>
+                        <li>The Final System Proposal & Requirements Blueprint (RDD-001).</li>
+                        <li>The Phase Gate 2 Scope Freeze Acceptance Agreement.</li>
+                    </ol>
+
+                    <p>As established in our Master Services Agreement, you now have two strategic paths:</p>
+
+                    <p><strong>• Path A (Blueprint Handover):</strong> Execute the Scope Freeze and IP Release Form. You take full ownership of these certified, buildable blueprints to run your internal procurement or development schedules. Our work concludes here.</p>
+
+                    <p><strong>• Path B (Advance to Phase 3 Design):</strong> Execute the Phase 3 Work Order and fund the 40% mobilization deposit (KES <span id="outDeposit" class="font-bold text-blue-700"></span>). Our technical architects will immediately commence physical PostgreSQL schema engineering, index tuning, and clickable UI wireframes.</p>
+
+                    <p>Please review the attached documents and let us know your intended timeline.</p>
+
+                    <p>Best regards,</p>
+
+                    <p>
+                        <strong><span id="outDir"></span></strong><br>
+                        Engagement Director & Principal Systems Architect<br>
+                        Tryphene Murugat Consultancy | Nairobi, Kenya
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function render() {
+            const project = document.getElementById('inpProject').value;
+            document.getElementById('outSubject').innerText = `Phase 2 Scope Freeze Sign-Off & Transition Notice | ${project}`;
+            document.getElementById('outName').innerText = document.getElementById('inpName').value;
+            document.getElementById('outDeposit').innerText = document.getElementById('inpDeposit').value;
+            document.getElementById('outDir').innerText = document.getElementById('inpDir').value;
+        }
+        
+        function copyEmail() {
+            const content = document.getElementById('emailContent').innerText;
+            const subject = document.getElementById('outSubject').innerText;
+            navigator.clipboard.writeText(`Subject: ${subject}\n\n${content}`).then(() => {
+                alert('Email copied to clipboard!');
+            });
+        }
+
+        render();
+    </script>
+</body>
+</html>

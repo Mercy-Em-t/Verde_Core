@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage/
+Sample_Project_Output.html
+Sample_Project_Audit_Trail.html
+Verde_Project_Binder_*.html

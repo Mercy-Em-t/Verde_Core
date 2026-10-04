@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md
+
+# Do not bake local development database state into the production image.
+# Data should be mounted via a volume instead.
+data/projects.json

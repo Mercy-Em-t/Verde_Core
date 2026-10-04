@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Matrix | Verde Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .sidebar { background-color: #0B1325; color: white; min-height: 100vh; }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 p-6 hidden md:block flex-shrink-0 flex flex-col">
+        <div class="flex items-center space-x-3 mb-10">
+            <div class="bg-indigo-600 text-white font-bold p-2 rounded w-8 h-8 flex items-center justify-center">TM</div>
+            <div>
+                <span class="text-sm font-bold tracking-wider block">Tryphene Murugat</span>
+                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest"><i class="fa-solid fa-code-branch mr-1"></i> Orchestrator Mode</span>
+            </div>
+        </div>
+        
+        <nav class="flex-1 space-y-6 text-sm font-medium">
+            <div class="space-y-1">
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Business Dev</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-5 text-center"></i> <span>Global HUD</span></a></li>
+                    <li><a href="admin-leads.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-funnel-dollar w-5 text-center"></i> <span>Lead Qualifiers</span></a></li>
+                    <li><a href="admin-services.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-emerald-400"><i class="fa-solid fa-layer-group w-5 text-center"></i> <span>Services Catalog</span></a></li>
+                    <li><a href="admin-portfolio.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-indigo-400 bg-slate-800"><i class="fa-solid fa-images w-5 text-center"></i> <span>Portfolio Matrix</span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-x-hidden overflow-y-auto">
+        <header class="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center sticky top-0 z-10">
+            <h1 class="text-2xl font-bold text-[#0B1325]">Portfolio Matrix</h1>
+            <button onclick="document.getElementById('portfolioModal').classList.remove('hidden'); document.getElementById('modalTitle').innerText='Create Portfolio Case'; document.getElementById('portfolioForm').reset(); document.getElementById('portfolioId').value='';" class="bg-indigo-600 text-white px-4 py-2 rounded font-bold text-sm hover:bg-indigo-700 transition">
+                <i class="fa-solid fa-plus mr-2"></i> Add Case Study
+            </button>
+        </header>
+
+        <div class="p-8 max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolioList">
+                <div class="text-slate-500 text-sm">Loading portfolio...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Portfolio Modal -->
+    <div id="portfolioModal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 z-50 flex justify-center items-center backdrop-blur-sm transition-opacity p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-800" id="modalTitle">Create Case Study</h3>
+                <button onclick="document.getElementById('portfolioModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <form id="portfolioForm" onsubmit="savePortfolio(event)">
+                    <input type="hidden" id="portfolioId">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Title</label>
+                                <input type="text" id="pTitle" required class="w-full border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 border">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Client Name</label>
+                                <input type="text" id="pClient" class="w-full border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 border">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Category</label>
+                            <input type="text" id="pCategory" placeholder="e.g. Fintech, Healthcare, Supply Chain" class="w-full border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Description</label>
+                            <textarea id="pDesc" required rows="3" class="w-full border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 border"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Challenges Solved</label>
+                            <textarea id="pChallenges" rows="3" class="w-full border-slate-300 rounded focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2 border"></textarea>
+                        </div>
+                        <div id="statusToggle" class="hidden items-center space-x-2 pt-2">
+                            <input type="checkbox" id="pActive" class="rounded text-indigo-600 focus:ring-indigo-500">
+                            <label class="text-sm font-bold text-slate-700">Display in Public Portfolio</label>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="document.getElementById('portfolioModal').classList.add('hidden')" class="px-4 py-2 text-slate-600 text-sm font-bold hover:bg-slate-100 rounded transition">Cancel</button>
+                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white text-sm font-bold rounded shadow hover:bg-indigo-700 transition">Save Case Study</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        const token = localStorage.getItem('verde_api_token');
+        if (!token) window.location.href = 'login.html';
+        
+        let localPortfolio = [];
+
+        async function loadPortfolio() {
+            try {
+                const res = await fetch('http://127.0.0.1:8081/api/admin/portfolio', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if(!res.ok) throw new Error("Failed to load portfolio");
+                const data = await res.json();
+                localPortfolio = data.portfolio || data.data || data || []; if(!Array.isArray(localPortfolio)) localPortfolio = Object.values(localPortfolio); if(!Array.isArray(localPortfolio)) localPortfolio = [];
+                renderPortfolio();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('portfolioList').innerHTML = `<div class="col-span-3 text-red-500 font-bold">Error loading portfolio cases.</div>`;
+            }
+        }
+
+        function renderPortfolio() {
+            const container = document.getElementById('portfolioList');
+            if(localPortfolio.length === 0) {
+                container.innerHTML = `<div class="col-span-3 text-slate-400 font-medium">No portfolio cases found. Add one above.</div>`;
+                return;
+            }
+            
+            container.innerHTML = localPortfolio.map(p => `
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col hover:shadow-md transition">
+                    <div class="bg-slate-800 h-32 relative">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                            <i class="fa-solid fa-code text-6xl text-white"></i>
+                        </div>
+                        <div class="absolute top-4 right-4">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest ${p.is_active ? 'bg-emerald-500 text-white' : 'bg-slate-500 text-white'}">${p.is_active ? 'Public' : 'Hidden'}</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col">
+                        <div class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">${p.category || 'Software'}</div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-2">${p.title}</h3>
+                        <p class="text-slate-600 text-sm mb-4 line-clamp-3 flex-1">${p.description}</p>
+                        
+                        <div class="text-xs text-slate-500 mb-4">
+                            <strong>Client:</strong> ${p.client || 'Confidential'}
+                        </div>
+                        
+                        <div class="pt-4 border-t border-slate-100 mt-auto flex justify-end">
+                            <button onclick="editPortfolio(${p.id})" class="text-slate-500 hover:text-indigo-600 font-bold text-sm transition"><i class="fa-solid fa-pen-to-square mr-1"></i> Edit Case</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editPortfolio(id) {
+            const p = localPortfolio.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('modalTitle').innerText = 'Edit Case Study';
+            document.getElementById('portfolioId').value = p.id;
+            document.getElementById('pTitle').value = p.title;
+            document.getElementById('pClient').value = p.client;
+            document.getElementById('pCategory').value = p.category;
+            document.getElementById('pDesc').value = p.description;
+            document.getElementById('pChallenges').value = p.challenges;
+            document.getElementById('pActive').checked = p.is_active;
+            
+            document.getElementById('statusToggle').classList.remove('hidden');
+            document.getElementById('statusToggle').classList.add('flex');
+            document.getElementById('portfolioModal').classList.remove('hidden');
+        }
+
+        async function savePortfolio(e) {
+            e.preventDefault();
+            const id = document.getElementById('portfolioId').value;
+            const payload = {
+                title: document.getElementById('pTitle').value,
+                client: document.getElementById('pClient').value,
+                category: document.getElementById('pCategory').value,
+                description: document.getElementById('pDesc').value,
+                challenges: document.getElementById('pChallenges').value,
+                is_active: id ? document.getElementById('pActive').checked : true
+            };
+            
+            const endpoint = id ? 'http://127.0.0.1:8081/api/admin/portfolio/' + id : 'http://127.0.0.1:8081/api/admin/portfolio';
+            const method = id ? 'PATCH' : 'POST';
+            
+            try {
+                const res = await fetch(endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if(!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'API Error');
+                }
+                
+                document.getElementById('portfolioModal').classList.add('hidden');
+                loadPortfolio(); // reload
+            } catch (err) {
+                alert("Error saving portfolio: " + err.message);
+                console.error(err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPortfolio);
+    </script>
+</body>
+</html>

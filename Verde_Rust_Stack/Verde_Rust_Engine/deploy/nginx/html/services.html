@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Pricing | Tryphen Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .gradient-text { background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] p-8 pb-24">
+    
+    <div class="max-w-6xl mx-auto">
+        <a href="index.html" class="text-indigo-400 hover:text-indigo-300 mb-8 inline-block font-semibold"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+        
+        <header class="mb-16 text-center">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight"><span class="gradient-text">System Architecture</span> & Analysis</h1>
+            <p class="text-xl text-slate-400 max-w-2xl mx-auto">We separate Systems Analysis & Architecture from Code Construction to eliminate scope creep and budget overruns.</p>
+        </header>
+
+        <!-- Tier 1 & 2: Progressive Disclosure Grid -->
+        <h2 class="text-2xl font-bold mb-8 text-white border-b border-slate-700 pb-2">Our SDLC Engineering Phases</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16" x-data="{ expanded: null }">
+            
+            <!-- Phase 1 -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg transition-colors hover:border-indigo-500/50">
+                <div class="p-6 cursor-pointer flex justify-between items-center" @click="expanded = expanded === 1 ? null : 1">
+                    <div>
+                        <span class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Phase 1</span>
+                        <h3 class="text-2xl font-bold text-white mt-1">Planning & Feasibility</h3>
+                        <p class="text-slate-400 mt-2 text-sm">"Why build it & will it pay off?"</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-emerald-400">From KES 300k / wk</div>
+                        <div class="text-xs text-slate-500 mt-1">1–2 Week Sprints</div>
+                        <i class="fa-solid fa-chevron-down text-slate-400 mt-3 transition-transform" :class="expanded === 1 ? 'rotate-180' : ''"></i>
+                    </div>
+                </div>
+                <div x-show="expanded === 1" x-collapse x-cloak class="p-6 pt-0 border-t border-slate-700/50 bg-slate-800/40">
+                    <h4 class="font-semibold text-slate-300 mb-3 mt-4">Core Deliverables:</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> System Request & Scope Charter</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Technical & Economic Feasibility Study</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Work Breakdown Structure (WBS)</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Project Risk Matrix & Mitigation Strategy</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg transition-colors hover:border-indigo-500/50">
+                <div class="p-6 cursor-pointer flex justify-between items-center" @click="expanded = expanded === 2 ? null : 2">
+                    <div>
+                        <span class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Phase 2</span>
+                        <h3 class="text-2xl font-bold text-white mt-1">Requirements & Specs</h3>
+                        <p class="text-slate-400 mt-2 text-sm">"What are the exact system flows?"</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-emerald-400">From KES 350k / wk</div>
+                        <div class="text-xs text-slate-500 mt-1">2–4 Week Sprints</div>
+                        <i class="fa-solid fa-chevron-down text-slate-400 mt-3 transition-transform" :class="expanded === 2 ? 'rotate-180' : ''"></i>
+                    </div>
+                </div>
+                <div x-show="expanded === 2" x-collapse x-cloak class="p-6 pt-0 border-t border-slate-700/50 bg-slate-800/40">
+                    <h4 class="font-semibold text-slate-300 mb-3 mt-4">Core Deliverables:</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Functional & Non-Functional Requirements</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Structured Use Cases & Scenarios</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Leveled Data Flow Diagrams (DFDs)</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> 3NF Entity Relationship Diagrams (ERDs)</li>
+                    </ul>
+                    <div class="mt-4 inline-flex items-center px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-bold rounded border border-amber-500/20">
+                        <i class="fa-solid fa-lock mr-2"></i> Milestone Gate: Formal Scope Freeze Sign-Off
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg transition-colors hover:border-indigo-500/50">
+                <div class="p-6 cursor-pointer flex justify-between items-center" @click="expanded = expanded === 3 ? null : 3">
+                    <div>
+                        <span class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Phase 3</span>
+                        <h3 class="text-2xl font-bold text-white mt-1">System Architecture</h3>
+                        <p class="text-slate-400 mt-2 text-sm">"How will the database & UI work?"</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-emerald-400">From KES 800,000</div>
+                        <div class="text-xs text-slate-500 mt-1">Fixed Milestone</div>
+                        <i class="fa-solid fa-chevron-down text-slate-400 mt-3 transition-transform" :class="expanded === 3 ? 'rotate-180' : ''"></i>
+                    </div>
+                </div>
+                <div x-show="expanded === 3" x-collapse x-cloak class="p-6 pt-0 border-t border-slate-700/50 bg-slate-800/40">
+                    <div class="mb-4 inline-flex items-center px-3 py-1 bg-red-500/10 text-red-400 text-xs font-bold rounded border border-red-500/20 mt-4">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i> Prerequisite: Requires signed Phase 2 documentation
+                    </div>
+                    <h4 class="font-semibold text-slate-300 mb-3">Core Deliverables:</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Cloud & Hardware Architecture Report</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Interactive UI/UX Wireframes & Navigation</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Physical Database Schema & Data Dictionary</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> API Integration Specifications</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="bg-slate-800/80 border border-slate-700 rounded-xl overflow-hidden shadow-lg transition-colors hover:border-indigo-500/50">
+                <div class="p-6 cursor-pointer flex justify-between items-center" @click="expanded = expanded === 4 ? null : 4">
+                    <div>
+                        <span class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Phase 4</span>
+                        <h3 class="text-2xl font-bold text-white mt-1">Implementation</h3>
+                        <p class="text-slate-400 mt-2 text-sm">"Build, test, and live deployment"</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-emerald-400">From KES 1.5M</div>
+                        <div class="text-xs text-slate-500 mt-1">Fixed Milestone</div>
+                        <i class="fa-solid fa-chevron-down text-slate-400 mt-3 transition-transform" :class="expanded === 4 ? 'rotate-180' : ''"></i>
+                    </div>
+                </div>
+                <div x-show="expanded === 4" x-collapse x-cloak class="p-6 pt-0 border-t border-slate-700/50 bg-slate-800/40">
+                    <div class="mb-4 inline-flex items-center px-3 py-1 bg-red-500/10 text-red-400 text-xs font-bold rounded border border-red-500/20 mt-4">
+                        <i class="fa-solid fa-triangle-exclamation mr-2"></i> Prerequisite: Requires certified Phase 3 blueprints
+                    </div>
+                    <h4 class="font-semibold text-slate-300 mb-3">Core Deliverables:</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Production-grade Software Build & Source Code</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Test Execution Logs (Unit, Integration, Sec)</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> User Acceptance Testing (UAT) Sign-Off</li>
+                        <li><i class="fa-solid fa-check text-indigo-500 mr-2"></i> Deployment & Operational Handover Manual</li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- The Anti-Scope Creep Callout -->
+        <div class="bg-slate-900/80 border-l-4 border-indigo-500 p-6 rounded mb-16 shadow-lg">
+            <h4 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-shield-halved text-indigo-400 mr-2"></i> The Anti-Scope Creep Guarantee</h4>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                All engineering builds (Phase 4) are strictly quoted against verified Phase 2 & 3 system blueprints to eliminate unbudgeted overruns. If you do not have technical specifications, you must book a Discovery Sprint first. Third-party specifications are accepted only upon passing a mandatory, billable 1-Week Specification Audit.
+            </p>
+        </div>
+
+        <!-- Tier 3: Interactive Project Scope Estimator -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-8 shadow-2xl" x-data="{ hasSpecs: null, hasArch: null }">
+            <h2 class="text-3xl font-bold text-white mb-2">Interactive Project Estimator</h2>
+            <p class="text-slate-400 mb-8">Determine your optimal starting phase based on your current project readiness.</p>
+            
+            <div class="space-y-6">
+                <!-- Question 1 -->
+                <div>
+                    <label class="block text-white font-semibold mb-3">1. Do you already have formally normalized ERDs and functional specifications?</label>
+                    <div class="flex space-x-4">
+                        <button @click="hasSpecs = true" :class="hasSpecs === true ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-600'" class="px-6 py-3 border rounded text-white font-medium transition-colors hover:bg-slate-700">Yes, we have specs</button>
+                        <button @click="hasSpecs = false; hasArch = false" :class="hasSpecs === false ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-600'" class="px-6 py-3 border rounded text-white font-medium transition-colors hover:bg-slate-700">No, just an idea/budget</button>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div x-show="hasSpecs === true" x-cloak x-transition>
+                    <label class="block text-white font-semibold mb-3">2. Do you have physical database schemas and interactive UI/UX wireframes?</label>
+                    <div class="flex space-x-4">
+                        <button @click="hasArch = true" :class="hasArch === true ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-600'" class="px-6 py-3 border rounded text-white font-medium transition-colors hover:bg-slate-700">Yes, architecture is done</button>
+                        <button @click="hasArch = false" :class="hasArch === false ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-600'" class="px-6 py-3 border rounded text-white font-medium transition-colors hover:bg-slate-700">No, we need technical design</button>
+                    </div>
+                </div>
+
+                <!-- Results Box -->
+                <div x-show="hasSpecs !== null" x-cloak x-transition class="mt-8 p-6 bg-indigo-900/30 border border-indigo-500/30 rounded-xl">
+                    <h3 class="text-xl font-bold text-indigo-300 mb-2">Recommended Path</h3>
+                    
+                    <div x-show="hasSpecs === false">
+                        <p class="text-white text-lg mb-2">Phase 1 & 2: Discovery & Requirements Sprint</p>
+                        <p class="text-slate-300 text-sm mb-4">You need to map out your business logic before writing code.</p>
+                        <div class="text-emerald-400 font-bold mb-6">Estimated Investment: KES 700,000 – 1.2M (2-3 Weeks)</div>
+                    </div>
+                    
+                    <div x-show="hasSpecs === true && hasArch === false">
+                        <p class="text-white text-lg mb-2">Phase 3: System Architecture</p>
+                        <p class="text-slate-300 text-sm mb-4">We will take your specs and translate them into a technical blueprint and UI.</p>
+                        <div class="text-emerald-400 font-bold mb-6">Estimated Investment: KES 800,000+</div>
+                    </div>
+
+                    <div x-show="hasSpecs === true && hasArch === true">
+                        <p class="text-white text-lg mb-2">Phase 4: Build & Implementation</p>
+                        <p class="text-slate-300 text-sm mb-4">Subject to a 1-week Specification Audit, your project is ready for code construction.</p>
+                        <div class="text-emerald-400 font-bold mb-6">Estimated Investment: From KES 1.5M</div>
+                    </div>
+
+                    <a href="start-project.html" class="inline-block px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded shadow-lg transition-colors">
+                        Proceed to Intake Form <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

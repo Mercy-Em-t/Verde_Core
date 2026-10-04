@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Economic Feasibility Model — Tryphene Murugat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ── Print styles ── */
+    @media print {
+      body { background: #fff !important; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      #results-section { display: block !important; }
+      .page-break { page-break-before: always; }
+    }
+    .print-only { display: none; }
+
+    /* ── Subtle table striping ── */
+    .cba-row:nth-child(even) { background-color: #f8fafc; }
+    .cba-row:nth-child(odd)  { background-color: #ffffff; }
+
+    /* ── Spinner animation ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
+
+    /* ── Smooth fade-in for results ── */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s ease both; }
+
+    /* ── Number input: hide arrows ── */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* ── Focus ring ── */
+    input:focus, select:focus { outline: none; box-shadow: 0 0 0 2px #6366f1; }
+
+    /* ── Print page layout ── */
+    #print-view {
+      display: none;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    @media print {
+      #main-app { display: none !important; }
+      #print-view { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans">
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header style="background-color:#0B1325;" class="text-white shadow-xl no-print">
+  <div class="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
+    <div>
+      <p class="text-indigo-300 text-xs font-semibold tracking-widest uppercase mb-1">Tryphene Murugat · Commercial Platform v5</p>
+      <h1 class="text-3xl font-bold tracking-tight">Economic Feasibility Model</h1>
+      <p class="text-slate-300 text-sm mt-1">Plug &amp; Play DCF / CBA Template — Powered by Tryphene Murugat Architecture</p>
+    </div>
+    <div class="hidden md:flex flex-col items-end gap-1">
+      <span class="text-xs text-slate-400">Sprint 17 · Template</span>
+      <span id="header-date" class="text-xs text-indigo-300 font-mono"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     MAIN APPLICATION
+══════════════════════════════════════════════ -->
+<div id="main-app" class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+  <!-- ── SECTION 1: Project Meta ── -->
+  <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h2 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+      <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">1</span>
+      Project Information
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Project Name</label>
+        <input id="inp-project" type="text" value="OmniLogix Digital Transformation" class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 bg-slate-50 transition" placeholder="e.g. OmniLogix Platform" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Client Name</label>
+        <input id="inp-client" type="text" value="OmniLogix Enterprises Ltd." class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 bg-slate-50 transition" placeholder="e.g. Acme Corp" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Discount Rate (%)</label>
+        <input id="inp-rate" type="number" value="10" min="0" max="100" step="0.5" class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 bg-slate-50 transition" />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Currency Label</label>
+        <input id="inp-currency" type="text" value="KES" maxlength="5" class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 bg-slate-50 transition" placeholder="KES / USD / GBP" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 2: CapEx ── -->
+  <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">2</span>
+        Year 0 Capital Expenditure (CapEx)
+      </h2>
+      <button onclick="addCapexRow()" class="no-print text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        Add Row
+      </button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wide border-b border-slate-100">
+            <th class="pb-2 pr-4 w-full">Description</th>
+            <th class="pb-2 pr-4 whitespace-nowrap w-48">Amount</th>
+            <th class="pb-2 no-print w-8"></th>
+          </tr>
+        </thead>
+        <tbody id="capex-tbody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-3 pt-3 border-t border-slate-100 flex justify-end">
+      <p class="text-xs text-slate-400">Total CapEx: <span id="capex-total-preview" class="font-bold text-slate-700">—</span></p>
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: OpEx ── -->
+  <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-slate-700 flex items-center gap-2">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">3</span>
+        Annual Operating Expenditure (OpEx)
+      </h2>
+      <button onclick="addOpexRow()" class="no-print text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        Add Row
+      </button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wide border-b border-slate-100">
+            <th class="pb-2 pr-4 w-full">Description</th>
+            <th class="pb-2 pr-4 whitespace-nowrap w-48">Annual Amount</th>
+            <th class="pb-2 no-print w-8"></th>
+          </tr>
+        </thead>
+        <tbody id="opex-tbody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-3 pt-3 border-t border-slate-100 flex justify-end">
+      <p class="text-xs text-slate-400">Total Annual OpEx: <span id="opex-total-preview" class="font-bold text-slate-700">—</span></p>
+    </div>
+  </section>
+
+  <!-- ── SECTION 4: Gross Savings ── -->
+  <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h2 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+      <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 text-sm font-bold">4</span>
+      Gross Operational Savings — Annual Forecast
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Year 1 Savings</label>
+        <div class="relative">
+          <span id="savings-lbl-1" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">KES</span>
+          <input id="inp-sav1" type="number" value="3200000" class="border border-slate-200 rounded-lg pl-12 pr-3 py-2 text-sm text-slate-800 bg-slate-50 w-full transition" />
+        </div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Year 2 Savings</label>
+        <div class="relative">
+          <span id="savings-lbl-2" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">KES</span>
+          <input id="inp-sav2" type="number" value="4800000" class="border border-slate-200 rounded-lg pl-12 pr-3 py-2 text-sm text-slate-800 bg-slate-50 w-full transition" />
+        </div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Year 3 Savings</label>
+        <div class="relative">
+          <span id="savings-lbl-3" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">KES</span>
+          <input id="inp-sav3" type="number" value="5200000" class="border border-slate-200 rounded-lg pl-12 pr-3 py-2 text-sm text-slate-800 bg-slate-50 w-full transition" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ACTION BAR ── -->
+  <div class="flex flex-col sm:flex-row gap-3 items-center no-print">
+    <button onclick="runCalculations()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      Calculate Feasibility
+    </button>
+    <button onclick="generateReport()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-semibold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2" id="btn-report" style="opacity:0.4;pointer-events:none;">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+      Generate Report
+    </button>
+    <p class="text-xs text-slate-400 italic">Complete all fields, then click <strong>Calculate Feasibility</strong> to generate the CBA model.</p>
+  </div>
+
+  <!-- ── RESULTS SECTION ── -->
+  <div id="results-section" class="hidden space-y-6 fade-in">
+
+    <!-- Verdict Banner -->
+    <div id="verdict-banner" class="rounded-2xl p-5 flex items-center gap-4 shadow-sm"></div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Net Present Value (NPV)</p>
+        <p id="card-npv" class="text-2xl font-bold"></p>
+        <p class="text-xs text-slate-400 mt-1">3-Year Discounted Cash Flow</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Return on Investment</p>
+        <p id="card-roi-u" class="text-2xl font-bold text-slate-800"></p>
+        <p id="card-roi-d" class="text-sm text-slate-500 mt-0.5"></p>
+        <p class="text-xs text-slate-400 mt-1">Undiscounted &amp; Discounted ROI</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Payback Period</p>
+        <p id="card-payback" class="text-2xl font-bold text-slate-800"></p>
+        <p class="text-xs text-slate-400 mt-1">From project go-live (Year 1)</p>
+      </div>
+    </div>
+
+    <!-- Extended Summary Row -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
+        <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Total CapEx</p>
+        <p id="card-capex" class="text-base font-bold text-slate-800"></p>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
+        <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Annual OpEx</p>
+        <p id="card-opex" class="text-base font-bold text-slate-800"></p>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
+        <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Total Gross Savings</p>
+        <p id="card-savings" class="text-base font-bold text-slate-800"></p>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 text-center">
+        <p class="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Total Net Benefits</p>
+        <p id="card-netbenefit" class="text-base font-bold text-slate-800"></p>
+      </div>
+    </div>
+
+    <!-- Master CBA Table -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="text-base font-semibold text-slate-700">Master Cost-Benefit Analysis Table</h3>
+        <span id="cba-rate-label" class="text-xs bg-indigo-50 text-indigo-700 font-semibold px-2.5 py-1 rounded-full"></span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="background-color:#0B1325;" class="text-white">
+              <th class="text-left px-4 py-3 font-semibold text-xs uppercase tracking-wide w-52">Metric</th>
+              <th class="text-right px-4 py-3 font-semibold text-xs uppercase tracking-wide">Year 0</th>
+              <th class="text-right px-4 py-3 font-semibold text-xs uppercase tracking-wide">Year 1</th>
+              <th class="text-right px-4 py-3 font-semibold text-xs uppercase tracking-wide">Year 2</th>
+              <th class="text-right px-4 py-3 font-semibold text-xs uppercase tracking-wide">Year 3</th>
+              <th class="text-right px-4 py-3 font-semibold text-xs uppercase tracking-wide whitespace-nowrap">3-Year Total</th>
+            </tr>
+          </thead>
+          <tbody id="cba-tbody">
+            <!-- rows rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Executive Recommendation -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+      <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-2">Executive Recommendation</h3>
+      <p id="exec-rec" class="text-slate-700 leading-relaxed text-sm"></p>
+    </div>
+
+  </div>
+  <!-- /results-section -->
+
+</div>
+<!-- /main-app -->
+
+<!-- ══════════════════════════════════════════════
+     PRINT VIEW (hidden on screen, shown on print)
+══════════════════════════════════════════════ -->
+<div id="print-view" class="p-10 max-w-5xl mx-auto">
+  <!-- content injected by generateReport() -->
+</div>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer class="no-print mt-12 border-t border-slate-200 bg-white">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+    <p class="text-xs text-slate-400">Tryphene Murugat · Engagement Director · Confidential</p>
+    <p class="text-xs text-slate-300">Economic Feasibility Model — Sprint 17 Template · All figures indicative</p>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT ENGINE
+══════════════════════════════════════════════ -->
+<script>
+/* ────────────────────────────────────────────
+   DEFAULT DATA
+──────────────────────────────────────────── */
+const DEFAULT_CAPEX = [
+  { desc: 'Phase 1 & 2 — Discovery, Requirements & Process Modeling',         amt: 800000  },
+  { desc: 'Phase 3 — Technical Architecture & Physical Database Design',        amt: 1000000 },
+  { desc: 'Phase 4 — Engineering, QA Automation & Cutover',                    amt: 2200000 },
+  { desc: 'Hardware Onboarding (Devices, Terminals & Cloud Setup)',             amt: 500000  },
+];
+const DEFAULT_OPEX = [
+  { desc: 'Managed Cloud Database & Hosting Infrastructure',                   amt: 360000  },
+  { desc: 'Software Maintenance & Support Retainer',                           amt: 600000  },
+];
+
+/* ────────────────────────────────────────────
+   INITIALISE
+──────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  // Date in header
+  const now = new Date();
+  document.getElementById('header-date').textContent =
+    now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  DEFAULT_CAPEX.forEach(r => addCapexRow(r.desc, r.amt));
+  DEFAULT_OPEX.forEach(r  => addOpexRow(r.desc, r.amt));
+
+  // Live currency label sync
+  document.getElementById('inp-currency').addEventListener('input', syncCurrencyLabels);
+  document.getElementById('inp-rate').addEventListener('input', updatePreviews);
+  document.getElementById('capex-tbody').addEventListener('input', updatePreviews);
+  document.getElementById('opex-tbody').addEventListener('input', updatePreviews);
+  updatePreviews();
+});
+
+/* ────────────────────────────────────────────
+   CURRENCY / FORMATTING UTILS
+──────────────────────────────────────────── */
+function currencyLabel() {
+  return (document.getElementById('inp-currency').value.trim() || 'KES').toUpperCase();
+}
+
+function fmt(num) {
+  const abs = Math.abs(num);
+  const formatted = abs.toLocaleString('en-KE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return (num < 0 ? '-' : '') + currencyLabel() + '\u00a0' + formatted;
+}
+
+function fmtFactor(n) { return n.toFixed(4); }
+function fmtPct(n)    { return n.toFixed(1) + '%'; }
+
+function syncCurrencyLabels() {
+  const lbl = currencyLabel();
+  ['1','2','3'].forEach(i => {
+    const el = document.getElementById('savings-lbl-' + i);
+    if (el) el.textContent = lbl;
+  });
+}
+
+/* ────────────────────────────────────────────
+   DYNAMIC ROW BUILDERS
+──────────────────────────────────────────── */
+let capexRowId = 0;
+let opexRowId  = 0;
+
+function addCapexRow(desc = '', amt = '') {
+  const id  = ++capexRowId;
+  const tr  = document.createElement('tr');
+  tr.id     = 'capex-row-' + id;
+  tr.innerHTML = `
+    <td class="py-2 pr-3">
+      <input type="text" value="${escAttr(desc)}" placeholder="e.g. Phase 1 Discovery"
+        class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm w-full bg-slate-50 focus:bg-white transition"
+        oninput="updatePreviews()" />
+    </td>
+    <td class="py-2 pr-3">
+      <input type="number" value="${amt}" placeholder="0"
+        class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm w-full bg-slate-50 focus:bg-white text-right transition"
+        oninput="updatePreviews()" />
+    </td>
+    <td class="py-2 no-print">
+      <button onclick="removeRow('capex-row-${id}')" title="Remove row"
+        class="text-slate-300 hover:text-red-400 transition p-1 rounded">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </td>`;
+  document.getElementById('capex-tbody').appendChild(tr);
+  updatePreviews();
+}
+
+function addOpexRow(desc = '', amt = '') {
+  const id  = ++opexRowId;
+  const tr  = document.createElement('tr');
+  tr.id     = 'opex-row-' + id;
+  tr.innerHTML = `
+    <td class="py-2 pr-3">
+      <input type="text" value="${escAttr(desc)}" placeholder="e.g. Cloud Hosting"
+        class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm w-full bg-slate-50 focus:bg-white transition"
+        oninput="updatePreviews()" />
+    </td>
+    <td class="py-2 pr-3">
+      <input type="number" value="${amt}" placeholder="0"
+        class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm w-full bg-slate-50 focus:bg-white text-right transition"
+        oninput="updatePreviews()" />
+    </td>
+    <td class="py-2 no-print">
+      <button onclick="removeRow('opex-row-${id}')" title="Remove row"
+        class="text-slate-300 hover:text-red-400 transition p-1 rounded">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </td>`;
+  document.getElementById('opex-tbody').appendChild(tr);
+  updatePreviews();
+}
+
+function removeRow(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+  updatePreviews();
+}
+
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ────────────────────────────────────────────
+   LIVE TOTALS PREVIEW
+──────────────────────────────────────────── */
+function updatePreviews() {
+  document.getElementById('capex-total-preview').textContent = fmt(sumTableBody('capex-tbody'));
+  document.getElementById('opex-total-preview').textContent  = fmt(sumTableBody('opex-tbody'));
+  syncCurrencyLabels();
+}
+
+function sumTableBody(tbodyId) {
+  let total = 0;
+  const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+  rows.forEach(row => {
+    const numInput = row.querySelectorAll('input[type=number]')[0];
+    if (numInput) total += parseFloat(numInput.value || 0);
+  });
+  return total;
+}
+
+function getLineItems(tbodyId) {
+  const items = [];
+  const rows = document.getElementById(tbodyId).querySelectorAll('tr');
+  rows.forEach(row => {
+    const textInput = row.querySelectorAll('input[type=text]')[0];
+    const numInput  = row.querySelectorAll('input[type=number]')[0];
+    if (textInput && numInput) {
+      items.push({ desc: textInput.value.trim(), amt: parseFloat(numInput.value || 0) });
+    }
+  });
+  return items;
+}
+
+/* ────────────────────────────────────────────
+   CORE CALCULATIONS
+──────────────────────────────────────────── */
+function runCalculations() {
+  // ── Collect inputs ──
+  const rate      = parseFloat(document.getElementById('inp-rate').value || 10) / 100;
+  const sav       = [
+    parseFloat(document.getElementById('inp-sav1').value || 0),
+    parseFloat(document.getElementById('inp-sav2').value || 0),
+    parseFloat(document.getElementById('inp-sav3').value || 0),
+  ];
+  const capex     = sumTableBody('capex-tbody');
+  const opex      = sumTableBody('opex-tbody');
+
+  // ── Year-by-year calcs ──
+  const df   = [1/(1+rate), 1/Math.pow(1+rate,2), 1/Math.pow(1+rate,3)];
+  const ncf  = sav.map(s => s - opex);                     // Net Cash Flow
+  const pv   = ncf.map((n, i) => n * df[i]);               // Present Value
+  const cum  = [pv[0], pv[0]+pv[1], pv[0]+pv[1]+pv[2]];   // Cumulative DCF
+
+  // ── Summary metrics ──
+  const npv          = -capex + pv[0] + pv[1] + pv[2];
+  const totalNCF     = ncf[0] + ncf[1] + ncf[2];
+  const totalSavings = sav[0] + sav[1] + sav[2];
+  const roiU         = capex > 0 ? ((totalNCF - capex) / capex * 100) : 0;
+  const roiD         = capex > 0 ? (npv / capex * 100) : 0;
+  const payback      = calcPayback(capex, ncf);
+
+  // ── Render ──
+  renderVerdict(npv);
+  renderCards(npv, roiU, roiD, payback, capex, opex, totalSavings, totalNCF);
+  renderCBATable(rate, capex, opex, sav, ncf, df, pv, cum);
+  renderExecRec(npv, roiU, roiD, payback, capex, opex, rate);
+
+  document.getElementById('results-section').classList.remove('hidden');
+  document.getElementById('results-section').classList.add('fade-in');
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Unlock report button
+  const btn = document.getElementById('btn-report');
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
+
+  // Store for report
+  window._lastResult = { npv, roiU, roiD, payback, capex, opex, rate, sav, ncf, df, pv, cum,
+    totalSavings, totalNCF };
+}
+
+/* ── Payback calculation ── */
+function calcPayback(capex, ncf) {
+  let cumCF = -capex;
+  for (let y = 0; y < ncf.length; y++) {
+    const prev = cumCF;
+    cumCF += ncf[y];
+    if (cumCF >= 0) {
+      // Linear interpolation
+      const fraction = Math.abs(prev) / ncf[y];
+      const years    = y + fraction;
+      return { years, months: years * 12, recovered: true };
+    }
+  }
+  return { years: null, months: null, recovered: false };
+}
+
+/* ────────────────────────────────────────────
+   RENDER: VERDICT BANNER
+──────────────────────────────────────────── */
+function renderVerdict(npv) {
+  const banner = document.getElementById('verdict-banner');
+  if (npv >= 0) {
+    banner.className = 'rounded-2xl p-5 flex items-center gap-4 shadow-sm bg-emerald-50 border border-emerald-200';
+    banner.innerHTML = `
+      <div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-emerald-800 font-bold text-lg">FEASIBLE — Proceed to Phase 3 Workplan</p>
+        <p class="text-emerald-600 text-sm mt-0.5">The project generates a positive Net Present Value. Investment is recommended.</p>
+      </div>`;
+  } else {
+    banner.className = 'rounded-2xl p-5 flex items-center gap-4 shadow-sm bg-red-50 border border-red-200';
+    banner.innerHTML = `
+      <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-red-800 font-bold text-lg">NOT FEASIBLE — Revise Scope</p>
+        <p class="text-red-600 text-sm mt-0.5">The project yields a negative NPV under current assumptions. Scope, cost or savings targets require revision.</p>
+      </div>`;
+  }
+}
+
+/* ────────────────────────────────────────────
+   RENDER: SUMMARY CARDS
+──────────────────────────────────────────── */
+function renderCards(npv, roiU, roiD, payback, capex, opex, totalSavings, totalNCF) {
+  // NPV
+  const npvEl = document.getElementById('card-npv');
+  npvEl.textContent = fmt(npv);
+  npvEl.className   = npv >= 0 ? 'text-2xl font-bold text-emerald-600' : 'text-2xl font-bold text-red-600';
+
+  // ROI
+  document.getElementById('card-roi-u').textContent = fmtPct(roiU) + ' Undiscounted ROI';
+  document.getElementById('card-roi-u').className   = roiU >= 0 ? 'text-2xl font-bold text-emerald-600' : 'text-2xl font-bold text-red-600';
+  document.getElementById('card-roi-d').textContent = fmtPct(roiD) + ' Discounted ROI (DCF)';
+
+  // Payback
+  const pbEl = document.getElementById('card-payback');
+  if (payback.recovered) {
+    const mo = Math.round(payback.months);
+    const yr = Math.floor(mo / 12);
+    const rem = mo % 12;
+    pbEl.textContent = yr > 0
+      ? `${yr} yr${yr>1?'s':''} ${rem} mo${rem!==1?'s':''}  (${mo} months)`
+      : `${mo} months`;
+    pbEl.className = 'text-2xl font-bold text-emerald-600';
+  } else {
+    pbEl.textContent = 'Beyond 3 Years';
+    pbEl.className   = 'text-2xl font-bold text-red-600';
+  }
+
+  // Small cards
+  document.getElementById('card-capex').textContent      = fmt(capex);
+  document.getElementById('card-opex').textContent       = fmt(opex) + ' /yr';
+  document.getElementById('card-savings').textContent    = fmt(totalSavings);
+  document.getElementById('card-netbenefit').textContent = fmt(totalNCF);
+}
+
+/* ────────────────────────────────────────────
+   RENDER: CBA TABLE
+──────────────────────────────────────────── */
+function renderCBATable(rate, capex, opex, sav, ncf, df, pv, cum) {
+  document.getElementById('cba-rate-label').textContent =
+    'Discount Rate: ' + fmtPct(rate * 100);
+
+  const totalPV  = pv[0] + pv[1] + pv[2];
+  const npv      = -capex + totalPV;
+  const totalNCF = ncf[0] + ncf[1] + ncf[2];
+  const totalSav = sav[0] + sav[1] + sav[2];
+  const totalOpex = opex * 3;
+
+  const rows = [
+    {
+      label: 'Gross Operational Savings',
+      cls:   'font-medium text-emerald-700',
+      y0: '—',
+      y1: fmt(sav[0]),
+      y2: fmt(sav[1]),
+      y3: fmt(sav[2]),
+      tot: fmt(totalSav),
+    },
+    {
+      label: 'System Development & Setup (CapEx)',
+      cls:   'font-medium text-red-600',
+      y0: fmt(-capex),
+      y1: '—',
+      y2: '—',
+      y3: '—',
+      tot: fmt(-capex),
+    },
+    {
+      label: 'Annual Operations (OpEx)',
+      cls:   'text-slate-600',
+      y0: '—',
+      y1: fmt(-opex),
+      y2: fmt(-opex),
+      y3: fmt(-opex),
+      tot: fmt(-totalOpex),
+    },
+    {
+      label: 'Total Annual Costs',
+      cls:   'font-semibold text-slate-700',
+      y0: fmt(-capex),
+      y1: fmt(-opex),
+      y2: fmt(-opex),
+      y3: fmt(-opex),
+      tot: fmt(-capex - totalOpex),
+      sep: true,
+    },
+    {
+      label: 'Net Cash Flow (Un-discounted)',
+      cls:   ncf.every(n=>n>=0) ? 'font-semibold text-emerald-700' : 'font-semibold text-red-600',
+      y0: fmt(-capex),
+      y1: fmt(ncf[0]),
+      y2: fmt(ncf[1]),
+      y3: fmt(ncf[2]),
+      tot: fmt(-capex + totalNCF),
+    },
+    {
+      label: 'Discount Factor (' + fmtPct(rate*100) + ')',
+      cls:   'text-slate-500 italic text-xs',
+      y0: '1.0000',
+      y1: fmtFactor(df[0]),
+      y2: fmtFactor(df[1]),
+      y3: fmtFactor(df[2]),
+      tot: '—',
+    },
+    {
+      label: 'Present Value (DCF)',
+      cls:   'font-medium text-indigo-700',
+      y0: fmt(-capex),
+      y1: fmt(pv[0]),
+      y2: fmt(pv[1]),
+      y3: fmt(pv[2]),
+      tot: fmt(pv[0]+pv[1]+pv[2]),
+      sep: true,
+    },
+    {
+      label: 'Cumulative DCF (NPV Build)',
+      cls:   npv >= 0 ? 'font-bold text-emerald-700' : 'font-bold text-red-600',
+      y0: fmt(-capex),
+      y1: fmt(-capex + cum[0]),
+      y2: fmt(-capex + cum[1]),
+      y3: fmt(npv),
+      tot: fmt(npv),
+      highlight: true,
+    },
+  ];
+
+  const tbody = document.getElementById('cba-tbody');
+  tbody.innerHTML = '';
+  rows.forEach((r, idx) => {
+    const tr = document.createElement('tr');
+    tr.className = 'cba-row' + (r.highlight ? ' bg-indigo-50' : '') + (r.sep ? ' border-t-2 border-slate-200' : '');
+    tr.innerHTML = `
+      <td class="px-4 py-3 ${r.cls} text-xs sm:text-sm border-r border-slate-100 whitespace-nowrap">${r.label}</td>
+      <td class="px-4 py-3 text-right text-xs sm:text-sm text-slate-600 font-mono">${r.y0}</td>
+      <td class="px-4 py-3 text-right text-xs sm:text-sm text-slate-600 font-mono">${r.y1}</td>
+      <td class="px-4 py-3 text-right text-xs sm:text-sm text-slate-600 font-mono">${r.y2}</td>
+      <td class="px-4 py-3 text-right text-xs sm:text-sm text-slate-600 font-mono">${r.y3}</td>
+      <td class="px-4 py-3 text-right text-xs sm:text-sm font-semibold font-mono ${r.highlight ? 'text-indigo-700' : 'text-slate-700'}">${r.tot}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ────────────────────────────────────────────
+   RENDER: EXECUTIVE RECOMMENDATION
+──────────────────────────────────────────── */
+function renderExecRec(npv, roiU, roiD, payback, capex, opex, rate) {
+  const project  = document.getElementById('inp-project').value.trim() || 'this project';
+  const client   = document.getElementById('inp-client').value.trim()  || 'the client';
+  const cur      = currencyLabel();
+  const rateDisp = fmtPct(rate * 100);
+  const npvDisp  = fmt(Math.abs(npv));
+  const roiDisp  = fmtPct(Math.abs(roiD));
+
+  let paybackStr = 'beyond the 3-year modelling horizon';
+  if (payback.recovered) {
+    const mo = Math.round(payback.months);
+    paybackStr = `approximately ${mo} months`;
+  }
+
+  let verdict, colour;
+  if (npv >= 0) {
+    verdict = `Based on the DCF analysis conducted for <strong>${client}</strong>, the <strong>${project}</strong> initiative is assessed as <strong class="text-emerald-700">financially feasible</strong>. `;
+    verdict += `The project recovers its full development capital within <strong>${paybackStr}</strong> and yields a positive 3-year Net Present Value of <strong>${npvDisp}</strong> at a ${rateDisp} hurdle rate. `;
+    verdict += `The discounted return on invested capital stands at <strong>${roiDisp}</strong>, demonstrating compelling value creation relative to the cost of capital. `;
+    verdict += `Tryphene Murugat recommends proceeding to Phase 3 Workplan and stakeholder ratification, subject to standard risk mitigants and governance sign-off.`;
+    colour = 'text-emerald-700';
+  } else {
+    verdict = `Based on the DCF analysis conducted for <strong>${client}</strong>, the <strong>${project}</strong> initiative is assessed as <strong class="text-red-600">not financially feasible</strong> under current assumptions. `;
+    verdict += `The 3-year NPV stands at <strong class="text-red-600">-${npvDisp}</strong> at a ${rateDisp} hurdle rate, and the project does not recover its capital within the modelling horizon. `;
+    verdict += `Tryphene Murugat recommends a scope revision, extension of the modelling horizon beyond 3 years, renegotiation of CapEx or OpEx line items, or a reassessment of achievable savings targets before proceeding to investment approval.`;
+    colour = 'text-red-700';
+  }
+  document.getElementById('exec-rec').innerHTML = verdict;
+}
+
+/* ────────────────────────────────────────────
+   GENERATE PRINT REPORT
+──────────────────────────────────────────── */
+function generateReport() {
+  const r        = window._lastResult;
+  if (!r) return;
+  const project  = document.getElementById('inp-project').value.trim() || 'Unnamed Project';
+  const client   = document.getElementById('inp-client').value.trim()  || 'Unnamed Client';
+  const date     = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+  const cur      = currencyLabel();
+  const rateDisp = fmtPct(r.rate * 100);
+  const npvDisp  = fmt(Math.abs(r.npv));
+  const roiD     = fmtPct(Math.abs(r.roiD));
+  const roiU     = fmtPct(Math.abs(r.roiU));
+  const feasible = r.npv >= 0;
+
+  let paybackStr = 'beyond the 3-year modelling horizon';
+  if (r.payback.recovered) {
+    const mo = Math.round(r.payback.months);
+    paybackStr = `${mo} months`;
+  }
+
+  const execRec = document.getElementById('exec-rec').innerHTML;
+
+  const capexItems = getLineItems('capex-tbody');
+  const opexItems  = getLineItems('opex-tbody');
+
+  // Build CapEx breakdown HTML
+  const capexRows = capexItems.map(i => `
+    <tr style="border-bottom:1px solid #e2e8f0;">
+      <td style="padding:6px 10px;font-size:12px;color:#475569;">${i.desc}</td>
+      <td style="padding:6px 10px;font-size:12px;color:#1e293b;text-align:right;font-family:monospace;">${fmt(i.amt)}</td>
+    </tr>`).join('');
+
+  const opexRows = opexItems.map(i => `
+    <tr style="border-bottom:1px solid #e2e8f0;">
+      <td style="padding:6px 10px;font-size:12px;color:#475569;">${i.desc}</td>
+      <td style="padding:6px 10px;font-size:12px;color:#1e293b;text-align:right;font-family:monospace;">${fmt(i.amt)}</td>
+    </tr>`).join('');
+
+  const pv   = r.pv;
+  const ncf  = r.ncf;
+  const sav  = r.sav;
+  const df   = r.df;
+  const cum  = r.cum;
+  const capex = r.capex;
+  const opex  = r.opex;
+  const npv   = r.npv;
+
+  const totalSav  = sav[0]+sav[1]+sav[2];
+  const totalNCF  = ncf[0]+ncf[1]+ncf[2];
+  const totalOpex = opex*3;
+  const totalPV   = pv[0]+pv[1]+pv[2];
+
+  const verdictColour = feasible ? '#065f46' : '#991b1b';
+  const verdictBg     = feasible ? '#d1fae5' : '#fee2e2';
+  const verdictText   = feasible
+    ? 'FEASIBLE — Proceed to Phase 3 Workplan'
+    : 'NOT FEASIBLE — Revise Scope';
+
+  const html = `
+    <div style="font-family:'Segoe UI',system-ui,sans-serif;color:#1e293b;max-width:900px;margin:0 auto;">
+
+      <!-- Report Header -->
+      <div style="background:#0B1325;color:white;padding:32px 40px;border-radius:8px 8px 0 0;">
+        <p style="font-size:10px;letter-spacing:3px;color:#a5b4fc;margin:0 0 6px;">TRYPHENE MURUGAT · COMMERCIAL PLATFORM v5 · SPRINT 17</p>
+        <h1 style="font-size:24px;font-weight:700;margin:0 0 4px;">Economic Feasibility Model</h1>
+        <p style="font-size:13px;color:#cbd5e1;margin:0;">DCF / Cost-Benefit Analysis Report</p>
+      </div>
+
+      <!-- Meta strip -->
+      <div style="background:#1e293b;color:#94a3b8;padding:12px 40px;display:flex;gap:40px;font-size:11px;">
+        <span><strong style="color:white;">Project:</strong> ${project}</span>
+        <span><strong style="color:white;">Client:</strong> ${client}</span>
+        <span><strong style="color:white;">Date:</strong> ${date}</span>
+        <span><strong style="color:white;">Hurdle Rate:</strong> ${rateDisp}</span>
+        <span><strong style="color:white;">Currency:</strong> ${cur}</span>
+      </div>
+
+      <!-- Verdict -->
+      <div style="background:${verdictBg};border:1.5px solid ${verdictColour}30;padding:16px 40px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:18px;font-weight:700;color:${verdictColour};">${verdictText}</span>
+      </div>
+
+      <!-- Summary Cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:24px 40px 0;">
+        ${summaryCard('Net Present Value (NPV)', fmt(Math.abs(npv)), feasible?'#065f46':'#991b1b', feasible?'#ecfdf5':'#fef2f2')}
+        ${summaryCard('Discounted ROI', roiD, feasible?'#065f46':'#991b1b', feasible?'#ecfdf5':'#fef2f2')}
+        ${summaryCard('Payback Period', paybackStr, '#1e40af', '#eff6ff')}
+        ${summaryCard('Total CapEx', fmt(capex), '#374151', '#f9fafb')}
+        ${summaryCard('Annual OpEx', fmt(opex) + ' /yr', '#374151', '#f9fafb')}
+        ${summaryCard('Undiscounted ROI', roiU, feasible?'#065f46':'#991b1b', feasible?'#ecfdf5':'#fef2f2')}
+      </div>
+
+      <!-- CapEx Breakdown -->
+      <div style="padding:24px 40px 0;">
+        <h3 style="font-size:12px;font-weight:700;letter-spacing:2px;color:#64748b;text-transform:uppercase;margin-bottom:8px;">Year 0 CapEx Breakdown</h3>
+        <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
+          <tr style="background:#f8fafc;">
+            <th style="padding:8px 10px;font-size:11px;text-align:left;color:#94a3b8;font-weight:600;border-bottom:1px solid #e2e8f0;">Description</th>
+            <th style="padding:8px 10px;font-size:11px;text-align:right;color:#94a3b8;font-weight:600;border-bottom:1px solid #e2e8f0;">Amount</th>
+          </tr>
+          ${capexRows}
+          <tr style="background:#f1f5f9;">
+            <td style="padding:8px 10px;font-size:12px;font-weight:700;color:#1e293b;">Total CapEx</td>
+            <td style="padding:8px 10px;font-size:12px;font-weight:700;color:#1e293b;text-align:right;font-family:monospace;">${fmt(capex)}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- OpEx Breakdown -->
+      <div style="padding:16px 40px 0;">
+        <h3 style="font-size:12px;font-weight:700;letter-spacing:2px;color:#64748b;text-transform:uppercase;margin-bottom:8px;">Annual OpEx Breakdown</h3>
+        <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
+          <tr style="background:#f8fafc;">
+            <th style="padding:8px 10px;font-size:11px;text-align:left;color:#94a3b8;font-weight:600;border-bottom:1px solid #e2e8f0;">Description</th>
+            <th style="padding:8px 10px;font-size:11px;text-align:right;color:#94a3b8;font-weight:600;border-bottom:1px solid #e2e8f0;">Annual Amount</th>
+          </tr>
+          ${opexRows}
+          <tr style="background:#f1f5f9;">
+            <td style="padding:8px 10px;font-size:12px;font-weight:700;color:#1e293b;">Total Annual OpEx</td>
+            <td style="padding:8px 10px;font-size:12px;font-weight:700;color:#1e293b;text-align:right;font-family:monospace;">${fmt(opex)}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Master CBA Table -->
+      <div style="padding:24px 40px 0;">
+        <h3 style="font-size:12px;font-weight:700;letter-spacing:2px;color:#64748b;text-transform:uppercase;margin-bottom:8px;">Master Cost-Benefit Analysis Table</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;">
+          <thead>
+            <tr style="background:#0B1325;color:white;">
+              <th style="padding:10px 10px;text-align:left;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Metric</th>
+              <th style="padding:10px 10px;text-align:right;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Year 0</th>
+              <th style="padding:10px 10px;text-align:right;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Year 1</th>
+              <th style="padding:10px 10px;text-align:right;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Year 2</th>
+              <th style="padding:10px 10px;text-align:right;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;">Year 3</th>
+              <th style="padding:10px 10px;text-align:right;font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;">3-Year Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${printCBARow('Gross Operational Savings', '—', fmt(sav[0]), fmt(sav[1]), fmt(sav[2]), fmt(totalSav), '#dcfce7','#15803d','bold')}
+            ${printCBARow('System Development & Setup (CapEx)', fmt(-capex), '—', '—', '—', fmt(-capex), '#fff1f2','#991b1b','normal')}
+            ${printCBARow('Annual Operations (OpEx)', '—', fmt(-opex), fmt(-opex), fmt(-opex), fmt(-totalOpex), '#fafafa','#64748b','normal')}
+            ${printCBARow('Total Annual Costs', fmt(-capex), fmt(-opex), fmt(-opex), fmt(-opex), fmt(-capex-totalOpex), '#f1f5f9','#334155','semibold','border-top:2px solid #cbd5e1;')}
+            ${printCBARow('Net Cash Flow (Un-discounted)', fmt(-capex), fmt(ncf[0]), fmt(ncf[1]), fmt(ncf[2]), fmt(-capex+totalNCF), '#fafafa', ncf.every(n=>n>=0)?'#15803d':'#991b1b','bold')}
+            ${printCBARow('Discount Factor ('+rateDisp+')', '1.0000', fmtFactor(df[0]), fmtFactor(df[1]), fmtFactor(df[2]), '—', '#f8fafc','#94a3b8','normal')}
+            ${printCBARow('Present Value (DCF)', fmt(-capex), fmt(pv[0]), fmt(pv[1]), fmt(pv[2]), fmt(totalPV), '#eff6ff','#4338ca','bold','border-top:2px solid #c7d2fe;')}
+            ${printCBARow('Cumulative DCF (NPV Build)', fmt(-capex), fmt(-capex+cum[0]), fmt(-capex+cum[1]), fmt(npv), fmt(npv), feasible?'#ecfdf5':'#fef2f2', feasible?'#065f46':'#991b1b','bold')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Executive Recommendation -->
+      <div style="padding:24px 40px 0;">
+        <h3 style="font-size:12px;font-weight:700;letter-spacing:2px;color:#64748b;text-transform:uppercase;margin-bottom:8px;">Executive Recommendation</h3>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:16px 20px;font-size:13px;line-height:1.7;color:#374151;">
+          ${execRec}
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="margin-top:32px;padding:16px 40px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+        <p style="font-size:11px;color:#94a3b8;">Tryphene Murugat | Engagement Director | Confidential</p>
+        <p style="font-size:11px;color:#cbd5e1;">Generated: ${date} · Economic Feasibility Model v5</p>
+      </div>
+
+    </div>`;
+
+  document.getElementById('print-view').innerHTML = html;
+
+  // Open print dialog
+  window.print();
+}
+
+function summaryCard(label, value, colour, bg) {
+  return `<div style="background:${bg};border:1px solid ${colour}22;border-radius:8px;padding:14px 16px;">
+    <p style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;margin:0 0 4px;">${label}</p>
+    <p style="font-size:18px;font-weight:700;color:${colour};margin:0;">${value}</p>
+  </div>`;
+}
+
+function printCBARow(label, y0, y1, y2, y3, tot, bg, colour, weight, extraStyle = '') {
+  const fw = weight === 'bold' ? '700' : weight === 'semibold' ? '600' : '400';
+  return `<tr style="background:${bg};${extraStyle}border-bottom:1px solid #f1f5f9;">
+    <td style="padding:8px 10px;font-size:11px;color:${colour};font-weight:${fw};">${label}</td>
+    <td style="padding:8px 10px;font-size:11px;color:#475569;text-align:right;font-family:monospace;">${y0}</td>
+    <td style="padding:8px 10px;font-size:11px;color:#475569;text-align:right;font-family:monospace;">${y1}</td>
+    <td style="padding:8px 10px;font-size:11px;color:#475569;text-align:right;font-family:monospace;">${y2}</td>
+    <td style="padding:8px 10px;font-size:11px;color:#475569;text-align:right;font-family:monospace;">${y3}</td>
+    <td style="padding:8px 10px;font-size:11px;color:${colour};text-align:right;font-family:monospace;font-weight:${fw};">${tot}</td>
+  </tr>`;
+}
+</script>
+
+</body>
+</html>

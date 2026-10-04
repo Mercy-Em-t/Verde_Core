@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2 Requirements Binder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .mono-doc {
+            font-family: "Courier New", Courier, monospace;
+            color: #111;
+            line-height: 1.5;
+            font-size: 12px;
+        }
+        .header-block {
+            white-space: pre;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-book mr-2 text-yellow-500"></i> The Complete Phase 2 Requirements Deliverable Binder</h1>
+            <p class="text-xs text-slate-400">Master Compilation Checklist</p>
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="window.print()" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+                <i class="fa-solid fa-print mr-2"></i> Print Binder Checklist
+            </button>
+        </div>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex justify-center print-container">
+        <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[850px] w-full print:shadow-none print:border-none print:p-0 mono-doc h-max">
+            
+            <div class="header-block text-center text-indigo-900 border-2 border-indigo-900 p-2 bg-indigo-50/50">================================================================================
+           THE COMPLETE PHASE 2 REQUIREMENTS DELIVERABLE BINDER
+================================================================================</div>
+
+            <!-- 1. Strategy Report -->
+            <div class="mb-6">
+                <div class="font-bold text-sm bg-slate-100 p-1 mb-2 border-l-4 border-slate-800 flex items-center">
+                    <input type="checkbox" class="mr-3 w-4 h-4 ml-2"> 1. BUSINESS ANALYSIS STRATEGY REPORT (10–15 Pages)
+                </div>
+                <div class="ml-10 space-y-1">
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Full BPA, BPI, and BPR decomposition for every operational workflow.</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>As-Is vs. To-Be process comparison matrices.</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Root-cause Fishbone / 5-Whys diagnostic logs for every department bottleneck.</span></label>
+                </div>
+            </div>
+
+            <!-- 2. RDD -->
+            <div class="mb-6">
+                <div class="font-bold text-sm bg-teal-50 p-1 mb-2 border-l-4 border-teal-600 flex items-center">
+                    <input type="checkbox" class="mr-3 w-4 h-4 ml-2"> 2. REQUIREMENTS DEFINITION DOCUMENT (RDD-001) (20–30 Pages)
+                </div>
+                <div class="ml-10 space-y-1">
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>40+ granular Functional Requirements (FR-1.1 to FR-40.0).</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>15+ Non-Functional Requirements (Performance, Security, Compliance, Ergonomics).</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Complete Requirements Traceability Matrix (RTM) mapping business drivers to test cases.</span></label>
+                </div>
+            </div>
+
+            <!-- 3. Use Cases -->
+            <div class="mb-6">
+                <div class="font-bold text-sm bg-emerald-50 p-1 mb-2 border-l-4 border-emerald-600 flex items-center">
+                    <input type="checkbox" class="mr-3 w-4 h-4 ml-2"> 3. THE MASTER USE CASE SUITE (12 Comprehensive Use Cases)
+                </div>
+                <p class="ml-10 mb-2 italic text-gray-500 font-bold">* (Each must contain Happy Path + minimum 2-4 detailed Alternative & Exception flows)</p>
+                <div class="ml-10 grid grid-cols-2 gap-2">
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-01: Inbound Gate-In & Vehicle Log</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-02: Purchase Order Validation & Manifest Match</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-03: Barcode Scanning & Physical Tally</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-04: Process Inbound Stock Delivery</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-05: Quarantine Bay Routing & Supervisor Override</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-06: Cryptographic Goods Received Note (GRN) Issuance</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-07: Warehouse Bin Put-Away & Location Assignment</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-08: Wave Picking & Route Sequencing</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-09: Inter-Branch Transfer Dispatch & Driver Sign-Off</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-10: In-Transit Transfer Receipt & Dual Custody Handoff</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-11: Stock Discrepancy & Shrinkage Escalation</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>UC-12: Automated Reorder Point Threshold Evaluation</span></label>
+                </div>
+            </div>
+
+            <!-- 4. DFDs -->
+            <div class="mb-6">
+                <div class="font-bold text-sm bg-rose-50 p-1 mb-2 border-l-4 border-rose-600 flex items-center">
+                    <input type="checkbox" class="mr-3 w-4 h-4 ml-2"> 4. COMPLETE BALANCED PROCESS MODELS (Gane & Sarson DFDs)
+                </div>
+                <div class="ml-10 space-y-1">
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>1 Context Diagram (Global System Boundary)</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>1 Level 0 DFD (All 5 Subsystems decomposed)</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1 text-rose-600"> <span class="font-bold text-rose-800">5 Level 1 DFDs (Subsystems 1.0 through 5.0)</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Level 2 DFDs for complex sub-operations (e.g., Sub-process 2.2 checks)</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Complete Data Dictionary defining every single flow attribute and data store element</span></label>
+                </div>
+            </div>
+
+            <!-- 5. 3NF ERD -->
+            <div class="mb-6">
+                <div class="font-bold text-sm bg-purple-50 p-1 mb-2 border-l-4 border-purple-600 flex items-center">
+                    <input type="checkbox" class="mr-3 w-4 h-4 ml-2"> 5. RELATIONAL DATA ARCHITECTURE (Normalized to 3NF)
+                </div>
+                <div class="ml-10 space-y-1">
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Full entity list (15+ tables: Staff, Roles, Branches, Suppliers, POs, Receipts, LineItems, SKUs, Bins, Transfers, Discrepancies, Audits, etc.)</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Explicit 1NF, 2NF, and 3NF functional dependency proofs for every entity.</span></label>
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Master Crow's Foot Entity Relationship Diagram (ERD).</span></label>
+                </div>
+            </div>
+
+            <!-- 6. Scope Freeze -->
+            <div class="mb-6">
+                <div class="font-bold text-sm bg-indigo-50 p-1 mb-2 border-l-4 border-indigo-600 flex items-center">
+                    <input type="checkbox" class="mr-3 w-4 h-4 ml-2"> 6. THE SYSTEM PROPOSAL & SCOPE FREEZE AGREEMENT (15–20 Pages)
+                </div>
+                <div class="ml-10 space-y-1">
+                    <label class="flex items-start"><input type="checkbox" class="mr-2 mt-1"> <span>Synthesis of all findings, revised financial feasibility, and binding scope lock.</span></label>
+                </div>
+            </div>
+
+            <div class="header-block text-center text-indigo-900 mt-8">================================================================================</div>
+
+        </div>
+    </div>
+</body>
+</html>

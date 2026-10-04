@@ -1,0 +1,10 @@
+import bcrypt from 'bcryptjs';
+import pg from 'pg';
+const {Pool}=pg;
+const email=process.env.ADMIN_EMAIL, password=process.env.ADMIN_PASSWORD;
+if(!email||!password) throw new Error('Set ADMIN_EMAIL and ADMIN_PASSWORD');
+const pool=new Pool({connectionString:process.env.DATABASE_URL});
+const hash=await bcrypt.hash(password,12);
+await pool.query(`INSERT INTO users(email,password_hash,name,role) VALUES($1,$2,$3,'admin') ON CONFLICT(email) DO UPDATE SET password_hash=EXCLUDED.password_hash,role='admin',active=true,updated_at=now()`,[email,hash,'Tryphene Admin']);
+await pool.end();
+console.log('Admin user created/updated:',email);

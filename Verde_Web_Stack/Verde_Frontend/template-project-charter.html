@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Project Charter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .doc-body {
+            font-family: "Times New Roman", Times, serif;
+            color: #111;
+            line-height: 1.5;
+        }
+        .mono-header {
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-file-signature mr-2 text-indigo-400"></i> Phase 1 Executive Project Charter</h1>
+            <p class="text-xs text-slate-400">Binding Engagement Authorization Document</p>
+        </div>
+        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print / Export to PDF
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex gap-6 no-print">
+        
+        <!-- Left Panel: Input Form -->
+        <div class="w-[45%] bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Configuration parameters</h2>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 space-y-8">
+                <!-- Section A -->
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">Section A: Identity</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Project Name</label>
+                            <input type="text" id="inpProject" value="OmniLogix Multi-Branch Platform" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Client Entity</label>
+                            <input type="text" id="inpClient" value="Client Legal Entity Ltd" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Exec Sponsor</label>
+                            <input type="text" id="inpSponsor" value="David Kimani, Chief Operating Officer" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Delivery Partner</label>
+                            <input type="text" id="inpPartner" value="Tryphene Murugat Consultancy" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Engagement Director</label>
+                            <input type="text" id="inpDirector" value="Tryphene Murugat" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Lifecycle Horizon (Wks)</label>
+                            <input type="number" id="inpHrz" value="17" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section B -->
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">Section B: Objectives (JSON)</h3>
+                    <textarea id="inpObjs" rows="5" class="w-full p-2 border border-slate-300 rounded text-xs font-mono" oninput="render()">
+[
+ "Eliminate decentralized, manual paper logging across regional fulfillment hubs.",
+ "Reduce inventory count discrepancy rates from 14% to under 2% within 60 days post-cutover.",
+ "Accelerate dock receiving and stock allocation cycles from 4 hours to 45 minutes.",
+ "Guarantee complete auditability and compliance with Kenyan Data Protection Act (KDPA) standards."
+]
+                    </textarea>
+                </div>
+
+                <!-- Section C -->
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">Section C: Economics</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">CapEx (KES)</label>
+                            <input type="number" id="inpCapex" value="4500000" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Annual OpEx (KES)</label>
+                            <input type="number" id="inpOpex" value="960000" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">3-Year NPV (KES)</label>
+                            <input type="number" id="inpNPV" value="3895493" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Hurdle Rate %</label>
+                            <input type="number" id="inpHurdle" value="10" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">ROI (Undiscounted %)</label>
+                            <input type="text" id="inpRoiU" value="129.3" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">ROI (Discounted %)</label>
+                            <input type="text" id="inpRoiD" value="86.6" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Payback Horizon</label>
+                            <input type="text" id="inpPayback" value="Month 19 (1.59 Years)" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Architecture</label>
+                            <input type="text" id="inpArch" value="PostgreSQL + Node.js/React; REST API sync to legacy Sage 300 ERP; Zebra TC21 Android handheld support." class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section E -->
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">Section E: Commercials</h3>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Phase 2 Weekly Rate (KES)</label>
+                        <input type="number" id="inpRate" value="400000" class="w-full p-2 border border-slate-300 rounded text-xs" oninput="render()">
+                    </div>
+                </div>
+
+            </div>
+            <div class="p-4 border-t border-slate-200">
+                <button onclick="render()" class="w-full bg-[#0B1325] text-white py-2 rounded font-bold text-sm shadow hover:bg-slate-800">Generate Charter Preview</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Output -->
+        <div class="w-[55%] flex justify-center print-container">
+            <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[800px] w-full print:shadow-none print:border-none print:p-0 doc-body text-sm">
+                
+                <div class="mono-header mb-8">
+================================================================================
+                    PHASE 1 EXECUTIVE PROJECT CHARTER
+================================================================================
+PROJECT NAME:       <span id="outProject"></span>
+SPONSORING ENTITY:  <span id="outClient"></span>
+EXECUTIVE SPONSOR:  <span id="outSponsor"></span>
+DELIVERY PARTNER:   <span id="outPartner"></span>
+ENGAGEMENT DIRECTOR:<span id="outDirector"></span>
+BASELINE DATE:      <span id="outDate"></span>
+LIFECYCLE HORIZON:  <span id="outHrz"></span> Calendar Weeks (Critical Path)
+================================================================================
+                </div>
+
+                <h3 class="font-bold mb-2 uppercase">1. Project Purpose & Strategic Objectives</h3>
+                <p class="mb-2">The implementation addresses critical operational deficits:</p>
+                <ul id="outObjs" class="list-disc pl-5 mb-6 space-y-1"></ul>
+
+                <h3 class="font-bold mb-2 uppercase">2. Verified Economic & Technical Baselines (Phase 1 Audit)</h3>
+                <p class="mb-2">The investment viability has been validated via multi-pillar feasibility analysis:</p>
+                <ul class="list-disc pl-5 mb-6 space-y-1">
+                    <li>Development CapEx (Year 0): <strong class="ml-4">KES <span id="outCapex"></span></strong></li>
+                    <li>Annual OpEx (Cloud & SLA): <strong class="ml-4">KES <span id="outOpex"></span> / year</strong></li>
+                    <li>3-Year Net Present Value (NPV): <strong class="ml-4">KES <span id="outNPV"></span> (at <span id="outHurdle"></span>% Hurdle Rate)</strong></li>
+                    <li>Return on Investment (ROI): <strong class="ml-4"><span id="outRoiU"></span>% (Un-discounted) / <span id="outRoiD"></span>% (Discounted)</strong></li>
+                    <li>Payback / Breakeven Horizon: <strong class="ml-4"><span id="outPayback"></span></strong></li>
+                    <li>Architecture Compatibility: <strong class="ml-4 font-normal"><span id="outArch"></span></strong></li>
+                </ul>
+
+                <h3 class="font-bold mb-2 uppercase">3. Master Schedule & Critical Milestones</h3>
+                <p class="mb-2">Execution strictly follows a zero-float critical path schedule:</p>
+                <div class="mono-header mb-6">
+-------------------------------------------------------------------------------
+Phase / Milestone Activity       Target Duration  Target Gate Closure
+-------------------------------------------------------------------------------
+Phase 1: Initiation & Feasibility 2.0 Weeks        Gate 1: Charter & SOW Approved
+Phase 2: Requirements & Modeling  3.0 Weeks        Gate 2: Scope Freeze Sign-Off
+Phase 3: Architecture & Design    3.0 Weeks        Gate 3: System Spec Executed
+Phase 4: Build, QA, & Cutover     9.0 Weeks        Gate 4: UAT Sign-Off & Go-Live
+-------------------------------------------------------------------------------
+                </div>
+
+                <h3 class="font-bold mb-2 uppercase">4. Governance, RACI & Change Defense</h3>
+                <ul class="list-disc pl-5 mb-6 space-y-2 text-justify">
+                    <li><strong>Operational Orchestration:</strong> Delivery utilizes the Solo-Manager Operating Framework. The Engagement Director retains sole veto power (Accountable) over architecture, scope, and quality gates, deploying vetted Specialist Agents (Analysts, Architects, Engineers).</li>
+                    <li><strong>Anti-Scope Creep Policy:</strong> All functional requirements become immutable upon Phase Gate 2 sign-off. Additions will be evaluated through a Change Order Request (COR) and funded 100% upfront on a Time & Materials basis before work commences.</li>
+                    <li><strong>Direct Contractor Instructions:</strong> Direct technical instructions from Client staff to subcontracted personnel without the Engagement Director's written consent are void.</li>
+                    <li><strong>Client Delay Guardrail:</strong> Approvals exceeding 5 business days pause delivery; stalls exceeding 10 business days incur a KES 150,000 project reactivation fee.</li>
+                    <li><strong>Communication Protocol:</strong> All formal project communications, scope discussions, and blocker escalations occur exclusively through the Engagement Director via designated project channels.</li>
+                </ul>
+
+                <h3 class="font-bold mb-2 uppercase">5. Commercial Authorization (Phase Gate 1 Transition)</h3>
+                <p class="text-justify mb-8">
+                    Execution of this Project Charter formally concludes Phase 1 (Planning & Feasibility). 
+                    Authorization is hereby granted to release the weekly Time & Materials retainer for 
+                    Phase 2 (Requirements Analysis) at <strong>KES <span id="outRate"></span> / week</strong>, with stakeholder Joint Application 
+                    Development (JAD) discovery commencing immediately upon fund clearance.
+                </p>
+
+                <div class="mono-header">
+================================================================================
+FOR THE CLIENT:
+================================================================================
+Authorized Name:      __________________________________________________________
+Title / Designation:  __________________________________________________________
+Signature:            __________________________________________________________
+Date:                 <span id="outDate2"></span>
+================================================================================
+FOR THE CONSULTANCY:
+================================================================================
+Authorized Name:      <span id="outDirector2"></span>
+Title / Designation:  Engagement Director & Principal Systems Architect
+Signature:            __________________________________________________________
+Date:                 <span id="outDate3"></span>
+================================================================================
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('outDate').innerText = new Date().toLocaleDateString('en-GB');
+        document.getElementById('outDate2').innerText = new Date().toLocaleDateString('en-GB');
+        document.getElementById('outDate3').innerText = new Date().toLocaleDateString('en-GB');
+
+        function fmtNum(val) {
+            return Number(val).toLocaleString();
+        }
+
+        function render() {
+            document.getElementById('outProject').innerText = document.getElementById('inpProject').value.padEnd(20);
+            document.getElementById('outClient').innerText = document.getElementById('inpClient').value.padEnd(20);
+            document.getElementById('outSponsor').innerText = document.getElementById('inpSponsor').value.padEnd(20);
+            document.getElementById('outPartner').innerText = document.getElementById('inpPartner').value.padEnd(20);
+            
+            const director = document.getElementById('inpDirector').value;
+            document.getElementById('outDirector').innerText = director.padEnd(20);
+            document.getElementById('outDirector2').innerText = director;
+            
+            document.getElementById('outHrz').innerText = document.getElementById('inpHrz').value;
+            
+            document.getElementById('outCapex').innerText = fmtNum(document.getElementById('inpCapex').value);
+            document.getElementById('outOpex').innerText = fmtNum(document.getElementById('inpOpex').value);
+            document.getElementById('outNPV').innerText = fmtNum(document.getElementById('inpNPV').value);
+            document.getElementById('outHurdle').innerText = document.getElementById('inpHurdle').value;
+            document.getElementById('outRoiU').innerText = document.getElementById('inpRoiU').value;
+            document.getElementById('outRoiD').innerText = document.getElementById('inpRoiD').value;
+            document.getElementById('outPayback').innerText = document.getElementById('inpPayback').value;
+            document.getElementById('outArch').innerText = document.getElementById('inpArch').value;
+            
+            document.getElementById('outRate').innerText = fmtNum(document.getElementById('inpRate').value);
+
+            try {
+                const objs = JSON.parse(document.getElementById('inpObjs').value);
+                let html = '';
+                objs.forEach(o => {
+                    html += `<li>${o}</li>`;
+                });
+                document.getElementById('outObjs').innerHTML = html;
+            } catch(e) {}
+        }
+        
+        render();
+    </script>
+</body>
+</html>

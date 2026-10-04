@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WBS &amp; Master Project Schedule | Tryphene Murugat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ── Base ── */
+    body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',system-ui,sans-serif; }
+
+    /* ── Scrollbars ── */
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:#1e293b; }
+    ::-webkit-scrollbar-thumb { background:#334155; border-radius:3px; }
+
+    /* ── Accordion ── */
+    .accordion-body { display:none; }
+    .accordion-body.open { display:block; }
+    .accordion-toggle .chevron { transition:transform .25s; }
+    .accordion-toggle.open .chevron { transform:rotate(180deg); }
+
+    /* ── Gantt ── */
+    #gantt-container { position:relative; overflow-x:auto; }
+    .gantt-grid { position:relative; min-width:720px; }
+    .gantt-row { display:flex; align-items:center; border-bottom:1px solid #1e293b; height:38px; }
+    .gantt-label { flex-shrink:0; width:200px; padding:0 10px; font-size:11px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; border-right:1px solid #1e293b; color:#94a3b8; height:100%; display:flex; align-items:center; gap:4px; }
+    .gantt-label .tid { font-weight:700; font-size:10px; }
+    .gantt-track { flex:1; position:relative; height:100%; }
+    .gantt-bar { position:absolute; height:22px; top:50%; transform:translateY(-50%); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; overflow:hidden; white-space:nowrap; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.4); transition:filter .15s; }
+    .gantt-bar:hover { filter:brightness(1.15); }
+    .gantt-bar.non-critical { background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,.12) 4px, rgba(255,255,255,.12) 8px); }
+    .gantt-bar .float-badge { position:absolute; right:4px; font-size:8px; opacity:.85; font-weight:600; background:rgba(0,0,0,.3); padding:1px 3px; border-radius:2px; }
+    .gantt-header-row { display:flex; border-bottom:2px solid #334155; height:30px; }
+    .gantt-header-label { flex-shrink:0; width:200px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; color:#64748b; border-right:1px solid #1e293b; }
+    .gantt-header-weeks { flex:1; position:relative; display:flex; }
+    .gantt-week-cell { flex:1; display:flex; align-items:center; justify-content:center; font-size:9px; color:#64748b; border-right:1px solid #0f172a; }
+    .gantt-gate-line { position:absolute; top:0; bottom:0; width:2px; background:transparent; border-left:2px dashed; z-index:10; pointer-events:none; }
+    .gantt-gate-label { position:absolute; top:2px; font-size:8px; font-weight:700; white-space:nowrap; padding:1px 3px; border-radius:2px; transform:translateX(-50%); }
+
+    /* ── WBS Tree ── */
+    .wbs-phase-header { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:8px; cursor:pointer; }
+    .wbs-task-row { display:flex; align-items:flex-start; gap-8 padding:6px 14px 6px 32px; border-left:2px solid; }
+    .wbs-gate { border:1.5px dashed; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:8px; margin:6px 14px; font-size:12px; font-weight:600; }
+
+    /* ── PERT Table ── */
+    .pert-table th { background:#1e293b; color:#94a3b8; font-size:11px; font-weight:600; padding:8px 12px; text-align:left; border-bottom:1px solid #334155; }
+    .pert-table td { padding:7px 12px; font-size:12px; border-bottom:1px solid #1e293b; }
+    .pert-table tr:hover td { background:#1e293b55; }
+
+    /* ── Inputs ── */
+    input[type=text], input[type=number], input[type=date], input[type=checkbox] { background:#1e293b; border:1px solid #334155; color:#e2e8f0; border-radius:5px; padding:4px 8px; font-size:12px; width:100%; outline:none; }
+    input[type=text]:focus, input[type=number]:focus, input[type=date]:focus { border-color:#6366f1; box-shadow:0 0 0 2px rgba(99,102,241,.25); }
+    input[type=checkbox] { width:auto; cursor:pointer; accent-color:#6366f1; }
+    label { font-size:11px; color:#94a3b8; margin-bottom:2px; display:block; }
+
+    /* ── Print ── */
+    @media print {
+      body { background:#fff !important; color:#000 !important; }
+      .no-print { display:none !important; }
+      #left-panel { display:none !important; }
+      #right-panel { width:100% !important; }
+      .gantt-bar { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .phase-header-slate { background:#334155 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- ═══════════════════════════════════ HEADER ═══════════════════════════════════ -->
+<header class="sticky top-0 z-50 no-print" style="background:#0B1325; border-bottom:1px solid #1e293b;">
+  <div class="max-w-screen-2xl mx-auto px-6 py-3 flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+        <span style="color:#6366f1;">⬡</span> WBS &amp; Master Project Schedule
+      </h1>
+      <p class="text-xs text-slate-400 mt-0.5">Plug &amp; Play Project Workplan Template · Tryphene Murugat Consulting</p>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="generateSchedule()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition flex items-center gap-2">
+        ⚡ Generate Full Schedule
+      </button>
+      <button onclick="exportSchedule()" class="bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition flex items-center gap-2">
+        ⬇ Export Schedule
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════ MAIN LAYOUT ══════════════════════════════ -->
+<div class="max-w-screen-2xl mx-auto flex gap-0" style="min-height:calc(100vh - 61px);">
+
+  <!-- ══════════ LEFT PANEL ══════════ -->
+  <aside id="left-panel" class="no-print flex-shrink-0 overflow-y-auto border-r border-slate-800 px-4 py-5" style="width:40%; background:#0d1a2e;">
+
+    <!-- Project Metadata -->
+    <div class="mb-5">
+      <h2 class="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3 flex items-center gap-2">
+        <span>📋</span> Project Metadata
+      </h2>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="col-span-2">
+          <label>Project Name</label>
+          <input type="text" id="meta-project" value="OmniLogix Multi-Branch Platform" />
+        </div>
+        <div class="col-span-2">
+          <label>Client Name</label>
+          <input type="text" id="meta-client" value="OmniLogix Retail Group" />
+        </div>
+        <div>
+          <label>Total Weeks</label>
+          <input type="number" id="meta-weeks" value="17" min="1" max="104" />
+        </div>
+        <div>
+          <label>Start Date</label>
+          <input type="date" id="meta-start" value="2026-10-05" />
+        </div>
+        <div>
+          <label>Engagement Director</label>
+          <input type="text" id="meta-director" value="Tryphene Murugat" />
+        </div>
+        <div>
+          <label>Currency</label>
+          <input type="text" id="meta-currency" value="KES" />
+        </div>
+      </div>
+    </div>
+
+    <hr class="border-slate-800 mb-4" />
+
+    <!-- Phase Accordions -->
+    <div id="phases-container">
+      <!-- Generated by JS -->
+    </div>
+
+    <div class="mt-4 text-center">
+      <button onclick="generateSchedule()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg shadow w-full transition">
+        ⚡ Generate Full Schedule
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ══════════ RIGHT PANEL ══════════ -->
+  <main id="right-panel" class="flex-1 overflow-y-auto px-5 py-5" style="background:#0f172a;">
+    <div id="output-area">
+      <!-- Placeholder before first generate -->
+      <div class="flex flex-col items-center justify-center h-full py-24 text-center">
+        <div class="text-6xl mb-4 opacity-30">📊</div>
+        <p class="text-slate-500 text-sm font-medium">Click <span class="text-indigo-400 font-bold">Generate Full Schedule</span> to render the WBS, Gantt, PERT table &amp; Critical Path summary.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- ═══════════════════════════════════ JAVASCRIPT ═══════════════════════════════ -->
+<script>
+// ─────────────────────────────────────────────────────────────────────────────────
+// DATA MODEL
+// ─────────────────────────────────────────────────────────────────────────────────
+const PHASES_DEFAULT = [
+  {
+    id: 'p1',
+    name: 'Phase 1 — Initiation & Scoping',
+    budget: 'KES 800,000',
+    gate: 'GATE 1: Project Charter Execution & Stakeholder Sign-Off',
+    gateWeek: 2,
+    color: 'slate',
+    colorHex: '#475569',
+    colorLight: '#64748b',
+    colorBorder: '#334155',
+    colorBg: '#1e293b',
+    tasks: [
+      { id:'T01', wbs:'1.1-1.2', desc:'System Request & Multi-Pillar Feasibility Audit', dur:1.0, float:0.0, critical:true,  startWk:1   },
+      { id:'T02', wbs:'1.3-1.4', desc:'Workplan, Staffing & Governance Setup',           dur:1.0, float:0.0, critical:true,  startWk:2   },
+    ]
+  },
+  {
+    id: 'p2',
+    name: 'Phase 2 — Requirements & Analysis',
+    budget: 'Phase 1/2 Pool',
+    gate: 'GATE 2: Requirements Baseline & Analysis Model Approval',
+    gateWeek: 6,
+    color: 'indigo',
+    colorHex: '#4f46e5',
+    colorLight: '#6366f1',
+    colorBorder: '#4338ca',
+    colorBg: '#1e1b4b',
+    tasks: [
+      { id:'T03', wbs:'2.1',     desc:'Requirements Intake & JAD Facilitation',            dur:1.5, float:0.0, critical:true,  startWk:3   },
+      { id:'T04', wbs:'2.2-2.3', desc:'Use Cases & Balanced Process Modeling (DFDs)',      dur:1.5, float:0.0, critical:true,  startWk:4.5 },
+      { id:'T05', wbs:'2.3.3',   desc:'Relational Data Modeling (3NF ERD)',                dur:1.0, float:0.5, critical:false, startWk:3   },
+    ]
+  },
+  {
+    id: 'p3',
+    name: 'Phase 3 — Architecture & Design',
+    budget: 'KES 1,000,000',
+    gate: 'GATE 3: Architecture Baseline & Design Package Approval',
+    gateWeek: 9.5,
+    color: 'amber',
+    colorHex: '#d97706',
+    colorLight: '#f59e0b',
+    colorBorder: '#b45309',
+    colorBg: '#1c1407',
+    tasks: [
+      { id:'T06', wbs:'3.1', desc:'Cloud Topology & Hardware Sizing Specs',          dur:1.0, float:0.5, critical:false, startWk:6   },
+      { id:'T07', wbs:'3.2', desc:'Handheld Wireframing & Usability Standards',      dur:1.5, float:0.0, critical:true,  startWk:6   },
+      { id:'T08', wbs:'3.3', desc:'Physical DDL Schema & Program Specs',             dur:1.5, float:0.0, critical:true,  startWk:8   },
+    ]
+  },
+  {
+    id: 'p4',
+    name: 'Phase 4 — Build, Test & Deployment',
+    budget: 'KES 2,200,000 + KES 500,000 HW',
+    gate: 'GATE 4: Production Go-Live & Client Acceptance',
+    gateWeek: 17,
+    color: 'emerald',
+    colorHex: '#059669',
+    colorLight: '#10b981',
+    colorBorder: '#047857',
+    colorBg: '#052e16',
+    tasks: [
+      { id:'T09', wbs:'4.1.1', desc:'Backend API & Ledger Engine Construction',          dur:3.0, float:0.0, critical:true,  startWk:9.5  },
+      { id:'T10', wbs:'4.1.2', desc:'Handheld PWA Front-End & Sync Buffer',              dur:3.0, float:0.0, critical:true,  startWk:11   },
+      { id:'T11', wbs:'4.2',   desc:'Automated QA, Integration & Load Benchmarks',       dur:1.5, float:0.0, critical:true,  startWk:15   },
+      { id:'T12', wbs:'4.3',   desc:'ETL Migration, Floor Training & Live Cutover',      dur:1.5, float:0.0, critical:true,  startWk:16.5 },
+    ]
+  }
+];
+
+// PERT predecessors map
+const PREDECESSORS = {
+  T01:'-', T02:'T01', T03:'T02', T04:'T03', T05:'T03',
+  T06:'T05', T07:'T04', T08:'T07', T09:'T08', T10:'T09',
+  T11:'T10', T12:'T11'
+};
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// INIT — build left panel from data
+// ─────────────────────────────────────────────────────────────────────────────────
+function initLeftPanel() {
+  const container = document.getElementById('phases-container');
+  container.innerHTML = '';
+  PHASES_DEFAULT.forEach((phase, pi) => {
+    container.appendChild(buildPhaseAccordion(phase, pi));
+  });
+}
+
+function buildPhaseAccordion(phase, pi) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'mb-3 rounded-lg overflow-hidden border border-slate-800';
+  wrapper.id = `phase-accordion-${phase.id}`;
+
+  // Header toggle
+  const toggle = document.createElement('div');
+  toggle.className = 'accordion-toggle flex items-center justify-between px-4 py-3 cursor-pointer select-none';
+  toggle.style.background = phase.colorBg;
+  toggle.style.borderLeft = `4px solid ${phase.colorHex}`;
+  toggle.innerHTML = `
+    <div class="flex items-center gap-2 flex-1 min-w-0">
+      <span class="text-xs font-bold px-2 py-0.5 rounded" style="background:${phase.colorHex}; color:#fff;">P${pi+1}</span>
+      <input type="text" data-phase="${phase.id}" data-field="name"
+        value="${phase.name}"
+        class="bg-transparent border-none text-white text-sm font-semibold flex-1 min-w-0 outline-none focus:bg-slate-700 focus:px-1 rounded transition-all"
+        onclick="event.stopPropagation()" />
+    </div>
+    <svg class="chevron w-4 h-4 text-slate-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>`;
+  toggle.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    toggle.classList.toggle('open');
+    body.classList.toggle('open');
+  });
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'accordion-body open px-4 py-3 space-y-3';
+  body.style.background = '#0d1a2e';
+
+  // Phase meta fields
+  body.innerHTML = `
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <label>Phase Budget</label>
+        <input type="text" data-phase="${phase.id}" data-field="budget" value="${phase.budget}" />
+      </div>
+      <div>
+        <label>Gate Week</label>
+        <input type="number" data-phase="${phase.id}" data-field="gateWeek" value="${phase.gateWeek}" step="0.5" min="0" />
+      </div>
+      <div class="col-span-2">
+        <label>Gate Label</label>
+        <input type="text" data-phase="${phase.id}" data-field="gate" value="${phase.gate}" />
+      </div>
+    </div>
+    <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-2 mb-1">Tasks</div>
+    <div id="task-list-${phase.id}" class="space-y-2"></div>`;
+
+  // Tasks
+  const taskList = body.querySelector(`#task-list-${phase.id}`);
+  phase.tasks.forEach((task, ti) => {
+    taskList.appendChild(buildTaskRow(task, phase, ti));
+  });
+
+  wrapper.appendChild(toggle);
+  wrapper.appendChild(body);
+  return wrapper;
+}
+
+function buildTaskRow(task, phase, ti) {
+  const row = document.createElement('div');
+  row.className = 'rounded p-2 space-y-1.5';
+  row.style.background = '#111827';
+  row.style.borderLeft = `3px solid ${task.critical ? phase.colorHex : '#475569'}`;
+  row.id = `task-row-${task.id}`;
+  row.innerHTML = `
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:${phase.colorHex}22; color:${phase.colorLight}; border:1px solid ${phase.colorBorder};">${task.id}</span>
+      <input type="text" data-task="${task.id}" data-field="desc" value="${task.desc}"
+        class="flex-1 text-xs text-slate-300 bg-transparent border-b border-slate-700 focus:border-indigo-500 outline-none py-0.5" />
+    </div>
+    <div class="grid grid-cols-4 gap-1.5">
+      <div>
+        <label>WBS Ref</label>
+        <input type="text" data-task="${task.id}" data-field="wbs" value="${task.wbs}" />
+      </div>
+      <div>
+        <label>Duration (wk)</label>
+        <input type="number" data-task="${task.id}" data-field="dur" value="${task.dur}" step="0.5" min="0.5" />
+      </div>
+      <div>
+        <label>Float (wk)</label>
+        <input type="number" data-task="${task.id}" data-field="float" value="${task.float}" step="0.5" min="0" />
+      </div>
+      <div>
+        <label>Start Wk</label>
+        <input type="number" data-task="${task.id}" data-field="startWk" value="${task.startWk}" step="0.5" min="1" />
+      </div>
+    </div>
+    <div class="flex items-center gap-2 mt-1">
+      <input type="checkbox" data-task="${task.id}" data-field="critical" ${task.critical ? 'checked' : ''} />
+      <label class="!mb-0 text-xs ${task.critical ? 'text-red-400' : 'text-slate-500'}">Critical Path</label>
+    </div>`;
+  return row;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// READ DATA FROM DOM
+// ─────────────────────────────────────────────────────────────────────────────────
+function readData() {
+  const totalWeeks = parseInt(document.getElementById('meta-weeks').value) || 17;
+  const projectName = document.getElementById('meta-project').value;
+  const clientName  = document.getElementById('meta-client').value;
+  const startDate   = document.getElementById('meta-start').value;
+  const director    = document.getElementById('meta-director').value;
+  const currency    = document.getElementById('meta-currency').value;
+
+  const phases = PHASES_DEFAULT.map(phase => {
+    const nameEl   = document.querySelector(`[data-phase="${phase.id}"][data-field="name"]`);
+    const budgetEl = document.querySelector(`[data-phase="${phase.id}"][data-field="budget"]`);
+    const gateEl   = document.querySelector(`[data-phase="${phase.id}"][data-field="gate"]`);
+    const gateWkEl = document.querySelector(`[data-phase="${phase.id}"][data-field="gateWeek"]`);
+    const tasks = phase.tasks.map(task => {
+      const descEl     = document.querySelector(`[data-task="${task.id}"][data-field="desc"]`);
+      const wbsEl      = document.querySelector(`[data-task="${task.id}"][data-field="wbs"]`);
+      const durEl      = document.querySelector(`[data-task="${task.id}"][data-field="dur"]`);
+      const floatEl    = document.querySelector(`[data-task="${task.id}"][data-field="float"]`);
+      const startWkEl  = document.querySelector(`[data-task="${task.id}"][data-field="startWk"]`);
+      const criticalEl = document.querySelector(`[data-task="${task.id}"][data-field="critical"]`);
+      return {
+        ...task,
+        desc:     descEl     ? descEl.value     : task.desc,
+        wbs:      wbsEl      ? wbsEl.value      : task.wbs,
+        dur:      durEl      ? parseFloat(durEl.value)     : task.dur,
+        float:    floatEl    ? parseFloat(floatEl.value)   : task.float,
+        startWk:  startWkEl  ? parseFloat(startWkEl.value) : task.startWk,
+        critical: criticalEl ? criticalEl.checked           : task.critical,
+      };
+    });
+    return {
+      ...phase,
+      name:     nameEl   ? nameEl.value               : phase.name,
+      budget:   budgetEl ? budgetEl.value              : phase.budget,
+      gate:     gateEl   ? gateEl.value               : phase.gate,
+      gateWeek: gateWkEl ? parseFloat(gateWkEl.value) : phase.gateWeek,
+      tasks
+    };
+  });
+
+  return { totalWeeks, projectName, clientName, startDate, director, currency, phases };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// GENERATE SCHEDULE
+// ─────────────────────────────────────────────────────────────────────────────────
+function generateSchedule() {
+  const data = readData();
+  const allTasks = data.phases.flatMap(p => p.tasks.map(t => ({...t, phase: p})));
+  const criticalTasks = allTasks.filter(t => t.critical);
+  const criticalEnd = criticalTasks.length ? Math.max(...criticalTasks.map(t => t.startWk + t.dur - 1)) : 0;
+
+  const outputArea = document.getElementById('output-area');
+  outputArea.innerHTML = `
+    <div class="space-y-8">
+      ${renderProjectBanner(data)}
+      ${renderWBSTree(data)}
+      ${renderGantt(data, allTasks)}
+      ${renderPERTTable(allTasks)}
+      ${renderCriticalPathCallout(data, criticalTasks, criticalEnd)}
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// PROJECT BANNER
+// ─────────────────────────────────────────────────────────────────────────────────
+function renderProjectBanner(data) {
+  const today = new Date().toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+  return `
+  <div class="rounded-xl border border-indigo-800 p-5" style="background:#0f172a;">
+    <div class="flex items-start justify-between flex-wrap gap-4">
+      <div>
+        <h2 class="text-2xl font-bold text-white">${escHtml(data.projectName)}</h2>
+        <p class="text-sm text-slate-400 mt-1">Client: <span class="text-indigo-300 font-semibold">${escHtml(data.clientName)}</span>
+          &nbsp;·&nbsp; Engagement Director: <span class="text-indigo-300 font-semibold">${escHtml(data.director)}</span>
+          &nbsp;·&nbsp; Start: <span class="text-slate-300">${escHtml(data.startDate)}</span>
+          &nbsp;·&nbsp; Duration: <span class="text-emerald-400 font-bold">${data.totalWeeks} Weeks</span>
+        </p>
+      </div>
+      <div class="text-right text-xs text-slate-500">
+        <div>Generated: ${today}</div>
+        <div class="mt-0.5 font-semibold text-slate-400">Tryphene Murugat Consulting · CONFIDENTIAL</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// WBS TREE
+// ─────────────────────────────────────────────────────────────────────────────────
+function renderWBSTree(data) {
+  const phaseBlocks = data.phases.map((phase, pi) => {
+    const taskRows = phase.tasks.map(task => `
+      <div class="flex items-start gap-3 py-2 px-4 pl-10 border-l-2 hover:bg-slate-800/40 transition rounded-r"
+           style="border-color:${task.critical ? phase.colorHex : '#334155'}">
+        <span class="text-xs font-bold mt-0.5 px-1.5 py-0.5 rounded flex-shrink-0"
+              style="background:${phase.colorHex}22; color:${phase.colorLight}; border:1px solid ${phase.colorBorder};">${escHtml(task.id)}</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-semibold text-slate-200 leading-snug">${escHtml(task.desc)}</div>
+          <div class="text-xs text-slate-500 mt-0.5">
+            WBS <span class="text-slate-400">${escHtml(task.wbs)}</span>
+            &nbsp;·&nbsp; <span class="text-slate-300">${task.dur} wk${task.dur !== 1 ? 's' : ''}</span>
+            &nbsp;·&nbsp; Float: <span class="${task.float === 0 ? 'text-red-400' : 'text-amber-400'}">${task.float} wk</span>
+            &nbsp;·&nbsp; <span class="${task.critical ? 'text-red-400 font-bold' : 'text-slate-500'}">
+              ${task.critical ? '🔴 Critical' : '⚪ Non-Critical'}
+            </span>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 flex-shrink-0 mt-0.5">Wk ${task.startWk}–${task.startWk + task.dur}</div>
+      </div>`).join('');
+
+    const gateRow = `
+      <div class="mx-4 my-2 flex items-center gap-3 px-4 py-2.5 rounded-lg"
+           style="border:1.5px dashed ${phase.colorBorder}; background:${phase.colorBg};">
+        <span class="text-base">⚡</span>
+        <div>
+          <div class="text-xs font-bold" style="color:${phase.colorLight};">${escHtml(phase.gate)}</div>
+          <div class="text-xs text-slate-500 mt-0.5">End of Week ${phase.gateWeek} milestone</div>
+        </div>
+        <span class="ml-auto text-xs font-bold px-2 py-1 rounded" style="background:${phase.colorHex}; color:#fff;">G${pi+1}</span>
+      </div>`;
+
+    return `
+      <div class="rounded-xl overflow-hidden border" style="border-color:${phase.colorBorder};">
+        <div class="flex items-center gap-3 px-4 py-3 cursor-pointer select-none wbs-phase-toggle"
+             style="background:${phase.colorBg}; border-left:5px solid ${phase.colorHex};"
+             onclick="this.nextElementSibling.classList.toggle('hidden')">
+          <span class="text-sm font-bold px-2 py-0.5 rounded" style="background:${phase.colorHex}; color:#fff;">P${pi+1}</span>
+          <span class="text-sm font-semibold text-white flex-1">${escHtml(phase.name)}</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded" style="background:${phase.colorHex}22; color:${phase.colorLight};">${escHtml(phase.budget)}</span>
+          <span class="text-xs text-slate-500">${phase.tasks.length} tasks</span>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <div class="py-1 space-y-0.5" style="background:#0d1a2e;">
+          ${taskRows}
+          ${gateRow}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+  <section>
+    <div class="flex items-center gap-3 mb-4">
+      <h3 class="text-base font-bold text-white flex items-center gap-2">🗂 Work Breakdown Structure</h3>
+      <span class="text-xs text-slate-500">Click phase headers to collapse</span>
+    </div>
+    <div class="space-y-3">${phaseBlocks}</div>
+  </section>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// GANTT CHART
+// ─────────────────────────────────────────────────────────────────────────────────
+function renderGantt(data, allTasks) {
+  const W = data.totalWeeks;
+
+  // Week header cells
+  let weekCells = '';
+  for (let i = 1; i <= W; i++) {
+    weekCells += `<div class="gantt-week-cell">${i}</div>`;
+  }
+
+  // Task rows
+  const taskRows = allTasks.map(task => {
+    const leftPct  = ((task.startWk - 1) / W) * 100;
+    const widthPct = (task.dur / W) * 100;
+    const shortDesc = task.desc.length > 28 ? task.desc.substring(0, 27) + '…' : task.desc;
+    const floatLabel = !task.critical && task.float > 0
+      ? `<span class="float-badge">+${task.float}w</span>` : '';
+    const barClass = task.critical ? 'gantt-bar' : 'gantt-bar non-critical';
+    const opacity  = task.critical ? '1' : '0.75';
+
+    return `
+      <div class="gantt-row">
+        <div class="gantt-label">
+          <span class="tid px-1 py-0.5 rounded text-white" style="background:${task.phase.colorHex}; font-size:9px;">${task.id}</span>
+          <span class="text-slate-400 truncate" style="font-size:10px;" title="${escHtml(task.desc)}">${escHtml(shortDesc)}</span>
+        </div>
+        <div class="gantt-track" style="position:relative;">
+          <div class="${barClass}"
+               title="${escHtml(task.id)}: ${escHtml(task.desc)} | Wk ${task.startWk}–${task.startWk + task.dur} | Float: ${task.float}w"
+               style="left:${leftPct.toFixed(3)}%; width:${widthPct.toFixed(3)}%; background:${task.phase.colorHex}; opacity:${opacity};">
+            <span style="padding:0 6px; font-size:10px; white-space:nowrap;">${task.id}</span>
+            ${floatLabel}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Gate lines (rendered on the track area)
+  const gateLines = data.phases.map((phase, pi) => {
+    const leftPct = (phase.gateWeek / W) * 100;
+    const gateColors = ['#64748b','#6366f1','#f59e0b','#10b981'];
+    const col = gateColors[pi] || '#6366f1';
+    return `
+      <div class="gantt-gate-line" style="left:${leftPct.toFixed(3)}%; border-color:${col}; top:0; bottom:0; position:absolute;">
+        <div class="gantt-gate-label" style="top:-22px; left:50%; background:${col}; color:#fff;">G${pi+1}</div>
+      </div>`;
+  }).join('');
+
+  // Legend
+  const legendItems = data.phases.map((p, pi) => `
+    <div class="flex items-center gap-1.5">
+      <div class="w-3 h-3 rounded" style="background:${p.colorHex};"></div>
+      <span class="text-xs text-slate-400">P${pi+1} ${p.name.replace(/Phase \d+ — /,'')}</span>
+    </div>`).join('');
+
+  return `
+  <section>
+    <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">📅 Master Gantt Chart</h3>
+    <div class="rounded-xl border border-slate-800 overflow-hidden" style="background:#0d1827;">
+      <div id="gantt-container">
+        <div class="gantt-grid" style="min-width:${Math.max(720, W * 40)}px;">
+          <!-- Header -->
+          <div class="gantt-header-row" style="padding-top:24px; position:relative;">
+            <div class="gantt-header-label">Task / Activity</div>
+            <div class="gantt-header-weeks" style="position:relative;">
+              ${weekCells}
+              ${gateLines}
+            </div>
+          </div>
+          <!-- Rows -->
+          <div style="position:relative;">
+            ${taskRows}
+          </div>
+        </div>
+      </div>
+      <!-- Legend -->
+      <div class="flex flex-wrap gap-4 px-4 py-3 border-t border-slate-800">
+        ${legendItems}
+        <div class="flex items-center gap-1.5">
+          <div class="w-5 h-3 rounded" style="background:repeating-linear-gradient(45deg,#475569,#475569 3px,#64748b 3px,#64748b 6px);"></div>
+          <span class="text-xs text-slate-400">Non-Critical (striped)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <div class="w-2 h-3" style="border-left:2px dashed #6366f1;"></div>
+          <span class="text-xs text-slate-400">Gate Milestone</span>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// PERT TABLE
+// ─────────────────────────────────────────────────────────────────────────────────
+function renderPERTTable(allTasks) {
+  const rows = allTasks.map(task => `
+    <tr>
+      <td>
+        <span class="px-1.5 py-0.5 rounded text-xs font-bold text-white" style="background:${task.phase.colorHex};">${escHtml(task.id)}</span>
+      </td>
+      <td class="text-slate-400 font-mono text-xs">${escHtml(task.wbs)}</td>
+      <td class="text-slate-200">${escHtml(task.desc)}</td>
+      <td class="text-slate-400 text-xs">${escHtml(PREDECESSORS[task.id] || '-')}</td>
+      <td class="text-center text-slate-300 font-semibold">${task.dur} wk</td>
+      <td class="text-center">
+        <span class="${task.float === 0 ? 'text-red-400' : 'text-amber-400'} font-semibold">${task.float} wk</span>
+      </td>
+      <td class="text-center">
+        ${task.critical
+          ? '<span class="px-2 py-0.5 rounded text-xs font-bold text-red-300" style="background:#7f1d1d55; border:1px solid #991b1b;">YES</span>'
+          : '<span class="text-xs text-slate-500">No</span>'}
+      </td>
+      <td class="text-slate-400 text-xs">Wk ${task.startWk} – ${task.startWk + task.dur}</td>
+    </tr>`).join('');
+
+  return `
+  <section>
+    <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">🔗 PERT Network Summary</h3>
+    <div class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="pert-table w-full" style="background:#0d1827; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th>Task ID</th>
+              <th>WBS Ref</th>
+              <th>Activity Description</th>
+              <th>Predecessor</th>
+              <th class="text-center">Duration</th>
+              <th class="text-center">Float</th>
+              <th class="text-center">Critical?</th>
+              <th>Window</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// CRITICAL PATH CALLOUT
+// ─────────────────────────────────────────────────────────────────────────────────
+function renderCriticalPathCallout(data, criticalTasks, criticalEnd) {
+  const sequence = criticalTasks.map(t => `
+    <div class="flex items-center gap-2">
+      <span class="px-2 py-0.5 rounded text-xs font-bold text-white" style="background:${t.phase.colorHex};">${t.id}</span>
+      <span class="text-sm text-emerald-100">${escHtml(t.desc)}</span>
+      <span class="ml-auto text-xs text-emerald-400 font-semibold">${t.dur} wk</span>
+    </div>`).join('<div class="text-emerald-700 text-center text-xs">▼</div>');
+
+  const phaseStats = data.phases.map((p, pi) => {
+    const ct = p.tasks.filter(t => t.critical).length;
+    const tt = p.tasks.length;
+    return `<div class="text-xs text-emerald-300"><span class="font-bold">P${pi+1}:</span> ${ct}/${tt} critical</div>`;
+  }).join('');
+
+  return `
+  <section>
+    <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">🔴 Critical Path Analysis</h3>
+    <div class="rounded-xl border-2 p-5 grid grid-cols-3 gap-6" style="border-color:#059669; background:#052e16;">
+      <!-- Stats -->
+      <div class="space-y-4">
+        <div>
+          <div class="text-xs text-emerald-400 uppercase tracking-wider font-bold mb-1">Total CP Duration</div>
+          <div class="text-4xl font-black text-white">${criticalEnd} <span class="text-lg text-emerald-400">Weeks</span></div>
+        </div>
+        <div>
+          <div class="text-xs text-emerald-400 uppercase tracking-wider font-bold mb-1">Critical Tasks</div>
+          <div class="text-3xl font-black text-white">${criticalTasks.length} <span class="text-sm text-emerald-400">of ${data.phases.flatMap(p=>p.tasks).length}</span></div>
+        </div>
+        <div>
+          <div class="text-xs text-emerald-400 uppercase tracking-wider font-bold mb-1">Phase Breakdown</div>
+          <div class="space-y-1">${phaseStats}</div>
+        </div>
+      </div>
+      <!-- Sequence -->
+      <div class="col-span-2">
+        <div class="text-xs text-emerald-400 uppercase tracking-wider font-bold mb-3">Critical Path Sequence</div>
+        <div class="space-y-1">${sequence}</div>
+        <div class="mt-4 p-3 rounded-lg" style="background:#064e3b55; border:1px dashed #059669;">
+          <div class="text-xs text-emerald-300 font-semibold">⚠️ Critical Path Note</div>
+          <div class="text-xs text-emerald-200 mt-1">All critical tasks have zero float. Any delay on these activities will delay the project end date. Non-critical tasks T05 and T06 carry schedule buffers of 0.5 weeks each.</div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// EXPORT / PRINT
+// ─────────────────────────────────────────────────────────────────────────────────
+function exportSchedule() {
+  const data = readData();
+  if (!document.getElementById('output-area').querySelector('section')) {
+    generateSchedule();
+  }
+  const today = new Date().toLocaleDateString('en-GB', {year:'numeric', month:'long', day:'numeric'});
+  const outputHTML = document.getElementById('output-area').innerHTML;
+
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>${escHtml(data.projectName)} — Project Schedule</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+  <style>
+    body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',system-ui,sans-serif; padding:24px; }
+    ::-webkit-scrollbar{width:6px;height:6px;}
+    ::-webkit-scrollbar-track{background:#1e293b;}
+    ::-webkit-scrollbar-thumb{background:#334155;border-radius:3px;}
+    .gantt-grid{position:relative;min-width:720px;}
+    .gantt-row{display:flex;align-items:center;border-bottom:1px solid #1e293b;height:38px;}
+    .gantt-label{flex-shrink:0;width:200px;padding:0 10px;font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-right:1px solid #1e293b;color:#94a3b8;height:100%;display:flex;align-items:center;gap:4px;}
+    .gantt-label .tid{font-weight:700;font-size:10px;}
+    .gantt-track{flex:1;position:relative;height:100%;}
+    .gantt-bar{position:absolute;height:22px;top:50%;transform:translateY(-50%);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;overflow:hidden;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+    .gantt-bar.non-critical{background-image:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,.12) 4px,rgba(255,255,255,.12) 8px);}
+    .gantt-bar .float-badge{position:absolute;right:4px;font-size:8px;opacity:.85;font-weight:600;background:rgba(0,0,0,.3);padding:1px 3px;border-radius:2px;}
+    .gantt-header-row{display:flex;border-bottom:2px solid #334155;height:30px;padding-top:24px;position:relative;}
+    .gantt-header-label{flex-shrink:0;width:200px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#64748b;border-right:1px solid #1e293b;}
+    .gantt-header-weeks{flex:1;position:relative;display:flex;}
+    .gantt-week-cell{flex:1;display:flex;align-items:center;justify-content:center;font-size:9px;color:#64748b;border-right:1px solid #0f172a;}
+    .gantt-gate-line{position:absolute;top:0;bottom:0;width:2px;background:transparent;border-left:2px dashed;z-index:10;pointer-events:none;}
+    .gantt-gate-label{position:absolute;top:2px;font-size:8px;font-weight:700;white-space:nowrap;padding:1px 3px;border-radius:2px;transform:translateX(-50%);}
+    .pert-table th{background:#1e293b;color:#94a3b8;font-size:11px;font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid #334155;}
+    .pert-table td{padding:7px 12px;font-size:12px;border-bottom:1px solid #1e293b;}
+    @media print{
+      body{background:#fff!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .gantt-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    }
+  </style>
+</head>
+<body>
+  <div class="max-w-screen-xl mx-auto">
+    <div style="border-bottom:2px solid #334155; padding-bottom:16px; margin-bottom:24px;">
+      <h1 style="font-size:22px; font-weight:900; color:#fff;">${escHtml(data.projectName)}</h1>
+      <p style="font-size:13px; color:#94a3b8; margin-top:4px;">
+        Client: <b style="color:#a5b4fc;">${escHtml(data.clientName)}</b> &nbsp;·&nbsp;
+        Prepared by: <b style="color:#a5b4fc;">Tryphene Murugat</b> &nbsp;·&nbsp;
+        Date: ${today} &nbsp;·&nbsp;
+        Duration: <b style="color:#34d399;">${data.totalWeeks} Weeks</b>
+      </p>
+    </div>
+    ${outputHTML}
+    <div style="margin-top:40px; border-top:1px solid #334155; padding-top:12px; text-align:center; font-size:11px; color:#475569;">
+      Tryphene Murugat &nbsp;|&nbsp; Engagement Director &nbsp;|&nbsp; CONFIDENTIAL &nbsp;|&nbsp; Generated ${today}
+    </div>
+  </div>
+  <script>
+    window.onload = function(){ window.print(); }
+  <\/script>
+</body>
+</html>`);
+  printWin.document.close();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// BOOT
+// ─────────────────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initLeftPanel();
+  // Auto-generate on load for immediate value
+  setTimeout(() => generateSchedule(), 150);
+});
+</script>
+</body>
+</html>

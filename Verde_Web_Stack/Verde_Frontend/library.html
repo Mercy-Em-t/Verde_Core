@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library & Insights | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; scroll-behavior: smooth; }
+        .hero-bg { background: #0B1325; color: #ffffff; }
+        .article-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 12px; transition: all 0.2s ease; overflow: hidden; }
+        .article-card:hover { transform: translateY(-5px); border-color: #CBD5E1; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center w-full">
+
+    <nav class="w-full max-w-6xl flex justify-between items-center p-6 bg-[#F8FAFC]">
+        <div class="text-2xl font-bold tracking-tight text-[#0B1325] cursor-pointer" onclick="window.location.href='index.html'">
+            Tryphene<span class="font-light">Murugat</span>
+        </div>
+        <div class="space-x-6 text-sm font-semibold text-slate-600">
+            <a href="index.html" class="hover:text-[#0B1325] transition-colors">Home</a>
+            <a href="portfolio.html" class="hover:text-[#0B1325] transition-colors">Projects</a>
+            <a href="services.html" class="hover:text-[#0B1325] transition-colors">Catalog</a>
+        </div>
+    </nav>
+
+    <!-- HERO & NEWSLETTER -->
+    <header class="hero-bg w-full flex flex-col items-center text-center py-20 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="relative z-10 max-w-3xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight text-white">Library & Insights</h1>
+            <p class="text-slate-300 text-lg mx-auto leading-relaxed font-light mb-8">
+                Subscribe to our private dispatch. We send out one high-density technical breakdown every two weeks. No spam, just pure engineering architecture.
+            </p>
+            <form class="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
+                <input type="email" placeholder="Enter your corporate email" required class="px-6 py-4 rounded bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-indigo-400 w-full sm:w-2/3">
+                <button type="submit" class="px-6 py-4 bg-indigo-600 text-white font-bold rounded hover:bg-indigo-500 transition-colors sm:w-1/3">Subscribe</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl px-4 py-16">
+        
+        <div class="mb-12 flex justify-between items-end border-b border-slate-200 pb-4">
+            <h2 class="text-3xl font-bold text-[#0B1325]">Featured Publications</h2>
+            <div class="space-x-4 text-sm font-semibold">
+                <a href="#" class="text-indigo-600">All</a>
+                <a href="#" class="text-slate-500 hover:text-[#0B1325]">Whitepapers</a>
+                <a href="#" class="text-slate-500 hover:text-[#0B1325]">Technical Teardowns</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Article 1 -->
+            <a href="#" class="article-card block group">
+                <div class="h-48 bg-slate-800 relative overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-server text-5xl text-slate-600 group-hover:scale-110 transition-transform"></i>
+                    <div class="absolute top-4 left-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">Whitepaper</div>
+                </div>
+                <div class="p-6">
+                    <p class="text-xs text-slate-500 font-semibold mb-2">October 2026 &bull; 12 min read</p>
+                    <h3 class="text-xl font-bold mb-3 text-[#0B1325] group-hover:text-indigo-600 transition-colors">Decoupling Monoliths: A Strategic Blueprint</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">How to transition a legacy enterprise monolith into a microservices architecture without causing operational downtime.</p>
+                    <span class="text-indigo-600 font-semibold text-sm">Read Publication <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                </div>
+            </a>
+
+            <!-- Article 2 -->
+            <a href="#" class="article-card block group">
+                <div class="h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-200">
+                    <i class="fa-brands fa-youtube text-5xl text-red-500 group-hover:scale-110 transition-transform"></i>
+                    <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">Video Breakdown</div>
+                </div>
+                <div class="p-6">
+                    <p class="text-xs text-slate-500 font-semibold mb-2">September 2026 &bull; 45 min watch</p>
+                    <h3 class="text-xl font-bold mb-3 text-[#0B1325] group-hover:text-indigo-600 transition-colors">Nueve Architecture: Low-Latency Streaming</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">A complete video teardown of how we built the Nueve streaming core to bypass third-party CDNs and reduce latency by 60%.</p>
+                    <span class="text-indigo-600 font-semibold text-sm">Watch Video <i class="fa-solid fa-play ml-1"></i></span>
+                </div>
+            </a>
+
+            <!-- Article 3 -->
+            <a href="#" class="article-card block group">
+                <div class="h-48 bg-[#0B1325] relative overflow-hidden flex items-center justify-center">
+                    <i class="fa-solid fa-shield-halved text-5xl text-emerald-900 group-hover:scale-110 transition-transform"></i>
+                    <div class="absolute top-4 left-4 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wider">Case Study</div>
+                </div>
+                <div class="p-6">
+                    <p class="text-xs text-slate-500 font-semibold mb-2">August 2026 &bull; 8 min read</p>
+                    <h3 class="text-xl font-bold mb-3 text-[#0B1325] group-hover:text-indigo-600 transition-colors">Securing the IAM Microservice with Rust</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">Why we chose Rust for our Identity Access Manager and how it eliminated memory-leak vulnerabilities instantly.</p>
+                    <span class="text-indigo-600 font-semibold text-sm">Read Publication <i class="fa-solid fa-arrow-right ml-1"></i></span>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer class="w-full py-8 text-center text-slate-500 text-sm border-t border-slate-200 bg-white mt-auto">
+        <p>&copy; 2026 Tryphene Murugat Consultancy. Built for scale.</p>
+    </footer>
+
+</body>
+</html>

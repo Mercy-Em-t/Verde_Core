@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formal Sign-Off | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; }
+        .pdf-viewer { background: #E2E8F0; background-image: radial-gradient(#CBD5E1 1px, transparent 1px); background-size: 20px 20px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="w-full bg-[#0B1325] text-white px-8 py-5 flex justify-between items-center shadow-md">
+        <div>
+            <h1 class="text-xl font-bold tracking-widest uppercase text-slate-100">Tryphene Murugat</h1>
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Systems Architecture & Governance</p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm font-medium text-slate-300">Phase 2 Authorization Gate</span>
+            <i class="fa-solid fa-lock text-emerald-400"></i>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Document Viewer Column -->
+        <div class="flex-grow flex flex-col">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold">Project Blueprint Sign-Off</h2>
+                <p class="text-slate-500 mt-1">Review the attached architectural blueprints for PRJ-9942.</p>
+            </div>
+            
+            <div class="flex-grow border-2 border-slate-200 rounded-lg pdf-viewer flex flex-col items-center justify-center p-8 min-h-[500px] shadow-inner relative">
+                <!-- Mock PDF Document -->
+                <div class="bg-white w-full max-w-2xl h-full rounded shadow-lg border border-slate-300 p-8 flex flex-col relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500 transform rotate-45 translate-x-8 -translate-y-8"></div>
+                    <div class="absolute top-2 right-2 text-white text-[10px] font-bold">FINAL</div>
+                    
+                    <h3 class="text-center font-bold text-lg mb-8 uppercase tracking-wider border-b pb-4">Systems Architecture Requirements Document</h3>
+                    
+                    <div class="space-y-6 text-sm text-slate-700">
+                        <div>
+                            <h4 class="font-bold text-black mb-2">1. Scope of Work (Phase 2)</h4>
+                            <p class="leading-relaxed">This document outlines the final approved database schemas (3NF), Entity Relationship Diagrams, and API Gateway routing logic for the Global Payment Gateway Redux.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-black mb-2">2. Out of Scope</h4>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Frontend React Native application development.</li>
+                                <li>Legacy data migration from Oracle databases.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-black mb-2">3. Acceptance Terms</h4>
+                            <p class="leading-relaxed text-red-700 bg-red-50 p-3 rounded border border-red-100">By authorizing this document, the client agrees that any subsequent deviations or additions to this technical scope will require a formal Change Order Request (COR) and incur additional architectural fees.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authorization Sidebar -->
+        <div class="w-full lg:w-96 shrink-0 flex flex-col">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-8">
+                <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                        <i class="fa-solid fa-file-signature text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Authorization Hub</h3>
+                        <p class="text-xs text-slate-500">Legally binding digital signature.</p>
+                    </div>
+                </div>
+
+                <form id="signoffForm" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">AUTHORIZED SIGNATORY</label>
+                        <input type="text" value="Alfred Omukaga Emurugat" disabled class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-500 font-medium cursor-not-allowed">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">DIGITAL SIGNATURE <span class="text-red-500">*</span></label>
+                        <input type="text" id="signature" placeholder="Type your full legal name" class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded text-xs text-slate-600 space-y-2 font-mono">
+                        <div class="flex justify-between"><span>IP Address:</span> <span>192.168.1.104</span></div>
+                        <div class="flex justify-between"><span>Timestamp:</span> <span id="timestamp"></span></div>
+                        <div class="flex justify-between"><span>Doc Hash:</span> <span>a8f5f167f44f4964e6c998dee827110c</span></div>
+                    </div>
+
+                    <div class="flex items-start space-x-2 pt-2">
+                        <input type="checkbox" id="terms" class="mt-1" required>
+                        <label for="terms" class="text-xs text-slate-600 leading-tight">I understand that signing this document locks the project scope and authorizes Tryphene Murugat to begin Phase 3 (Build). The Phase 3 Retainer Invoice will be automatically issued.</label>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors shadow-md flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>Approve & Lock Scope</span>
+                    </button>
+                </form>
+
+                <!-- Success State (Hidden by default) -->
+                <div id="successState" class="hidden text-center py-6">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-2">Scope Locked Successfully</h3>
+                    <p class="text-sm text-slate-600 mb-6">Phase 3 has been officially authorized. A copy of this signed blueprint has been emailed to you.</p>
+                    <a href="my-project.html" class="text-indigo-600 hover:text-indigo-800 font-bold text-sm">Return to Dashboard &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Set dynamic timestamp
+        document.getElementById('timestamp').textContent = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+
+        document.getElementById('signoffForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const sig = document.getElementById('signature').value;
+            if(sig.toLowerCase() !== 'alfred omukaga emurugat') {
+                alert("Signature must exactly match the Authorized Signatory name.");
+                return;
+            }
+            
+            // Show loading state
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('signoffForm').classList.add('hidden');
+                document.getElementById('successState').classList.remove('hidden');
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

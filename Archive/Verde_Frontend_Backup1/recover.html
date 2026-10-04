@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Account Recovery | Tryphene Murugat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; margin: 0; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md bg-white rounded-xl shadow-xl p-8 border border-slate-200 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+    
+    <div class="text-center mb-8">
+        <div class="text-2xl font-bold tracking-tight text-[#0B1325] mb-1">Tryphene<span class="font-light">Murugat</span></div>
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Cold Storage Recovery</div>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded p-4 mb-6 flex items-start space-x-3 text-amber-800 text-sm">
+        <i class="fa-solid fa-triangle-exclamation mt-1"></i>
+        <p>Use this protocol only if your account is locked out. This will verify your cold storage recovery key and force a password reset.</p>
+    </div>
+
+    <form id="recoverForm" class="space-y-4">
+        <div id="errorBox" class="hidden p-3 bg-red-50 text-red-600 text-sm rounded border border-red-200 font-medium"></div>
+        <div id="successBox" class="hidden p-3 bg-emerald-50 text-emerald-700 text-sm rounded border border-emerald-200 font-medium">
+            Account successfully unlocked! Redirecting to login...
+        </div>
+        
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Email Address / User ID</label>
+            <input type="text" id="userid" required class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+        </div>
+        
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Recovery Key</label>
+            <input type="password" id="reckey" required placeholder="Enter your 12-word seed or hash" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">New Password</label>
+            <input type="password" id="newpass" required class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+        </div>
+
+        <button type="submit" id="btn" class="w-full mt-4 py-3 bg-indigo-600 text-white font-bold rounded shadow hover:bg-indigo-700 transition-colors flex justify-center items-center">
+            <i class="fa-solid fa-unlock-keyhole mr-2"></i> Execute Recovery Protocol
+        </button>
+    </form>
+
+    <div class="mt-6 text-center text-sm">
+        <a href="login.html" class="font-semibold text-slate-500 hover:text-[#0B1325] transition"><i class="fa-solid fa-arrow-left mr-1"></i> Return to Login</a>
+    </div>
+  </div>
+
+<script>
+    const form = document.getElementById('recoverForm');
+    const errBox = document.getElementById('errorBox');
+    const succBox = document.getElementById('successBox');
+    const btn = document.getElementById('btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errBox.classList.add('hidden');
+      succBox.classList.add('hidden');
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+      btn.disabled = true;
+
+      const payload = {
+          userid: document.getElementById('userid').value,
+          recovery_key: document.getElementById('reckey').value,
+          new_password: document.getElementById('newpass').value
+      };
+
+      try {
+        const res = await fetch('http://127.0.0.1:8081/api/recover', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.detail || 'Recovery execution failed');
+        }
+        
+        succBox.classList.remove('hidden');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 3000);
+    
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.classList.remove('hidden');
+        btn.innerHTML = '<i class="fa-solid fa-unlock-keyhole mr-2"></i> Execute Recovery Protocol';
+        btn.disabled = false;
+      }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "title": "FinTech Payment Gateway",
+        "client": "KeshaBank",
+        "type": "Web Architecture",
+        "description": "Engineered a high-throughput transaction processing engine handling 10,000 TPS with zero data loss.",
+        "timeline": "8 Weeks",
+        "tech_stack": "FastAPI, PostgreSQL, Redis",
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&q=80"
+    },
+    {
+        "id": 2,
+        "title": "Smart Logistics Platform",
+        "client": "EcoFreight",
+        "type": "Full-Stack System",
+        "description": "Built a complete supply chain tracking system with real-time GPS websocket integration.",
+        "timeline": "12 Weeks",
+        "tech_stack": "Vue.js, Node.js, MongoDB",
+        "image": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&q=80"
+    }
+]

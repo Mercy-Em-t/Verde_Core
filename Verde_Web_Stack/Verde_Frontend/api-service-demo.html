@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verde API Service - Document Renderer</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f0f2f5; }
+        .container { display: flex; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .sidebar { width: 30%; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .renderer { width: 70%; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button { display: block; width: 100%; padding: 10px; margin-bottom: 10px; background: #0056b3; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #004494; }
+        h1 { font-size: 1.5em; margin-top: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sidebar">
+            <h1>API Service Controls</h1>
+            <p>Simulate the workflow from Project Initiation.</p>
+            
+            <button id="btn-create-sr">1. Create System Request</button>
+            <button id="btn-approve-sr" disabled>2. Admin Approve System Request</button>
+            <hr>
+            <button id="btn-create-fs" disabled>3. Start Feasibility Study</button>
+            <button id="btn-run-econ" disabled>4. Run Economic Analysis (ROI, NPV, BEP)</button>
+            <button id="btn-verdict" disabled>5. Set Verdict & Approve</button>
+            <hr>
+            <button id="btn-detailed-planning" disabled style="background: #28a745;">6. ENTER GATE: Detailed Planning</button>
+            <hr>
+            <button id="btn-save-version" style="background: #6c757d; margin-top: 10px;">💾 Save System Request Version</button>
+            <button id="btn-attach-pdf" style="background: #ffc107; margin-top: 10px; color: #000;">📎 Upload Signed PDF (Redundancy)</button>
+            <button id="btn-view-history" style="background: #6c757d; margin-top: 10px;">🕒 View Version History</button>
+            <hr>
+            <button id="btn-view-audit" style="background: #17a2b8;">🔍 View Project Audit Trail</button>
+        </div>
+
+        <div class="renderer" id="view-pane">
+            <h2 style="color: #666; text-align: center; margin-top: 50px;">Rendered Document Will Appear Here</h2>
+        </div>
+    </div>
+
+    <!-- Import the module -->
+    <script type="module">
+        import ApiService from './api-service/index.js';
+
+        const PROJECT_ID = 'PRJ-100';
+        const projectAuditLogger = new ApiService.AuditLogger(PROJECT_ID);
+        const docManager = new ApiService.DocumentManager();
+        
+        // Log initialization
+        projectAuditLogger.logEvent('System', 'PROJECT_CREATED', 'Project ' + PROJECT_ID + ' workspace initialized.');
+
+        let currentSystemRequest = null;
+        let currentFeasibilityStudy = null;
+        const viewPane = document.getElementById('view-pane');
+
+        // New Logic for versioning demo
+        document.getElementById('btn-save-version').addEventListener('click', () => {
+            if (!currentSystemRequest) {
+                alert('You need to create a System Request first (Step 1).');
+                return;
+            }
+            
+            // Add a dynamic edit to prove the version changed
+            const editCount = docManager.getDocumentHistory(PROJECT_ID, 'SYSTEM_REQUEST').length + 1;
+            currentSystemRequest.setSpecialIssues(`Revision Edit #${editCount} added prior to saving.`);
+            
+            // Save to DocumentManager
+            const savedRecord = docManager.saveDocument(PROJECT_ID, 'SYSTEM_REQUEST', currentSystemRequest, 'Jane Doe');
+            
+            projectAuditLogger.logEvent('Jane Doe', 'DOCUMENT_SAVED', `Saved System Request v${savedRecord.version}. Linked to previous: ${savedRecord.previousId || 'None'}`);
+            alert(`✅ System Request v${savedRecord.version} saved successfully!`);
+        });
+
+        document.getElementById('btn-attach-pdf').addEventListener('click', () => {
+            const history = docManager.getDocumentHistory(PROJECT_ID, 'SYSTEM_REQUEST');
+            if (history.length === 0) {
+                alert('You must save a version first before attaching a PDF!');
+                return;
+            }
+            const latestVersion = history[history.length - 1].version;
+            
+            // Simulate physical file upload
+            docManager.attachFileToVersion(PROJECT_ID, 'SYSTEM_REQUEST', latestVersion, 'Signed_Request_v' + latestVersion + '.pdf', '/uploads/signed_req.pdf');
+            
+            projectAuditLogger.logEvent('Jane Doe', 'FILE_ATTACHED', `Attached physical signed PDF to v${latestVersion} for redundancy.`);
+            alert(`📎 Physical PDF attached to version ${latestVersion}! Click 'View Version History' to see it.`);
+        });
+
+        document.getElementById('btn-view-history').addEventListener('click', () => {
+            viewPane.innerHTML = docManager.renderHistoryAsHTML(PROJECT_ID, 'SYSTEM_REQUEST');
+        });
+
+        document.getElementById('btn-create-sr').addEventListener('click', () => {
+            currentSystemRequest = new ApiService.SystemRequest(PROJECT_ID);
+            currentSystemRequest.setProjectSponsor('Jane Doe - VP of Sales');
+            currentSystemRequest.setBusinessNeed('Automate lead tracking to reduce manual entry time.');
+            
+            projectAuditLogger.logEvent('Jane Doe', 'SYSTEM_REQUEST_CREATED', 'Drafted initial System Request.');
+            
+            viewPane.innerHTML = currentSystemRequest.renderAsHTML();
+            document.getElementById('btn-approve-sr').disabled = false;
+        });
+
+        document.getElementById('btn-approve-sr').addEventListener('click', () => {
+            if (currentSystemRequest) {
+                currentSystemRequest.approve('SuperAdmin_John');
+                
+                projectAuditLogger.logEvent('SuperAdmin_John', 'SYSTEM_REQUEST_APPROVED', 'Signed off on System Request, escalating it to an Official Document.');
+
+                viewPane.innerHTML = currentSystemRequest.renderAsHTML();
+                document.getElementById('btn-create-fs').disabled = false;
+            }
+        });
+
+        document.getElementById('btn-create-fs').addEventListener('click', () => {
+            const workflow = ApiService.createWorkflow(PROJECT_ID);
+            const guard = workflow.canStartFeasibilityStudy(currentSystemRequest);
+            
+            if (!guard.allowed) {
+                alert(guard.reason);
+                return;
+            }
+
+            currentFeasibilityStudy = new ApiService.FeasibilityStudy(PROJECT_ID);
+            currentFeasibilityStudy.markStepComplete('identifyCostsAndBenefits');
+            
+            projectAuditLogger.logEvent('System', 'FEASIBILITY_STUDY_STARTED', 'Started data collection for Technical and Economic feasibility.');
+
+            viewPane.innerHTML = currentFeasibilityStudy.renderAsHTML();
+            document.getElementById('btn-run-econ').disabled = false;
+        });
+
+        document.getElementById('btn-run-econ').addEventListener('click', () => {
+            if (currentFeasibilityStudy) {
+                currentFeasibilityStudy.addCostOrBenefit('developmentCosts', 'Software Licenses', 15000);
+                currentFeasibilityStudy.markStepComplete('assignValues');
+                currentFeasibilityStudy.calculateFinancialMetrics(5);
+
+                projectAuditLogger.logEvent('Financial Team', 'ECONOMIC_ANALYSIS_COMPLETED', 'Calculated 5-year cash flows, ROI, and NPV.');
+
+                viewPane.innerHTML = currentFeasibilityStudy.renderAsHTML();
+                document.getElementById('btn-verdict').disabled = false;
+            }
+        });
+
+        document.getElementById('btn-verdict').addEventListener('click', () => {
+            if (currentFeasibilityStudy) {
+                currentFeasibilityStudy.setVerdict(true); // PROCEED
+                currentFeasibilityStudy.approve('SuperAdmin_John');
+
+                projectAuditLogger.logEvent('SuperAdmin_John', 'FEASIBILITY_APPROVED', 'Approved feasibility study with a verdict of PROCEED.');
+
+                viewPane.innerHTML = currentFeasibilityStudy.renderAsHTML();
+                document.getElementById('btn-detailed-planning').disabled = false;
+            }
+        });
+
+        document.getElementById('btn-detailed-planning').addEventListener('click', () => {
+            const workflow = ApiService.createWorkflow(PROJECT_ID);
+            const gate = workflow.canProceedToDetailedPlanning(currentSystemRequest, currentFeasibilityStudy);
+            
+            if (gate.allowed) {
+                projectAuditLogger.logEvent('System', 'GATE_PASSED', 'Successfully passed the gate into Detailed Planning phase.');
+                
+                // Initialize the ProjectPlanning object (which inherently checks the same prerequisites)
+                const planningPhase = new ApiService.ProjectPlanning(PROJECT_ID, currentSystemRequest, currentFeasibilityStudy);
+                planningPhase.setProjectManager('Alice Smith');
+                
+                projectAuditLogger.logEvent('SuperAdmin_John', 'PM_ASSIGNED', 'Assigned Alice Smith as the Project Manager.');
+
+                viewPane.innerHTML = planningPhase.renderAsHTML();
+            } else {
+                alert("❌ " + gate.reason);
+                projectAuditLogger.logEvent('System', 'GATE_BLOCKED', 'Attempted to enter Detailed Planning but was blocked: ' + gate.reason);
+            }
+        });
+
+        document.getElementById('btn-view-audit').addEventListener('click', () => {
+            // Render the third-person audit trail
+            viewPane.innerHTML = projectAuditLogger.renderAuditReportHTML();
+        });
+
+    </script>
+</body>
+</html>

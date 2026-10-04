@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Journey Playbook | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; scroll-behavior: smooth; }
+        .hero-bg { background: #0B1325; color: #ffffff; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center w-full">
+
+    <!-- Navigation -->
+    <div class="w-full bg-white border-b border-slate-200 shadow-sm flex justify-center sticky top-0 z-50">
+        <nav class="w-full max-w-6xl flex justify-between items-center px-6 py-4">
+            <div class="text-2xl font-bold tracking-tight text-[#0B1325] cursor-pointer" onclick="window.location.href='client-dashboard.html'">
+                Tryphene<span class="font-light">Murugat</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="client-dashboard.html" class="text-sm font-semibold text-slate-600 hover:text-[#0B1325] transition-colors"><i class="fa-solid fa-gauge mr-1"></i> Dashboard</a>
+                <a id="navProjBtn" href="my-project.html" class="text-sm font-semibold text-slate-600 hover:text-[#0B1325] transition-colors"><i class="fa-solid fa-folder-open mr-1"></i> My Project</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- HERO SECTION -->
+    <header class="hero-bg w-full flex flex-col items-center text-center py-20 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="relative z-10 max-w-4xl">
+            <span class="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded uppercase tracking-wider border border-indigo-500/30 mb-6">Customer Journey Playbook</span>
+            <h1 id="heroTitle" class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight text-white">Loading Project...</h1>
+            <p id="heroIntro" class="text-slate-400 text-lg mx-auto leading-relaxed max-w-2xl flex items-center justify-center space-x-3">
+                <i class="fa-solid fa-spinner fa-spin"></i> Syncing...
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto px-6 py-12">
+        
+        <!-- Current Status Block -->
+        <section class="bg-white border border-indigo-200 shadow-sm rounded-xl p-8 mb-8 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-600"></div>
+            <div class="mb-6">
+                <p class="text-xs font-bold text-indigo-600 tracking-wider uppercase mb-1">You Are Here</p>
+                <h2 id="where" class="text-3xl font-extrabold text-slate-800">Explore</h2>
+                <p id="next" class="text-slate-500 mt-2 text-lg">Tell us what you're trying to achieve.</p>
+            </div>
+
+            <!-- Stepper -->
+            <div class="mt-8 mb-8">
+                <div id="progress" class="flex space-x-2 h-2 mb-2">
+                    <!-- Progress bars injected via JS -->
+                </div>
+                <div id="labels" class="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <!-- Labels injected via JS -->
+                </div>
+            </div>
+            
+            <div class="flex space-x-4 pt-6 border-t border-indigo-100 mt-4">
+                <a id="heroProjBtn" href="my-project.html" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded shadow-md hover:bg-indigo-700 transition"><i class="fa-solid fa-folder-open mr-2"></i>Open My Project</a>
+                <button id="qualifierBtn" onclick="document.getElementById('crModal').classList.remove('hidden')" class="px-8 py-3 bg-white border border-slate-300 text-slate-700 font-bold rounded shadow-sm hover:bg-slate-50 transition"><i class="fa-solid fa-pen-to-square mr-2"></i>Update Requirements</button>
+            </div>
+        </section>
+
+        <!-- Summary Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="font-bold text-lg text-slate-800 mb-4"><i class="fa-solid fa-list-check text-emerald-500 mr-2"></i>Retained Phases</h3>
+                <div id="selected" class="flex flex-wrap gap-2">
+                    <span class="text-sm text-slate-500 italic">No phases selected yet.</span>
+                </div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 class="font-bold text-lg text-slate-800 mb-4"><i class="fa-solid fa-handshake text-blue-500 mr-2"></i>How we work together</h3>
+                <p id="promise" class="text-sm text-slate-600 leading-relaxed">We guide you one decision at a time. You do not need to understand the technical delivery language.</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4 mb-8">
+            <div class="h-px bg-slate-300 flex-1"></div>
+            <h2 class="text-lg font-bold text-slate-400 uppercase tracking-widest">Journey Breakdown</h2>
+            <div class="h-px bg-slate-300 flex-1"></div>
+        </div>
+
+        <!-- Steps Container -->
+        <div id="steps" class="space-y-8">
+            <!-- Steps injected via JS -->
+        </div>
+
+    
+        <!-- Change Request Modal -->
+        <div id="crModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 class="font-bold text-slate-800"><i class="fa-solid fa-code-pull-request text-indigo-600 mr-2"></i> Update Requirements</h3>
+                    <button onclick="document.getElementById('crModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-slate-600 mb-4">Submit a formal request to adjust your project scope, add a new phase, or update your technical requirements. Your Engagement Director will review this and log it in your project workspace.</p>
+                    <textarea id="crText" class="w-full h-32 p-3 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm text-slate-700 resize-none" placeholder="Describe the changes or new requirements you'd like to discuss..."></textarea>
+                </div>
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-3">
+                    <button onclick="document.getElementById('crModal').classList.add('hidden')" class="px-4 py-2 text-slate-600 text-sm font-bold hover:bg-slate-200 rounded transition">Cancel</button>
+                    <button onclick="submitCR()" id="submitCrBtn" class="px-5 py-2 bg-indigo-600 text-white text-sm font-bold rounded shadow hover:bg-indigo-700 transition">Submit Request</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+<script src="cms.js"></script>
+<script src="workflow-guards.js"></script>
+<script src="runtime-config.js"></script>
+<script src="api-client.js"></script>
+<script src="project-state.js"></script>
+<script>
+const content={
+explore:{title:'Explore',desc:'We understand the problem, opportunity and what you want to achieve.',you:['Your idea or problem','Your goals','Anything you already have'],we:['Questions that clarify the project','An initial assessment','A recommended starting point'],expect:'A clearer picture of the project and a sensible starting point.',tip:'Discovery or feasibility can be added if the idea is still unclear.',optional:'Discovery / feasibility review',popular:'Most clients use this stage to make sure the right problem is being solved.'},
+define:{title:'Define',desc:'We agree what the system needs to do before detailed design or development begins.',you:['People who understand the business','Existing processes or documents','Priorities and constraints'],we:['Structured project definition','Clear agreed scope','Process and data understanding'],expect:'A shared understanding of what is included and what is not.',tip:'This is where scope is confirmed before detailed design.',optional:'Process mapping or requirements workshops',popular:'Clients often add a focused workshop when several teams need to agree the scope.'},
+design:{title:'Design',desc:'We turn the agreed needs into a practical blueprint for how the solution will work.',you:['Feedback and preferences','Approvals','People who will use the system'],we:['System blueprint','Screens and user journeys','Data and technical design'],expect:'You can see how the solution is intended to work before full development.',tip:'Security, integrations, reporting and specialised workflows can be added.',optional:'Security, integration or reporting design',popular:'Clients commonly add a focused design review before build approval.'},
+build:{title:'Build',desc:'The agreed design becomes a working system.',you:['Feedback and test users','Required access','Acceptance decisions'],we:['Development and testing','Demonstrations','Issue resolution'],expect:'Working parts of the system to review during the build.',tip:'Testing and migration work can be planned alongside construction.',optional:'Testing / data migration support',popular:'A structured testing cycle is often added before launch.'},
+launch:{title:'Launch',desc:'We prepare the system for real-world use and move it into controlled operation.',you:['Final approval','Users for testing','Operational readiness'],we:['Final testing','Migration where needed','Deployment and handover'],expect:'A controlled transition into normal operation.',tip:'Launch support can be retained after go-live.',optional:'Launch support / hypercare',popular:'Clients often retain short-term support while users settle into the new system.'},
+improve:{title:'Improve',desc:'After launch, the system can be reviewed, supported and improved as the organisation changes.',you:['Feedback from users','New needs','Issues or improvement ideas'],we:['Support and reviews','Enhancements','Governance'],expect:'A structured way to keep the system useful and aligned.',tip:'Most clients return for targeted improvements, reviews or support as the system evolves.',optional:'Governance review / enhancement cycle',popular:'Ongoing review helps turn new needs into controlled improvements.'}};
+
+async function render(){
+    const p=await TM.sync();
+    const stage=TM.stages.find(s=>s.id===p.stage)||TM.stages[0];
+    const idx=TM.stages.findIndex(s=>s.id===stage.id);
+    const cms=TMCMS.get();
+
+    // 1. Inject Hero Title and ID + Explanatory Text
+    document.getElementById('heroTitle').textContent = p.name || 'Secure Project Workspace';
+    document.getElementById('heroIntro').innerHTML = `
+        <div class="flex flex-col items-center justify-center space-y-4">
+            <span class="px-3 py-1 bg-indigo-500/30 text-indigo-100 rounded-md text-sm font-mono border border-indigo-400/50 shadow-sm tracking-wide">${p.id || 'N/A'}</span>
+            <span class="text-slate-300 max-w-2xl text-base font-light leading-relaxed">A simple client view of the project: what happens, what you provide, what we provide, what you can expect, and what you may want to add.</span>
+        </div>
+    `;
+
+    // 2. Fix circular navigation by appending projectId to all "Open My Project" buttons
+    if (p.id) {
+        if (document.getElementById('navProjBtn')) {
+            document.getElementById('navProjBtn').href = 'my-project.html?projectId=' + encodeURIComponent(p.id);
+        }
+        if (document.getElementById('heroProjBtn')) {
+            document.getElementById('heroProjBtn').href = 'my-project.html?projectId=' + encodeURIComponent(p.id);
+        }
+    }
+
+    // 3. Inject stage details (using next_action instead of nextAction to match DB casing)
+    document.getElementById('where').textContent=stage.label;
+    document.getElementById('next').textContent=p.next_action || p.nextAction || 'Awaiting next action...';
+    document.getElementById('promise').textContent=stage.promise;
+    
+    // Render Progress Bars
+    document.getElementById('progress').innerHTML=TM.stages.map((s,i)=>{
+        let color = i < idx ? 'bg-indigo-600' : (i === idx ? 'bg-indigo-500' : 'bg-slate-200');
+        return `<div class="flex-1 rounded-full ${color}"></div>`;
+    }).join('');
+    
+    // Render Labels
+    document.getElementById('labels').innerHTML=TM.stages.map((s,i)=>{
+        let color = i <= idx ? 'text-indigo-600' : 'text-slate-400';
+        return `<span class="${color}">${s.label}</span>`;
+    }).join('');
+    
+    // Render Selected Phases
+        const selPhases = p.selected_phases || p.selectedPhases || [];
+    const selectedHtml = selPhases.length ? selPhases.map(id=>`<span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200 shadow-sm">Phase ${String(id).padStart(2,'0')} &bull; ${TM.phases[id]?.name||'Selected'}</span>`).join('') : '<span class="text-sm text-slate-500 italic">No phases selected yet.</span>';
+    document.getElementById('selected').innerHTML = selectedHtml;
+    
+    // Render Steps
+    document.getElementById('steps').innerHTML=TM.stages.map((s,i)=>{
+        const c=content[s.id];
+        const isCurrent = i === idx;
+        const borderClass = isCurrent ? 'border-2 border-indigo-600 shadow-lg relative' : 'border border-slate-200 opacity-60 hover:opacity-100 transition';
+                let badgeText = "Current Stage";
+        if (selPhases.length === 0 && isCurrent) {
+            badgeText = "Pre-Engagement / Discovery";
+        } else if (isCurrent) {
+            badgeText = "Active Phase";
+        }
+        const currentBadge = isCurrent ? `<div class="absolute -top-3 right-6 px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full shadow tracking-wide">${badgeText}</div>` : '';
+        
+        return `
+        <section class="bg-white rounded-xl p-8 ${borderClass}">
+            ${currentBadge}
+            <div class="flex items-center space-x-4 mb-6">
+                <span class="flex items-center justify-center w-12 h-12 rounded-lg bg-indigo-50 text-indigo-700 font-extrabold text-lg">${String(i+1).padStart(2,'0')}</span>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">${c.title}</h2>
+                    <p class="text-slate-500 mt-1">${c.desc}</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-5">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3"><i class="fa-regular fa-user mr-1"></i> You provide</h3>
+                    <ul class="list-disc pl-4 text-sm text-slate-600 space-y-2">
+                        ${c.you.map(x=>`<li>${x}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-5">
+                    <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-3"><i class="fa-solid fa-laptop-code mr-1"></i> We provide</h3>
+                    <ul class="list-disc pl-4 text-sm text-slate-600 space-y-2">
+                        ${c.we.map(x=>`<li>${x}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="bg-emerald-50/50 border border-emerald-100 rounded-lg p-5">
+                    <h3 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-3"><i class="fa-solid fa-bullseye mr-1"></i> Expect</h3>
+                    <p class="text-sm text-slate-600">${c.expect}</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p class="text-sm text-amber-800"><strong class="font-bold">You may want to add:</strong> ${c.tip}</p>
+                </div>
+                <div class="flex-1 bg-slate-50 border border-slate-200 rounded-lg p-4">
+                    <p class="text-sm text-slate-700"><strong class="font-bold text-slate-800">Optional add-on:</strong> ${c.optional}</p>
+                    <p class="text-xs text-slate-500 mt-1">${c.popular}</p>
+                </div>
+            </div>
+            
+            ${isCurrent ? `
+            <div class="mt-6 pt-6 border-t border-slate-100 flex gap-4">
+                <a href="my-project.html?projectId=${p.id}" class="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded shadow-sm hover:bg-indigo-700 transition">Continue to workspace</a>
+            </div>` : ''}
+        </section>`;
+    }).join('');
+    
+    // Ensure qualifier btn is always visible for requirement updates
+    const qBtn = document.getElementById('qualifierBtn');
+    if (qBtn) qBtn.style.display = 'block';
+}
+
+async function submitCR() {
+    const text = document.getElementById('crText').value;
+    if (!text.trim()) return;
+    
+    const btn = document.getElementById('submitCrBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...';
+    btn.disabled = true;
+    
+    // Simulate API delay for UX
+    await new Promise(r => setTimeout(r, 800));
+    
+    // Here we would normally call TMAPI.createChangeOrder(...) 
+    // For now we just show success and close
+    btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i> Request Logged';
+    btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+    btn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
+    
+    setTimeout(() => {
+        document.getElementById('crModal').classList.add('hidden');
+        document.getElementById('crText').value = '';
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+        btn.classList.replace('hover:bg-emerald-700', 'hover:bg-indigo-700');
+    }, 1500);
+}
+render();
+</script>
+</body>
+</html>
