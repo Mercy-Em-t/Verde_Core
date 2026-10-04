@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Projects & Portfolio | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; scroll-behavior: smooth; }
+        .hero-bg { background: #0B1325; color: #ffffff; }
+        .project-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 12px; transition: all 0.2s ease; overflow: hidden; }
+        .project-card:hover { transform: translateY(-3px); border-color: #CBD5E1; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center w-full">
+
+    <nav class="w-full max-w-6xl flex justify-between items-center p-6 bg-[#F8FAFC]">
+        <div class="text-2xl font-bold tracking-tight text-[#0B1325] cursor-pointer" onclick="window.location.href='index.html'">
+            Tryphene<span class="font-light">Murugat</span>
+        </div>
+        <div class="space-x-6 text-sm font-semibold text-slate-600">
+            <a href="index.html" class="hover:text-[#0B1325] transition-colors">Home</a>
+            <a href="library.html" class="hover:text-[#0B1325] transition-colors">Insights</a>
+            <a href="services.html" class="hover:text-[#0B1325] transition-colors">Catalog</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero-bg w-full flex flex-col items-center text-center py-20 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="relative z-10 max-w-4xl">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight text-white">Project Portfolio</h1>
+            <p class="text-slate-300 text-lg mx-auto leading-relaxed font-light mb-8">
+                A selection of enterprise systems, microservices, and architectural blueprints delivered by our consultancy.
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl px-4 py-16">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            
+            <!-- Project 1 -->
+            <div class="project-card flex flex-col">
+                <div class="h-64 bg-slate-100 flex items-center justify-center border-b border-slate-200 p-8">
+                    <!-- Placeholder for Project Image / Graphic -->
+                    <div class="w-full h-full bg-white border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-400">
+                        <i class="fa-solid fa-image text-3xl mr-3"></i> UI / Architecture Diagram
+                    </div>
+                </div>
+                <div class="p-8 flex-grow">
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded uppercase tracking-wider">Fintech</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded uppercase tracking-wider">Phase 1-4 Delivered</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-[#0B1325]">Global Payment Gateway Redux</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                        We orchestrated the complete architectural teardown and rebuild of a legacy payment gateway processing $5M/day. We decoupled the core ledger into highly available microservices.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 text-sm mb-6 border-t border-slate-100 pt-4">
+                        <div>
+                            <span class="block font-bold text-[#0B1325]">Timeline</span>
+                            <span class="text-slate-500">6 Months</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-[#0B1325]">Tech Stack</span>
+                            <span class="text-slate-500">Node.js, PostgreSQL, Docker</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card flex flex-col">
+                <div class="h-64 bg-slate-800 flex items-center justify-center border-b border-slate-900 p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                    <i class="fa-solid fa-server text-6xl text-slate-500 relative z-10"></i>
+                </div>
+                <div class="p-8 flex-grow">
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded uppercase tracking-wider">Media & Streaming</span>
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded uppercase tracking-wider">Phase 2 Blueprint</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-[#0B1325]">Nueve Core Integration</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                        Designed the Phase 2 Technical Blueprint for a live-streaming OTT platform. Drafted the exact API contracts and DB schemas required to hit sub-2-second latency globally.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 text-sm mb-6 border-t border-slate-100 pt-4">
+                        <div>
+                            <span class="block font-bold text-[#0B1325]">Timeline</span>
+                            <span class="text-slate-500">4 Weeks</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-[#0B1325]">Tech Stack</span>
+                            <span class="text-slate-500">Rust, WebRTC, Redis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-16 text-center">
+            <a href="start-project.html" class="inline-block px-8 py-4 bg-[#0B1325] text-white font-bold rounded-lg hover:bg-slate-800 transition-colors shadow-lg">
+                Start Your Own Project <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="w-full py-8 text-center text-slate-500 text-sm border-t border-slate-200 bg-white mt-auto">
+        <p>&copy; 2026 Tryphene Murugat Consultancy. Built for scale.</p>
+    </footer>
+
+
+
+<script src="config.js"></script>
+<script src="api-client.js"></script>
+<script>
+async function loadPortfolio() {
+    try {
+        const res = await TMAPI.portfolio();
+        const projects = res.portfolio;
+        const grid = document.getElementById('portfolio-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        projects.forEach(p => {
+            grid.innerHTML += `
+            <a href="portfolio-detail.html?id=${p.id}" class="project-card flex flex-col h-full block cursor-pointer">
+                <div class="h-48 bg-slate-200 overflow-hidden relative">
+                    <img src="${p.image_url}" alt="${p.title}" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur text-[#0B1325] text-xs font-bold px-3 py-1 rounded">
+                        ${p.category}
+                    </div>
+                </div>
+                <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-xl font-bold mb-1 group-hover:text-indigo-600">${p.title}</h3>
+                    <p class="text-sm text-slate-500 font-semibold mb-4">Client: ${p.client}</p>
+                    <p class="text-slate-600 text-sm mb-6 flex-grow">${p.description}</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-sm border-t border-slate-100 pt-4">
+                        <div>
+                            <span class="block font-bold text-[#0B1325]">Timeline</span>
+                            <span class="text-slate-500">${p.timeline}</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-[#0B1325]">Tech Stack</span>
+                            <span class="text-slate-500">${p.tech_stack}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>`;
+        });
+    } catch(e) {
+        console.error("Failed to load portfolio", e);
+    }
+}
+document.addEventListener("DOMContentLoaded", loadPortfolio);
+</script>
+
+</body>
+
+</html>

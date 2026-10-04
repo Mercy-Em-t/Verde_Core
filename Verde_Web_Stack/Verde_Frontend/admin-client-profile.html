@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="hyd_title">Client Profile | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; }
+        .tab-active { border-bottom: 2px solid #4F46E5; color: #4F46E5; font-weight: bold; }
+        .tab-inactive { color: #64748B; font-weight: 600; }
+        .tab-inactive:hover { color: #0B1325; }
+    </style>
+</head>
+<body class="min-h-screen flex bg-[#F8FAFC]">
+    
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#0B1325] text-slate-300 flex flex-col h-screen sticky top-0 shrink-0 border-r border-slate-800">
+        <div class="p-4 border-b border-slate-700/50 flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white font-bold">TM</div>
+            <div>
+                <h1 class="text-sm font-bold text-white leading-tight">Tryphene Murugat</h1>
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest"><i class="fa-solid fa-anchor mr-1"></i> Orchestrator Mode</p>
+            </div>
+        </div>
+        
+        <div class="p-4 flex-1 overflow-y-auto space-y-6">
+            <!-- Business Dev -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Business Dev</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-5 text-center"></i> <span>Global HUD</span></a></li>
+                    <li><a href="admin-leads.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-funnel-dollar w-5 text-center"></i> <span>Lead Qualifiers</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Operations -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Operations</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-analyst.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-microscope w-5 text-center"></i> <span>Systems Analyst</span></a></li>
+                    <li><a href="admin-jad-dashboard.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-users-rectangle w-5 text-center"></i> <span>JAD Facilitator</span></a></li>
+                    <li><a href="admin-engineering.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-code w-5 text-center"></i> <span>Engineering Portal</span></a></li>
+                    <li><a href="admin-finance.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-vault w-5 text-center"></i> <span>Financial Ledger</span></a></li>
+                </ul>
+            </div>
+
+            <!-- System -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">System</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-templates.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-folder-tree w-5 text-center"></i> <span>Template Library</span></a></li>
+                    <li>
+            
+            <a href="admin-portfolio.html" class="flex items-center px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-[#0B1325] transition-all group">
+                <i class="fa-solid fa-briefcase w-5 h-5 mr-3 text-slate-400 group-hover:text-[#0B1325] transition-colors"></i> Portfolio
+            </a>
+            <a href="admin-services.html" class="flex items-center px-4 py-3 text-sm font-semibold text-slate-500 rounded-lg hover:bg-slate-50 hover:text-[#0B1325] transition-all group">
+                <i class="fa-solid fa-list-check w-5 h-5 mr-3 text-slate-400 group-hover:text-[#0B1325] transition-colors"></i> Services Catalog
+            </a>
+            <a href="admin-settings.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-gears w-5 text-center"></i> <span>Platform Settings</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50">
+            <a href="index.html" class="flex items-center space-x-2 text-xs font-bold text-slate-400 hover:text-white transition"><i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i> <span>Exit System</span></a>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-grow flex flex-col min-h-screen">
+
+        <!-- Top Navigation -->
+        <header class="w-full bg-white px-8 py-5 flex justify-between items-center shadow-sm border-b border-slate-200 sticky top-0 z-10">
+            <div class="flex items-center space-x-4">
+                <a href="admin.html" class="text-slate-400 hover:text-[#0B1325] transition"><i class="fa-solid fa-arrow-left"></i></a>
+                <h1 class="text-2xl font-bold text-[#0B1325]">Client CRM Profile</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="flex-grow p-8 max-w-6xl w-full mx-auto space-y-8">
+            
+            <!-- Client Header Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                
+                <div class="flex items-center space-x-6 z-10">
+                    <div class="w-20 h-20 bg-[#0B1325] text-white rounded-lg flex items-center justify-center text-3xl shadow-md border-4 border-slate-50">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-3 mb-1">
+                            <h2 id="hyd_clientName" class="text-3xl font-extrabold text-slate-800">Acme Corp</h2>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider rounded border border-emerald-200">Active</span>
+                        </div>
+                        <p id="hyd_industry" class="text-slate-500 font-medium">FinTech & Payment Gateways &bull; Client since 2024</p>
+                        <div class="flex items-center space-x-4 mt-3 text-sm text-slate-600" id="hyd_meta_container">
+                            <span class="flex items-center"><i class="fa-solid fa-location-dot mr-2 text-slate-400"></i> <span id="hyd_location">Nairobi, KE</span></span>
+                            <span class="flex items-center"><i class="fa-solid fa-link mr-2 text-slate-400"></i> <a href="#" id="hyd_website" class="hover:text-indigo-600">acmecorp.com</a></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 md:mt-0 flex gap-6 text-right z-10">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Lifetime Value</p>
+                        <p class="text-2xl font-bold text-emerald-600 font-mono" id="hyd_ltv">KES 1.8M</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Projects</p>
+                        <p class="text-2xl font-bold text-slate-800 font-mono" id="hyd_totalProjects">3</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="border-b border-slate-200 flex space-x-8 px-2" id="tabNav">
+                <button onclick="switchTab('projects')" class="tab-btn tab-active pb-3 text-sm uppercase tracking-wide" data-target="projects"><i class="fa-solid fa-briefcase mr-2"></i>Projects</button>
+                <button onclick="switchTab('contacts')" class="tab-btn tab-inactive pb-3 text-sm uppercase tracking-wide" data-target="contacts"><i class="fa-solid fa-address-book mr-2"></i>Contacts</button>
+                <button onclick="switchTab('financials')" class="tab-btn tab-inactive pb-3 text-sm uppercase tracking-wide" data-target="financials"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Financials</button>
+                <button onclick="switchTab('docs')" class="tab-btn tab-inactive pb-3 text-sm uppercase tracking-wide" data-target="docs"><i class="fa-solid fa-file-signature mr-2"></i>Master Docs</button>
+            </div>
+
+            <!-- Tab Content: Projects (Default Active) -->
+            <div class="tab-pane block space-y-4" id="pane-projects">
+                <div class="space-y-4" id="hyd_projectsList">
+                
+                <!-- Project Card 1 (Active) -->
+                <div class="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer flex justify-between items-center group">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold mt-1">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800 group-hover:text-indigo-600 transition-colors">Global Payment Gateway Redux</h3>
+                            <p class="text-sm text-slate-500 mb-2">Complete system overhaul of core transaction processing.</p>
+                            <div class="flex space-x-3">
+                                <span class="px-2 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded border border-amber-100">Phase 3: Build</span>
+                                <span class="text-xs text-slate-400 flex items-center font-mono">ID: PRJ-9942</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right flex flex-col items-end">
+                        <span class="text-sm font-bold text-slate-700 font-mono mb-1">KES 850,000</span>
+                        <div class="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-500 w-3/4"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-bold mt-1 uppercase">75% Funded</span>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 (Completed) -->
+                <div class="bg-white border border-slate-200 rounded-lg p-5 hover:shadow-md transition-shadow cursor-pointer flex justify-between items-center group opacity-75">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-10 h-10 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mt-1">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">Legacy DB Migration Audit</h3>
+                            <p class="text-sm text-slate-500 mb-2">Phase 1 feasibility study for Oracle to Postgres migration.</p>
+                            <div class="flex space-x-3">
+                                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded border border-slate-200">Completed</span>
+                                <span class="text-xs text-slate-400 flex items-center font-mono">ID: PRJ-8810</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right flex flex-col items-end">
+                        <span class="text-sm font-bold text-slate-700 font-mono mb-1">KES 200,000</span>
+                        <div class="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 w-full"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-bold mt-1 uppercase">100% Paid</span>
+                    </div>
+                </div>
+
+            </div>
+
+            </div> <!-- end pane-projects -->
+            
+            <!-- Tab Content: Contacts -->
+            <div class="tab-pane hidden space-y-4" id="pane-contacts">
+                <div class="bg-white border border-slate-200 rounded-lg p-12 text-center text-slate-500">
+                    <i class="fa-solid fa-address-book text-4xl mb-4 text-slate-300"></i>
+                    <h3 class="text-lg font-bold text-slate-700">Client Directory</h3>
+                    <p class="mt-2">No secondary contacts listed for this organisation yet.</p>
+                </div>
+            </div>
+
+            <!-- Tab Content: Financials -->
+            <div class="tab-pane hidden space-y-4" id="pane-financials">
+                <div class="bg-white border border-slate-200 rounded-lg p-12 text-center text-slate-500">
+                    <i class="fa-solid fa-file-invoice-dollar text-4xl mb-4 text-slate-300"></i>
+                    <h3 class="text-lg font-bold text-slate-700">Financial Ledger</h3>
+                    <p class="mt-2">Financial history and outstanding invoices will appear here.</p>
+                </div>
+            </div>
+
+            <!-- Tab Content: Master Docs -->
+            <div class="tab-pane hidden space-y-4" id="pane-docs">
+                <div class="bg-white border border-slate-200 rounded-lg p-12 text-center text-slate-500">
+                    <i class="fa-solid fa-file-signature text-4xl mb-4 text-slate-300"></i>
+                    <h3 class="text-lg font-bold text-slate-700">Master Service Agreements</h3>
+                    <p class="mt-2">Global NDAs and umbrella contracts will appear here.</p>
+                </div>
+            </div>
+            
+            <script>
+                function switchTab(tabId) {
+                    // Update buttons
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        if (btn.getAttribute('data-target') === tabId) {
+                            btn.className = 'tab-btn pb-3 text-sm uppercase tracking-wide border-b-2 border-indigo-600 text-indigo-600 font-bold';
+                        } else {
+                            btn.className = 'tab-btn pb-3 text-sm uppercase tracking-wide text-slate-500 hover:text-slate-700';
+                        }
+                    });
+                    
+                    // Update panes
+                    document.querySelectorAll('.tab-pane').forEach(pane => {
+                        if (pane.id === 'pane-' + tabId) {
+                            pane.classList.remove('hidden');
+                            pane.classList.add('block');
+                        } else {
+                            pane.classList.remove('block');
+                            pane.classList.add('hidden');
+                        }
+                    });
+                }
+            </script>
+        </main>
+    </div>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('verde_api_token');
+        if (!token) { window.location.href = 'login.html'; return; }
+        
+        const params = new URLSearchParams(window.location.search);
+        const projectId = params.get('projectId');
+        
+        if (projectId) {
+            try {
+                const res = await fetch(`http://127.0.0.1:8081/api/projects/${projectId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (res.ok) {
+                    const project = await res.json();
+                    
+                    // The project object name contains both the client and project
+                    // e.g. "Apex SACCO Loan Portal". We'll split or just use it.
+                    let clientName = project.name.split(' ')[0] + ' ' + project.name.split(' ')[1];
+                    if (!clientName || clientName.includes('undefined')) clientName = project.name;
+                    
+                    document.getElementById('hyd_clientName').innerText = clientName;
+                    document.getElementById('hyd_title').innerText = `Client Profile: ${clientName} | Tryphene Murugat`;
+                    document.getElementById('hyd_industry').innerHTML = `${project.stage.toUpperCase()} &bull; Created ${new Date(project.created_at).getFullYear()}`;
+                    
+                    if (document.getElementById('hyd_projName')) {
+                        document.getElementById('hyd_projName').innerText = project.name;
+                    }
+                    
+                    // Update Website Mock
+                    if (document.getElementById('hyd_website')) {
+                        let domainName = clientName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+                        document.getElementById('hyd_website').innerText = domainName;
+                    }
+
+                    // Update LTV and Project Count
+                    document.getElementById('hyd_ltv').innerText = 'KES 350,000'; // Hardcoded Phase 1 retainer base for now
+                    document.getElementById('hyd_totalProjects').innerText = '1';
+
+                    // Update the Project List
+                    const listHtml = `
+                        <div class="bg-white border border-indigo-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex justify-between items-center group">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold mt-1">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800 group-hover:text-indigo-600 transition-colors">${project.name}</h3>
+                                    <p class="text-sm text-slate-500 mb-2">Phase 1 Retainer Engagement Active.</p>
+                                    <div class="flex space-x-3">
+                                        <span class="px-2 py-1 bg-sky-50 text-sky-600 text-xs font-bold rounded border border-sky-100 uppercase tracking-wider">${project.stage}</span>
+                                        <span class="text-xs text-slate-400 flex items-center font-mono">ID: ${project.id.substring(0,8).toUpperCase()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right flex flex-col items-end">
+                                <span class="text-sm font-bold text-slate-700 font-mono mb-1">KES 350,000</span>
+                                <div class="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full" style="width: 25%"></div>
+                                </div>
+                                <span class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider mb-3">Phase 1 Retainer</span>
+                                <button onclick="window.location.href='workspace.html?projectId=${project.id}'" class="mt-2 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded hover:bg-indigo-700 transition flex items-center shadow-sm">
+                                    <i class="fa-solid fa-rocket mr-1.5"></i> Launch Workspace
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('hyd_projectsList').innerHTML = listHtml;
+                }
+            } catch (err) {
+                console.error("Hydration failed", err);
+            }
+        }
+      });
+    </script>
+</body>
+
+</html>

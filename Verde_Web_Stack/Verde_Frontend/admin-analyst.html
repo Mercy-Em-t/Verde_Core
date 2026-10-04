@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyst Workspace | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#0B1325] text-slate-300 flex flex-col h-screen sticky top-0 shrink-0 border-r border-slate-800">
+        <div class="p-4 border-b border-slate-700/50 flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white font-bold">TM</div>
+            <div>
+                <h1 class="text-sm font-bold text-white leading-tight">Tryphene Murugat</h1>
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest"><i class="fa-solid fa-anchor mr-1"></i> Orchestrator Mode</p>
+            </div>
+        </div>
+        
+        <div class="p-4 flex-1 overflow-y-auto space-y-6">
+            <!-- Business Dev -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Business Dev</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-5 text-center"></i> <span>Global HUD</span></a></li>
+                    <li><a href="admin-leads.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-funnel-dollar w-5 text-center"></i> <span>Lead Qualifiers</span></a></li>
+                    <li><a href="admin-services.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-emerald-400"><i class="fa-solid fa-layer-group w-5 text-center"></i> <span>Services Catalog</span></a></li>
+                    <li><a href="admin-portfolio.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-indigo-400"><i class="fa-solid fa-images w-5 text-center"></i> <span>Portfolio Matrix</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Operations -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Operations</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-analyst.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-microscope w-5 text-center"></i> <span>Systems Analyst</span></a></li>
+                    <li><a href="admin-jad-dashboard.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-users-rectangle w-5 text-center"></i> <span>JAD Facilitator</span></a></li>
+                    <li><a href="admin-engineering.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-code w-5 text-center"></i> <span>Engineering Portal</span></a></li>
+                    <li><a href="admin-finance.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-vault w-5 text-center"></i> <span>Financial Ledger</span></a></li>
+                </ul>
+            </div>
+
+            <!-- System -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">System</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-templates.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-folder-tree w-5 text-center"></i> <span>Template Library</span></a></li>
+                    <li><a href="#" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition opacity-50"><i class="fa-solid fa-shield-halved w-5 text-center"></i> <span>QA Gatekeeper</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50">
+            <button onclick="localStorage.removeItem('tm_role'); window.location.href='index.html'" class="flex items-center space-x-2 text-sm text-slate-400 hover:text-white transition w-full">
+                <i class="fa-solid fa-sign-out-alt w-5 text-center"></i> <span>Exit System</span>
+            </button>
+        </div>
+    </aside>
+
+    
+    <!-- Sidebar Navigation -->
+        <!-- Sidebar -->
+    
+
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <!-- Top Bar -->
+        <header class="bg-white border-b border-slate-200 p-4 flex justify-between items-center z-10 shadow-sm">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-laptop-code text-indigo-600 mr-2"></i> Subcontractor Handoff: Lead Systems Analyst</h2>
+                <p class="text-xs text-slate-500 mt-1">Project: OmniLogix Multi-Branch Platform | Phase 2 (Requirements Analysis)</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold border border-amber-200"><i class="fa-solid fa-clock mr-1"></i> Timebox: 35 Hrs/Wk</span>
+                <button onclick="alert('Downloading discovery.json for engineering handoff...')" class="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-bold shadow hover:bg-indigo-700 transition-colors">
+                    <i class="fa-solid fa-download mr-2"></i> Export discovery.json
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable Workspace -->
+        <div class="flex-1 overflow-y-auto p-6 bg-slate-100">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+                
+                <!-- LEFT COLUMN: Deliverable Manifest & Tasks -->
+                <div class="lg:col-span-1 space-y-6 flex flex-col">
+                    
+                    <!-- Manifest Checklist (Technical Desk Work) -->
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-5">
+                        <h3 class="font-bold text-sm text-slate-700 uppercase tracking-wider mb-2"><i class="fa-solid fa-list-check text-slate-400 mr-2"></i> 1. Technical Desk Work</h3>
+                        <p class="text-[10px] text-slate-500 mb-4 pb-2 border-b border-slate-100">Analyst Deliverable Manifest. This does NOT close the phase.</p>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                <input type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded">
+                                <span class="text-sm font-medium text-slate-700 line-through">1. Populate incoming findings into discovery.json</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded">
+                                <span class="text-sm font-medium text-slate-700">2. Draft 12 formal Use Case specifications (Happy + 2 Exceptions)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded">
+                                <span class="text-sm font-medium text-slate-700">3. Construct Gane & Sarson DFDs (Context, L0, L1)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded">
+                                <span class="text-sm font-medium text-slate-700">4. Normalize data entities to 3NF</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Commercial Gate (Business Execution) -->
+                    <div class="bg-indigo-50 border-2 border-indigo-200 rounded-xl shadow-sm p-5">
+                        <h3 class="font-bold text-sm text-indigo-900 uppercase tracking-wider mb-2"><i class="fa-solid fa-lock text-indigo-500 mr-2"></i> 2. Business Execution (Gate 2)</h3>
+                        <p class="text-[10px] text-indigo-700 mb-4 pb-2 border-b border-indigo-200">Only the Engagement Director can execute this gate to unlock Phase 3.</p>
+                        
+                        <div class="space-y-3">
+                            <label class="flex items-start space-x-3 p-2 bg-white/50 rounded">
+                                <input type="checkbox" disabled class="mt-0.5 w-4 h-4 text-indigo-600 rounded opacity-50">
+                                <div>
+                                    <span class="block text-xs font-bold text-slate-800">Ink on the Page: Scope Freeze</span>
+                                    <span class="block text-[10px] text-slate-600">Client Exec Sponsor signs the immutable System Proposal.</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start space-x-3 p-2 bg-white/50 rounded">
+                                <input type="checkbox" disabled class="mt-0.5 w-4 h-4 text-indigo-600 rounded opacity-50">
+                                <div>
+                                    <span class="block text-xs font-bold text-slate-800">Funds in the Bank: Phase 3 Retainer</span>
+                                    <span class="block text-[10px] text-slate-600">Accounts confirm clearance of Phase 3 Architecture Deposit.</span>
+                                </div>
+                            </label>
+                        </div>
+                        <button onclick="alert('Cannot initiate Gate 2 Closure until Technical Desk Work is 100% complete.')" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded text-xs font-bold transition-colors">
+                            Initiate Gate 2 Commercial Closure
+                        </button>
+                    </div>
+
+                    <!-- Raw Synthesis Feed -->
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 flex flex-col">
+                        <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                            <h3 class="font-bold text-xs text-slate-700 uppercase tracking-wider">Raw JAD Transcripts</h3>
+                            <span class="bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">From Otter.ai</span>
+                        </div>
+                        <div class="p-4 flex-1 overflow-y-auto space-y-4">
+                            <div class="p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900 font-mono">
+                                "[00:14:22] Client Ops: 'When a truck arrives, the receiving supervisor scans the GRN barcode. If the PO doesn't exist in Sage 300, it throws an error and we manually write it down.'"
+                            </div>
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded text-xs text-slate-700 font-mono">
+                                "[00:18:45] Client Finance: 'No, they shouldn't write it down. The scanner should alert them to reject the shipment immediately. We can't have unlogged inventory on the floor.'"
+                            </div>
+                            <div class="p-3 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-900 font-mono">
+                                "[00:22:10] Engagement Director (Tryphene): 'Okay, binding decision: Scanner will reject unmatched POs immediately. No manual override on the floor without manager PIN.'"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: discovery.json Engine -->
+                <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col">
+                    <div class="p-5 border-b border-slate-200 bg-[#0B1325] text-white flex justify-between items-center rounded-t-xl">
+                        <div>
+                            <h3 class="font-bold text-lg"><i class="fa-solid fa-file-code text-emerald-400 mr-2"></i> discovery.json Elicitation Engine</h3>
+                            <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Transform Raw Transcripts -> Formal Business Rules</p>
+                        </div>
+                        <button class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-xs font-bold transition-colors">
+                            <i class="fa-solid fa-plus mr-1"></i> Add New Rule
+                        </button>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto flex-1 bg-slate-50 space-y-6">
+                        
+                        <!-- Rule Block 1 -->
+                        <div class="bg-white border border-slate-300 rounded-lg shadow-sm overflow-hidden">
+                            <div class="bg-slate-100 p-3 border-b border-slate-300 flex justify-between items-center">
+                                <span class="font-bold text-sm text-slate-800">Rule ID: BR-001 (Inbound Receiving)</span>
+                                <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">Validated</span>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Actor (Trigger)</label>
+                                        <input type="text" value="Receiving Supervisor (Zebra TC21)" class="w-full p-2 border border-slate-300 rounded text-xs font-mono bg-slate-50" readonly>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Target Entity / DFD Store</label>
+                                        <input type="text" value="D1: Purchase Orders (Sage 300)" class="w-full p-2 border border-slate-300 rounded text-xs font-mono bg-slate-50" readonly>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Happy Path (Main Flow)</label>
+                                    <textarea rows="2" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500">IF PO exists in system AND status == 'Approved', THEN render PO line items on scanner for quantity validation.</textarea>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-red-500 uppercase mb-1">Exception Flow 1</label>
+                                        <textarea rows="3" class="w-full p-2 border border-red-200 bg-red-50 rounded text-xs font-mono focus:border-red-500">IF PO does not exist, THEN display 'Invalid PO' alert. Block receiving. Require Manager PIN (Role: Warehouse Manager) to force quarantine hold.</textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-orange-500 uppercase mb-1">Exception Flow 2</label>
+                                        <textarea rows="3" class="w-full p-2 border border-orange-200 bg-orange-50 rounded text-xs font-mono focus:border-orange-500">IF PO exists BUT status == 'Cancelled', THEN trigger alarm sound on device. Log failed attempt in Audit Table. Do not allow receiving.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rule Block 2 -->
+                        <div class="bg-white border border-slate-300 rounded-lg shadow-sm overflow-hidden">
+                            <div class="bg-indigo-50 p-3 border-b border-indigo-200 flex justify-between items-center">
+                                <span class="font-bold text-sm text-indigo-800">Rule ID: BR-002 (Drafting...)</span>
+                                <div class="space-x-2">
+                                    <button class="text-xs text-red-600 font-bold"><i class="fa-solid fa-trash"></i></button>
+                                    <button class="bg-indigo-600 text-white px-3 py-1 rounded text-[10px] font-bold hover:bg-indigo-700">Save Rule</button>
+                                </div>
+                            </div>
+                            <div class="p-4 space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Actor (Trigger)</label>
+                                        <input type="text" placeholder="e.g., Inventory Clerk" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Target Entity / DFD Store</label>
+                                        <input type="text" placeholder="e.g., D2: Ledger Commit" class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Happy Path (Main Flow)</label>
+                                    <textarea rows="2" placeholder="IF [condition], THEN [action]..." class="w-full p-2 border border-slate-300 rounded text-xs font-mono focus:border-indigo-500"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analytics | Tryphene Murugat</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 { font-size: 1.8rem; font-weight: 600; color: var(--text-primary); }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card h3 { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+        .card .value { font-size: 2.5rem; font-weight: 700; color: var(--text-primary); }
+        .card .target { font-size: 0.85rem; color: var(--success-color); }
+
+        .revenue-gauge {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .revenue-gauge h2 { margin-bottom: 1rem; color: var(--text-secondary); }
+        .revenue-value { font-size: 3rem; font-weight: bold; color: var(--accent-color); margin-bottom: 1rem;}
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 24px;
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--success-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .log-section {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .log-section h2 { margin-bottom: 1rem; font-size: 1.2rem; }
+        
+        .form-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        button:hover { background-color: #2563eb; }
+
+        .nav-links { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .nav-links a { color: var(--accent-color); text-decoration: none; }
+        .nav-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<script>
+  const verde_api_token = localStorage.getItem('verde_api_token');
+  const tm_user = JSON.parse(localStorage.getItem('tm_user') || 'null');
+  if (!verde_api_token || !tm_user || (tm_user.role !== 'admin' && tm_user.role !== 'consultant')) {
+    window.location.href = 'login.html';
+  }
+</script>
+
+    <div class="nav-links">
+        <a href="admin.html">← Back to Admin</a>
+        <a href="workspace.html">Workspace</a>
+        <a href="governance.html">Governance</a>
+    </div>
+
+    <h1>Sales Analytics & Volume Tracker</h1>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>Outbound Volume (Weekly)</h3>
+            <div class="value" id="val-outbound">0</div>
+            <div class="target">Target: 125 Touches (75 Email + 50 LI)</div>
+        </div>
+        <div class="card">
+            <h3>Discovery Calls Booked</h3>
+            <div class="value" id="val-calls">0</div>
+            <div class="target" id="val-response-rate">Response Rate: 0%</div>
+        </div>
+        <div class="card">
+            <h3>Clients Closed</h3>
+            <div class="value" id="val-closed">0</div>
+            <div class="target" id="val-conversion-rate">Conversion Rate: 0%</div>
+        </div>
+    </div>
+
+    <div class="revenue-gauge">
+        <h2>Monthly Recurring Revenue (Gross)</h2>
+        <div class="revenue-value">KES <span id="val-revenue">0</span></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div style="margin-top: 0.5rem; color: var(--text-secondary);">Target: KES 4,000,000 / month</div>
+    </div>
+
+    <div class="log-section">
+        <h2>Log Daily Activity</h2>
+        <div class="form-group">
+            <input type="number" id="input-emails" placeholder="Emails Sent Today" min="0">
+            <input type="number" id="input-li" placeholder="LinkedIn Msgs Sent" min="0">
+            <input type="number" id="input-calls" placeholder="Calls Booked" min="0">
+            <input type="number" id="input-closed" placeholder="Clients Closed" min="0">
+            <input type="number" id="input-rev" placeholder="Revenue Booked (KES)" min="0">
+        </div>
+        <button onclick="logActivity()">Save Activity Log</button>
+    </div>
+
+    <script>
+        async function fetchAnalytics() {
+            try {
+                const res = await fetch('http://127.0.0.1:8081/api/analytics/sales');
+                const data = await res.json();
+                
+                const totalOutbound = parseInt(data.emails_sent) + parseInt(data.linkedin_messages_sent);
+                document.getElementById('val-outbound').innerText = totalOutbound;
+                document.getElementById('val-calls').innerText = data.discovery_calls_booked;
+                document.getElementById('val-closed').innerText = data.clients_closed;
+                
+                const responseRate = totalOutbound > 0 ? ((data.discovery_calls_booked / totalOutbound) * 100).toFixed(1) : 0;
+                document.getElementById('val-response-rate').innerText = `Response Rate: ${responseRate}% (Target 2-4%)`;
+                
+                const conversionRate = data.discovery_calls_booked > 0 ? ((data.clients_closed / data.discovery_calls_booked) * 100).toFixed(1) : 0;
+                document.getElementById('val-conversion-rate').innerText = `Conversion Rate: ${conversionRate}% (Target 25%)`;
+
+                const revenue = parseFloat(data.revenue_booked) || 0;
+                document.getElementById('val-revenue').innerText = revenue.toLocaleString();
+                
+                const progressPct = Math.min((revenue / 4000000) * 100, 100);
+                document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            } catch (err) {
+                console.error("Failed to load analytics", err);
+            }
+        }
+
+        async function logActivity() {
+            const payload = {
+                emails: parseInt(document.getElementById('input-emails').value) || 0,
+                linkedin: parseInt(document.getElementById('input-li').value) || 0,
+                calls: parseInt(document.getElementById('input-calls').value) || 0,
+                closed: parseInt(document.getElementById('input-closed').value) || 0,
+                revenue: parseFloat(document.getElementById('input-rev').value) || 0
+            };
+
+            if(Object.values(payload).every(v => v === 0)) return alert("Please enter at least one value.");
+
+            try {
+                const res = await fetch('http://127.0.0.1:8081/api/analytics/log-activity', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    alert("Activity logged successfully!");
+                    document.querySelectorAll('input').forEach(i => i.value = '');
+                    fetchAnalytics();
+                } else {
+                    alert("Failed to log activity.");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Init
+        fetchAnalytics();
+    </script>
+</body>
+</html>
+

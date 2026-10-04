@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAD Pre-Read Packet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .doc-body {
+            font-family: "Times New Roman", Times, serif;
+            color: #111;
+            line-height: 1.5;
+        }
+        .mono-header {
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-book-open mr-2 text-amber-400"></i> JAD Workshop Pre-Read Packet & Session Charter</h1>
+            <p class="text-xs text-slate-400">Phase 2 Operational Diagnostic Artifact</p>
+        </div>
+        <button onclick="window.print()" class="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print / Export to PDF
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex gap-6 no-print">
+        
+        <!-- Left Panel: Input Form -->
+        <div class="w-[45%] bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Configuration parameters</h2>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 space-y-6">
+                
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">Project Details</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Project Name</label>
+                            <input type="text" id="inpProject" value="OmniLogix Multi-Branch Platform" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-amber-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Client Sponsor</label>
+                            <input type="text" id="inpSponsor" value="David Kimani, Chief Operating Officer" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-amber-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Facilitator</label>
+                            <input type="text" id="inpDirector" value="Tryphene Murugat (Engagement Director)" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-amber-500" oninput="render()">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Session Timebox</label>
+                            <input type="text" id="inpTimebox" value="4 Hours (Strictly Moderated)" class="w-full p-2 border border-slate-300 rounded text-xs focus:border-amber-500" oninput="render()">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xs font-bold text-indigo-700 uppercase mb-3 border-b pb-1">Email Template Copy</h3>
+                    <p class="text-[10px] text-slate-500 mb-2">Copy this text to paste into your dispatch email to the client leads.</p>
+                    <textarea readonly rows="12" class="w-full p-3 border border-slate-300 rounded text-xs font-mono bg-slate-50 focus:outline-none">
+Subject: Action Required: Joint Application Development (JAD) Workshop & Pre-Read Packet | [Project Name]
+
+Dear Stakeholders,
+
+Following the successful execution of our Phase 1 Project Charter, we are officially activating Phase 2: Requirements Analysis & Business Modeling.
+
+To ensure the new platform eliminates warehouse discrepancies and manual paperwork without disrupting daily operations, we are convening a mandatory, cross-functional Joint Application Development (JAD) workshop:
+
+📅 Date & Time: [Date] | 09:00 - 13:00 EAT
+📍 Location: [Conference Room / Zoom Link]
+🎯 Purpose: Map cross-departmental workflows, arbitrate operational policies, and lock the baseline functional requirements for engineering.
+
+Attached to this email is your JAD Pre-Read Packet & Session Charter. Please complete your Stakeholder Diagnostic Questionnaire (Section 4 of the packet) and return it by [Date] so our systems analysts can synthesize your requirements prior to the session.
+
+Looking forward to our collaborative session.
+
+Best regards,
+Tryphene Murugat
+Engagement Director & Principal Systems Architect
+                    </textarea>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-200">
+                <button onclick="render()" class="w-full bg-[#0B1325] text-white py-2 rounded font-bold text-sm shadow hover:bg-slate-800">Refresh Document</button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Live Output -->
+        <div class="w-[55%] flex justify-center print-container overflow-y-auto">
+            <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[800px] w-full print:shadow-none print:border-none print:p-0 doc-body text-sm h-max">
+                
+                <div class="mono-header mb-8">
+================================================================================
+                    JOINT APPLICATION DEVELOPMENT (JAD)
+                       PRE-READ PACKET & SESSION CHARTER
+================================================================================
+PROJECT:            <span id="outProject"></span>
+CLIENT SPONSOR:     <span id="outSponsor"></span>
+DELIVERY PARTNER:   Tryphene Murugat Consultancy
+FACILITATOR:        <span id="outDirector"></span>
+SESSION TIMEBOX:    <span id="outTimebox"></span>
+================================================================================
+                </div>
+
+                <h3 class="font-bold mb-2 uppercase text-slate-900">1. Workshop Purpose & Executive Mandate</h3>
+                <p class="mb-4 text-justify">The objective of this 4-hour working session is to systematically define and align cross-departmental business processes across Procurement, Warehouse Operations, Finance/Accounts Payable, and IT.</p>
+                <p class="mb-6 text-justify">Our engineering teams do not write code based on assumptions. The consensus reached during this session directly dictates the Data Flow Diagrams (DFDs), Relational Schemas (ERDs), and the immutable System Proposal for Phase Gate 2.</p>
+
+                <h3 class="font-bold mb-2 uppercase text-slate-900">2. Attendee Roles & Participation Roster</h3>
+                <p class="mb-2">To prevent scope fragmentation, participation is strictly limited to authorized leads:</p>
+                <div class="mono-header mb-6">
+-------------------------------------------------------------------------------
+Department          Lead Representative     Session Responsibility
+-------------------------------------------------------------------------------
+Facilitation / Arch Tryphene Murugat        Session mediation & scope boundary defense.
+Systems Analysis    Lead Systems Analyst    Verbatim logic capture & DFD transcription.
+Operations          Warehouse Floor Lead    Floor realities, scanning ergonomics.
+Procurement         Procurement Director    Purchase order lifecycles & vendor tolerances.
+Finance             Accounts Payable Lead   GRN 3-way matching & ledger commit rules.
+IT / Architecture   Head of ICT             Legacy Sage 300 ERP sync & network boundaries.
+-------------------------------------------------------------------------------
+                </div>
+
+                <h3 class="font-bold mb-2 uppercase text-slate-900">3. Working Ground Rules & Facilitation Protocol</h3>
+                <p class="mb-2">To complete our agenda within the 4-hour timebox, all participants adhere to four rules:</p>
+                <ul class="list-disc pl-5 mb-6 space-y-3 text-justify">
+                    <li><strong>Rule 1: Focus on Business Logic, Not Technical Implementation.</strong> Discuss operational triggers, data rules, and exception cases. Do not debate database syntax, programming languages, or server configurations.</li>
+                    <li><strong>Rule 2: Solve for the Organization, Not the Silo.</strong> Workflows will be evaluated against primary project KPIs: reducing the 14% discrepancy rate and shortening dock receiving from 4 hours to 45 minutes.</li>
+                    <li><strong>Rule 3: Decouple Contested Handoffs.</strong> Where departmental needs conflict (e.g., dock turn speed vs. invoice precision), we will implement decoupled intermediate states (e.g., 'Gate-In' vs. 'Reconciled').</li>
+                    <li><strong>Rule 4: The 24-Hour Executive Escalation Rule.</strong> Unresolved operational deadlocks will be logged in the Conflict Register and escalated to the Chief Operating Officer for a binding determination within 24 hours.</li>
+                </ul>
+
+                <h3 class="font-bold mb-2 uppercase text-slate-900">4. High-Level Agenda</h3>
+                <ul class="space-y-1 mb-8 text-sm">
+                    <li>• <strong class="text-slate-800">Hour 1 (09:00 - 10:00):</strong> Problem Diagnosis & Inbound Manifest Validation (PO -> Gate-In)</li>
+                    <li>• <strong class="text-slate-800">Hour 2 (10:00 - 11:00):</strong> Floor Receiving, Scanning, & Physical Exception Handling</li>
+                    <li>• <strong class="text-slate-800">Hour 3 (11:00 - 12:00):</strong> Stock Reconciliation, Ledger Commits, & Finance GRN Matching</li>
+                    <li>• <strong class="text-slate-800">Hour 4 (12:00 - 13:00):</strong> Data Entity Review, Conflict Sign-Off, & Phase 2 Next Steps</li>
+                </ul>
+
+                <div class="mono-header">
+================================================================================
+PRE-REQUISITE SUBMISSION: Please submit your completed Intake Questionnaire 
+to info@tryphenemurugat.com 24 hours prior to workshop commencement.
+================================================================================
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function render() {
+            document.getElementById('outProject').innerText = document.getElementById('inpProject').value.padEnd(20);
+            document.getElementById('outSponsor').innerText = document.getElementById('inpSponsor').value.padEnd(20);
+            document.getElementById('outDirector').innerText = document.getElementById('inpDirector').value.padEnd(20);
+            document.getElementById('outTimebox').innerText = document.getElementById('inpTimebox').value.padEnd(20);
+        }
+        
+        render();
+    </script>
+</body>
+</html>

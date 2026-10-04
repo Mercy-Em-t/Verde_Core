@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: System Construction & Testing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mono-doc { font-family: "Courier New", Courier, monospace; font-size: 13px; line-height: 1.6; }
+        .header-block { font-weight: bold; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+        .box { border: 1px solid #111; padding: 10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <header class="bg-[#0B1325] text-white p-4 shadow-md flex justify-between items-center">
+        <div><h1 class="text-xl font-bold"><i class="fa-solid fa-hammer mr-2 text-orange-400"></i> Phase 4: System Construction & Testing</h1></div>
+        <button onclick="window.print()" class="bg-orange-600 px-4 py-2 rounded text-sm font-bold shadow hover:bg-orange-700">Print</button>
+    </header>
+    <div class="flex-1 overflow-auto p-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white border shadow-xl p-12 mono-doc">
+            <div class="header-block">PHASE 4 IMPLEMENTATION DELIVERABLE<br>PART 1: CONSTRUCTION, TESTING & DOCUMENTATION</div>
+            
+            <h3 class="font-bold bg-slate-200 p-1 mb-2 uppercase">1. System Construction & Code Freeze</h3>
+            <p class="mb-4">Physical programming of the AWS ECS Node.js API and the React Native client for Zebra TC21 terminals, strictly adhering to the Phase 3 specs. No scope changes permitted without a formal Change Order Request (COR).</p>
+            
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">2. Comprehensive Test Plan</h3>
+            <div class="box">
+                <ul class="list-disc ml-6 space-y-1">
+                    <li><strong>Unit Testing:</strong> Jest suites covering individual endpoints (e.g., asserting 422 Unprocessable if tolerance > +5%).</li>
+                    <li><strong>Integration Testing:</strong> Verifying the API Gateway connects successfully to the RDS PostgreSQL instance in private VPC subnets.</li>
+                    <li><strong>System Testing:</strong> End-to-end load testing using Artillery.io to simulate 50 concurrent warehouse clerks scanning items.</li>
+                    <li><strong>User Acceptance Testing (UAT):</strong> Client floor managers physically testing the Zebra TC21 devices against a staging database using dummy GS1-128 barcodes.</li>
+                </ul>
+            </div>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">3. User Documentation</h3>
+            <div class="ml-4 space-y-2">
+                <p><strong>System Administration Guide:</strong> Auth0 configuration, AWS RDS backup restoration procedures, and RBAC role assignments.</p>
+                <p><strong>Standard Operating Procedure (SOP) Manual:</strong> Laminated 1-page visual cheat sheets for warehouse clerks (e.g., "How to Override a Quarantine Hold").</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

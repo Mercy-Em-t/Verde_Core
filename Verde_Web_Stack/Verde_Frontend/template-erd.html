@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logical Relational Data Model (3NF)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .ascii-diagram {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 11px;
+            white-space: pre;
+            line-height: 1.2;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-database mr-2 text-purple-400"></i> Logical Relational Data Model (3NF)</h1>
+            <p class="text-xs text-slate-400">Phase 2 Engineering Synthesis Artifact</p>
+        </div>
+        <button onclick="window.print()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print / Export to PDF
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex gap-6 no-print">
+        
+        <!-- Left Panel: Instruction & Controls -->
+        <div class="w-[30%] bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col h-full overflow-hidden">
+            <div class="p-4 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-bold text-sm text-slate-700 uppercase tracking-wider">Normalization Protocol</h2>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-1 space-y-6 text-sm text-slate-700">
+                
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded text-purple-900">
+                    <h3 class="font-bold text-xs uppercase tracking-wider mb-2"><i class="fa-solid fa-scale-balanced mr-1"></i> Data Integrity Mandate</h3>
+                    <p class="text-xs text-justify">All logical schemas modeled by the Systems Analyst must strictly adhere to the Third Normal Form (3NF) before Phase 2 can be closed. Update, Insertion, and Deletion anomalies will not be tolerated in physical execution.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2">1NF (First Normal Form)</h3>
+                    <p class="text-xs text-justify mb-2">Eliminate repeating groups. Every field is made atomic, and a composite primary key is defined on associative entities (e.g., receiving line manifests `[ReceiptID, SKUID]`).</p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2">2NF (Second Normal Form)</h3>
+                    <p class="text-xs text-justify mb-2">Remove partial functional dependencies. Attributes depending only on a portion of the composite key are separated (e.g., Supplier/Warehouse isolated from SKU specifics).</p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2">3NF (Third Normal Form)</h3>
+                    <p class="text-xs text-justify mb-2">Remove transitive dependencies. Attributes dependent on other non-key fields (e.g., `ClerkName` depending on `ClerkID`) are isolated into independent master lookup tables.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Output Document -->
+        <div class="w-[70%] flex justify-center print-container overflow-y-auto">
+            <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[900px] w-full print:shadow-none print:border-none print:p-0 h-max">
+                
+                <div class="border-b-2 border-slate-800 pb-4 mb-8 text-center">
+                    <h1 class="text-2xl font-bold uppercase tracking-widest text-slate-900 mb-2">Logical Data Model (3NF)</h1>
+                    <p class="text-sm font-bold text-slate-600 uppercase tracking-widest">Project: OmniLogix Multi-Branch Platform</p>
+                </div>
+
+                <h3 class="font-bold text-lg mb-4 text-slate-900 border-b border-slate-200 pb-1">Normalized Relational Entities (Crow's Foot Notation)</h3>
+                
+                <div class="ascii-diagram mb-10">
++--------------------+            +---------------------+
+|    TBL_SUPPLIER    |            |    TBL_PO_HEADER    |
++--------------------+            +---------------------+
+| PK  SupplierID     |<------||---| PK  PO_Number       |
+|     SupplierName   |            | FK  SupplierID      |
+|     Address        |            |     Status          |
++--------------------+            +----------+----------+
+                                             |
+                                             | 1
+                                             | creates
+                                             v 0..N
++--------------------+            +----------+----------+
+|   TBL_WAREHOUSE    |            |     TBL_RECEIPT     |
++--------------------+            +---------------------+
+| PK  WarehouseID    |<------||---| PK  ReceiptID       |
+|     LocationCode   |            | FK  PO_Number       |
++--------------------+            | FK  WarehouseID     |
+                                  | FK  ClerkID         |
++--------------------+            |     ReceiptDate     |
+|     TBL_STAFF      |            +----------+----------+
++--------------------+                       |
+| PK  ClerkID        |<------||--------------+
+|     StaffName      |                       | 1
++--------------------+                       | contains
+                                             v 1..N
++--------------------+            +----------+----------+
+|      TBL_ITEM      |            |    TBL_RCV_LINES    |
++--------------------+            +---------------------+
+| PK  SKUID          |<------||---| PK,FK ReceiptID     |
+|     SKUName        |            | PK,FK SKUID         |
+|     CategoryCode   |            |       QtyReceived   |
++--------------------+            +---------------------+
+                </div>
+
+                <div class="mt-16 pt-8 border-t-2 border-slate-800">
+                    <p class="text-center text-xs font-bold text-slate-500 uppercase tracking-widest">Confidential & Proprietary • Tryphene Murugat Consultancy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

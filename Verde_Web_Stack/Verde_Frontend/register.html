@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Create Account | Tryphen Emurugat</title>
+  <style>
+    body { margin:0; background:#f8fafc; color:#0b1325; font:14px/1.55 Inter,system-ui,sans-serif; }
+    .top { background:#0b1325; color:#fff; padding:20px; }
+    .wrap { max-width:400px; margin:60px auto; padding:24px; background:#fff; border:1px solid #cbd5e1; border-radius:12px; }
+    .field { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+    .field input { padding:8px; border:1px solid #cbd5e1; border-radius:7px; }
+    .btn { border:1px solid #cbd5e1; background:#0b1325; color:#fff; border-radius:8px; padding:9px 12px; cursor:pointer; width:100%; font-weight:bold; }
+    .error { color:red; margin-bottom:14px; display:none; }
+    h2 { margin-top:0; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <strong>TRYPHEN EMURUGAT</strong>
+  </div>
+  <main class="wrap">
+    <h2>Save your project</h2>
+    <p>Create an account to save your qualifications and access your dashboard.</p>
+    <div id="error" class="error"></div>
+    <form id="registerForm">
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <button class="btn" type="submit">Create account</button>
+    </form>
+    <p style="text-align:center; margin-top:20px; font-size:12px;">
+      Already have an account? <a href="login.html">Log in</a>
+    </p>
+  </main>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      
+      try {
+        const res = await fetch("http://127.0.0.1:8081/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role: "client" })
+        });
+        const data = await res.json();
+        
+        if (!res.ok) {
+          document.getElementById("error").textContent = data.error || "Registration failed";
+          document.getElementById("error").style.display = "block";
+        } else {
+          localStorage.setItem("verde_api_token", data.token);
+          localStorage.setItem("tm_user", JSON.stringify(data.user));
+          
+          window.location.href = "my-project.html";
+        }
+      } catch (err) {
+        document.getElementById("error").textContent = "Network error";
+        document.getElementById("error").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

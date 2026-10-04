@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Verde SDLC — Test Suite</title>
+    <style>
+        body { font-family: sans-serif; background: #f9f9f9; margin: 0; padding: 20px; color: #333; }
+        h1   { color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        .summary-bar {
+            display: flex; gap: 20px; padding: 15px 20px;
+            background: #fff; border: 1px solid #ddd; border-radius: 6px;
+            margin-bottom: 25px; align-items: center;
+        }
+        .stat { text-align: center; }
+        .stat-num  { font-size: 2em; font-weight: bold; line-height: 1; }
+        .stat-label{ font-size: 0.8em; color: #666; }
+        .green { color: #28a745; }
+        .red   { color: #dc3545; }
+        .blue  { color: #0056b3; }
+        #controls { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        button {
+            padding: 8px 16px; border: none; border-radius: 4px;
+            cursor: pointer; font-size: 0.9em; font-weight: bold;
+        }
+        .btn-run    { background: #0056b3; color: white; }
+        .btn-filter { background: #6c757d; color: white; }
+        .btn-filter.active { background: #dc3545; }
+        #results { margin-top: 10px; }
+        .loading { color: #666; font-style: italic; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<h1>🧪 Verde SDLC API Service — Test Suite</h1>
+<p style="color:#666;margin-top:-10px;">
+    Phase 1 (Planning) + Phase 2 (Analysis) | Browser-native ES Module Tests
+</p>
+
+<div id="controls">
+    <button class="btn-run" id="btn-run-all">▶ Run All Suites</button>
+    <button class="btn-filter" id="btn-filter-fail">Show Failures Only</button>
+    <button class="btn-filter" id="btn-filter-pass">Show Passes Only</button>
+    <button class="btn-filter" id="btn-clear-filter">Clear Filter</button>
+</div>
+
+<div class="summary-bar" id="summary-bar" style="display:none;">
+    <div class="stat">
+        <div class="stat-num blue" id="stat-suites">0</div>
+        <div class="stat-label">Suites</div>
+    </div>
+    <div style="width:1px;background:#ddd;"></div>
+    <div class="stat">
+        <div class="stat-num blue" id="stat-total">0</div>
+        <div class="stat-label">Total Tests</div>
+    </div>
+    <div style="width:1px;background:#ddd;"></div>
+    <div class="stat">
+        <div class="stat-num green" id="stat-passed">0</div>
+        <div class="stat-label">Passed</div>
+    </div>
+    <div style="width:1px;background:#ddd;"></div>
+    <div class="stat">
+        <div class="stat-num red" id="stat-failed">0</div>
+        <div class="stat-label">Failed</div>
+    </div>
+    <div style="width:1px;background:#ddd;"></div>
+    <div class="stat">
+        <div class="stat-num" id="stat-pct" style="color:#0056b3;">—</div>
+        <div class="stat-label">Pass Rate</div>
+    </div>
+    <div style="width:1px;background:#ddd;"></div>
+    <div class="stat">
+        <div class="stat-num blue" id="stat-time">—</div>
+        <div class="stat-label">Duration (ms)</div>
+    </div>
+</div>
+
+<div id="results"></div>
+
+<script type="module">
+    import { runSystemRequestTests, runFeasibilityStudyTests, runProjectPlanningTests, runDocumentManagerTests } from './tests/phase1.test.js';
+    import { runPhase1BinderTests, runAnalysisPhaseTests, runRequirementsDeterminationTests, runUseCaseAnalysisTests } from './tests/phase2.test.js';
+    import { runIntegrationTests } from './tests/integration.test.js';
+    import { runProcessModelingTests, runDataModelingTests, runAuditLoggerTests, runWorkflowEngineTests } from './tests/extra.test.js';
+    import { runPhase2BinderTests, runDesignPhaseTests, runArchitectureDesignTests, runOtherDesignTests } from './tests/phase3.test.js';
+
+    const SUITES = [
+        { name: 'Phase 1 — SystemRequest',          fn: runSystemRequestTests },
+        { name: 'Phase 1 — FeasibilityStudy',       fn: runFeasibilityStudyTests },
+        { name: 'Phase 1 — ProjectPlanning',        fn: runProjectPlanningTests },
+        { name: 'Phase 1 — DocumentManager',        fn: runDocumentManagerTests },
+        { name: 'Phase 2 — Phase1Binder',           fn: runPhase1BinderTests },
+        { name: 'Phase 2 — AnalysisPhase',          fn: runAnalysisPhaseTests },
+        { name: 'Phase 2 — RequirementsDetermination', fn: runRequirementsDeterminationTests },
+        { name: 'Phase 2 — UseCaseAnalysis',        fn: runUseCaseAnalysisTests },
+        { name: 'Phase 2 — ProcessModeling',        fn: runProcessModelingTests },
+        { name: 'Phase 2 — DataModeling',           fn: runDataModelingTests },
+        { name: 'Phase 3 — Phase2Binder',           fn: runPhase2BinderTests },
+        { name: 'Phase 3 — DesignPhase Container',  fn: runDesignPhaseTests },
+        { name: 'Phase 3 — Arch & Moving Design',   fn: runArchitectureDesignTests },
+        { name: 'Phase 3 — UI, Prog, Storage',      fn: runOtherDesignTests },
+        { name: 'System  — AuditLogger',            fn: runAuditLoggerTests },
+        { name: 'System  — WorkflowEngine',         fn: runWorkflowEngineTests },
+        { name: 'Integration — Full SDLC Flow',     fn: runIntegrationTests },
+    ];
+
+    let allSummaries = [];
+    let showFilter = null; // null | 'FAIL' | 'PASS'
+
+    function renderResults() {
+        const container = document.getElementById('results');
+
+        if (allSummaries.length === 0) {
+            container.innerHTML = '<div class="loading">No results yet. Click Run All Suites.</div>';
+            return;
+        }
+
+        container.innerHTML = allSummaries.map(s => {
+            const rows = s.results
+                .filter(r => {
+                    if (showFilter === 'FAIL') return r.status === 'FAIL';
+                    if (showFilter === 'PASS') return r.status === 'PASS';
+                    return true;
+                })
+                .map(r => `
+                    <tr style="background:${r.status === 'PASS' ? '#f0fff0' : '#fff0f0'}">
+                        <td style="border:1px solid #ddd;padding:5px;text-align:center;font-weight:bold;color:${r.status === 'PASS' ? 'green' : 'red'}">${r.status === 'PASS' ? '✅' : '❌'}</td>
+                        <td style="border:1px solid #ddd;padding:5px;">${r.label}</td>
+                        <td style="border:1px solid #ddd;padding:5px;color:#666;font-size:0.85em;">${r.detail || '—'}</td>
+                    </tr>`).join('');
+
+            const headerColor = s.failed === 0 ? '#28a745' : '#dc3545';
+            return `
+                <div style="margin-bottom:25px;font-family:sans-serif;">
+                    <div style="background:${headerColor};color:white;padding:10px 15px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;">
+                        <strong>${s.suite}</strong>
+                        <span>${s.passed}/${s.total} passed${s.failed > 0 ? ` | ${s.failed} FAILED` : ''}</span>
+                    </div>
+                    <table style="width:100%;border-collapse:collapse;border:1px solid #ddd;">
+                        <tr style="background:#f4f4f4;">
+                            <th style="border:1px solid #ddd;padding:5px;width:60px;">Result</th>
+                            <th style="border:1px solid #ddd;padding:5px;">Test Case</th>
+                            <th style="border:1px solid #ddd;padding:5px;">Detail</th>
+                        </tr>
+                        ${rows || '<tr><td colspan="3" style="text-align:center;padding:10px;color:#888;">No tests match current filter.</td></tr>'}
+                    </table>
+                </div>`;
+        }).join('');
+    }
+
+    function updateSummaryBar() {
+        const totalTests  = allSummaries.reduce((a, s) => a + s.total,  0);
+        const totalPassed = allSummaries.reduce((a, s) => a + s.passed, 0);
+        const totalFailed = allSummaries.reduce((a, s) => a + s.failed, 0);
+        const pct = totalTests > 0 ? ((totalPassed / totalTests) * 100).toFixed(1) : 0;
+
+        document.getElementById('stat-suites').textContent = allSummaries.length;
+        document.getElementById('stat-total').textContent  = totalTests;
+        document.getElementById('stat-passed').textContent = totalPassed;
+        document.getElementById('stat-failed').textContent = totalFailed;
+        document.getElementById('stat-pct').textContent    = pct + '%';
+        document.getElementById('stat-pct').style.color    = totalFailed === 0 ? '#28a745' : '#dc3545';
+        document.getElementById('summary-bar').style.display = 'flex';
+    }
+
+    document.getElementById('btn-run-all').addEventListener('click', async () => {
+        document.getElementById('results').innerHTML = '<div class="loading">⏳ Running test suites...</div>';
+        allSummaries = [];
+
+        const start = performance.now();
+        for (const suite of SUITES) {
+            try {
+                const summary = await suite.fn();
+                allSummaries.push(summary);
+            } catch (err) {
+                allSummaries.push({
+                    suite: suite.name,
+                    total: 1, passed: 0, failed: 1,
+                    results: [{ label: 'Suite crashed', status: 'FAIL', detail: err.message }]
+                });
+            }
+        }
+        const elapsed = (performance.now() - start).toFixed(0);
+        document.getElementById('stat-time').textContent = elapsed;
+
+        updateSummaryBar();
+        renderResults();
+    });
+
+    document.getElementById('btn-filter-fail').addEventListener('click', () => {
+        showFilter = 'FAIL';
+        renderResults();
+    });
+    document.getElementById('btn-filter-pass').addEventListener('click', () => {
+        showFilter = 'PASS';
+        renderResults();
+    });
+    document.getElementById('btn-clear-filter').addEventListener('click', () => {
+        showFilter = null;
+        renderResults();
+    });
+</script>
+</body>
+</html>

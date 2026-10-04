@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Dictionary & Granular Specifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .print-container { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; border: none !important; box-shadow: none !important;}
+        }
+        .mono-doc {
+            font-family: "Courier New", Courier, monospace;
+            color: #111;
+            line-height: 1.4;
+            font-size: 11px;
+        }
+        .header-block {
+            white-space: pre;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #111; padding: 6px 8px; text-align: left; }
+        th { background-color: #f1f5f9; font-weight: bold; }
+        .ascii-diagram {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 10px;
+            white-space: pre;
+            line-height: 1.2;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-[#0B1325] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+        <div>
+            <h1 class="text-xl font-bold"><i class="fa-solid fa-book-journal-whills mr-2 text-cyan-400"></i> Phase 2 Data Dictionary & Granular Specifications</h1>
+            <p class="text-xs text-slate-400">Engineering Synthesis Artifact</p>
+        </div>
+        <button onclick="window.print()" class="bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded text-sm font-bold shadow transition-colors">
+            <i class="fa-solid fa-print mr-2"></i> Print / Export to PDF
+        </button>
+    </header>
+
+    <div class="flex-1 overflow-auto p-6 flex justify-center print-container">
+        <div class="bg-white border border-slate-200 shadow-xl p-12 max-w-[950px] w-full print:shadow-none print:border-none print:p-0 h-max mono-doc">
+            
+            <div class="header-block text-center border-b-2 border-black pb-4">================================================================================
+          DATA DICTIONARY & LEVEL 2 PROCESS SPECIFICATIONS
+================================================================================
+PROJECT: OmniLogix Multi-Branch Platform</div>
+
+            <p class="mb-4 text-justify italic">In full systems engineering, the Data Dictionary defines every data flow, data element, and persistent data store to prevent ambiguities before entering physical database design (Phase 3).</p>
+
+            <!-- 1. Data Stores -->
+            <div class="font-bold mb-3 mt-6 uppercase tracking-wider text-sm bg-slate-200 p-1">1. Data Store Specifications</div>
+            
+            <div class="mb-4">
+                <p><span class="font-bold text-blue-700">Data Store:</span> D1: PURCHASE_ORDERS</p>
+                <p><span class="font-bold">Description:</span> Master relational store containing vendor commitments, line manifests, and delivery status.</p>
+                <p><span class="font-bold">Physical Mapping:</span> Maps directly to TBL_PO_HEADER and composite lines in TBL_RCV_LINES.</p>
+                <p><span class="font-bold text-emerald-700">Inbound Flows:</span> Validated PO Records (from Process 1.0).</p>
+                <p><span class="font-bold text-rose-700">Outbound Flows:</span> Expected Line Item Manifests (to Process 2.0 & 2.1).</p>
+            </div>
+            
+            <div class="mb-4">
+                <p><span class="font-bold text-blue-700">Data Store:</span> D2: INVENTORY_BALANCES</p>
+                <p><span class="font-bold">Description:</span> Real-time stock ledger storing atomic on-hand counts per SKU, warehouse depot, and physical bin location.</p>
+                <p><span class="font-bold">Physical Mapping:</span> Maps to TBL_ITEM, TBL_WAREHOUSE, and physical ledger balance records.</p>
+                <p><span class="font-bold text-emerald-700">Inbound Flows:</span> Validated Unit Stock Increments (from Process 3.0).</p>
+                <p><span class="font-bold text-rose-700">Outbound Flows:</span> Current Stock Velocity and Reorder Thresholds (to Process 5.0).</p>
+            </div>
+
+            <div class="mb-6">
+                <p><span class="font-bold text-blue-700">Data Store:</span> D3: AUDIT_TRAIL_LOGS</p>
+                <p><span class="font-bold">Description:</span> Append-only cryptographic ledger tracking every operational mutation, clerk identifier, and terminal timestamp.</p>
+                <p><span class="font-bold">Physical Mapping:</span> Write-only relational audit partition.</p>
+                <p><span class="font-bold text-emerald-700">Inbound Flows:</span> Immutable Transaction Hash & Metadata (from Process 4.0).</p>
+                <p><span class="font-bold text-rose-700">Outbound Flows:</span> Audit queries for compliance under the Kenyan Data Protection Act (KDPA).</p>
+            </div>
+
+            <!-- 2. Composite Data Flow -->
+            <div class="font-bold mb-3 uppercase tracking-wider text-sm bg-slate-200 p-1">2. Composite Data Flow Dictionary Entries</div>
+            
+            <div class="mb-2">
+                <p class="font-bold">Data Flow: Validated Expected SKU Manifest (Process 1.0 → Process 2.0)</p>
+                <p class="bg-gray-100 p-2 font-mono">Manifest = PO_Number + SupplierID + {SKUID + SKUName + QtyOrdered + MaxToleranceQty} + OrderStatus</p>
+            </div>
+
+            <div class="mb-2">
+                <p class="font-bold">Data Flow: Buffered Physical Scans (Receiving Clerk → Process 2.0)</p>
+                <p class="bg-gray-100 p-2 font-mono">ScanPayload = TerminalUUID + ClerkID + ScanTimestamp + {BarcodeRaw + ScannedSKU + QtyTally} + NetworkState</p>
+            </div>
+
+            <div class="mb-6">
+                <p class="font-bold">Data Flow: Cryptographic GRN & Discrepancy Escalation (Process 4.0 → Finance / External)</p>
+                <p class="bg-gray-100 p-2 font-mono">GRNPayload = GRN_Number + ReceiptID + PO_Number + ReceiptDate + {SKUID + QtyAccepted + VarianceCode} + HashSig</p>
+            </div>
+
+            <!-- 3. Granular Dictionary -->
+            <div class="font-bold mb-3 uppercase tracking-wider text-sm bg-slate-200 p-1">3. Granular Data Element Dictionary</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="w-24">Element Name</th>
+                        <th class="w-24">Data Type & Length</th>
+                        <th class="w-32">Valid Range / Constraints</th>
+                        <th>System Description / Business Rule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">PO_Number</td>
+                        <td>VARCHAR(16)</td>
+                        <td>Alphanumeric, Format: PO-[0-9]{8}</td>
+                        <td>Unique external purchase order reference key.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">SKUID</td>
+                        <td>VARCHAR(32)</td>
+                        <td>GS1-128 / EAN-13 Barcode String</td>
+                        <td>Master global stock-keeping unit barcode identifier.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">QtyOrdered</td>
+                        <td>INTEGER</td>
+                        <td>≥ 1 and ≤ 500,000</td>
+                        <td>Authorized purchasing volume from commercial supplier.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">QtyReceived</td>
+                        <td>INTEGER</td>
+                        <td>≥ 0</td>
+                        <td>Physical floor unit count tallied during bay receiving.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">MaxToleranceQty</td>
+                        <td>INTEGER</td>
+                        <td>QtyOrdered × 1.05</td>
+                        <td>Hard upper bound (+5% cap) permitted prior to supervisor lockout.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">VarianceCode</td>
+                        <td>CHAR(2)</td>
+                        <td>OK, UN (Unlisted), EX (Excess)</td>
+                        <td>Exception flag determining downstream routing or quarantine.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">TerminalUUID</td>
+                        <td>UUID</td>
+                        <td>RFC-4122 v4 UUID</td>
+                        <td>Cryptographic hardware identifier of Zebra TC21 scanner.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">ScanTimestamp</td>
+                        <td>TIMESTAMPTZ</td>
+                        <td>UTC, ISO-8601</td>
+                        <td>Server-normalized timestamp of transaction execution.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 4. Level 2 Diagram -->
+            <div class="font-bold mb-3 uppercase tracking-wider text-sm bg-slate-200 p-1">4. Level 2 Process Decomposition: Process 2.2 (Evaluate Count & Tolerance)</div>
+            <div class="ascii-diagram mb-8">
+[From 2.1: Matched SKU Record]
+               |
+               v
++------------------------------+
+| 2.2.1 Compare Physical Count |
+|       Against PO_MaxLimit    |
++--------------+---------------+
+               |
+       +-------+-------+
+       |               |
+[Qty <= PO_Limit]   [Qty > PO_Limit]
+       |               |
+       v               v
++--------------+ +------------------------------+
+| 2.2.2 Mark   | | 2.2.3 Calculate Discrepancy  |
+|       Line OK| |       Variance (% Delta)     |
++------+-------+ +--------------+---------------+
+       |                        |
+       |                +-------+-------+
+       |                |               |
+       |         [Delta <= +5%]   [Delta > +5%]
+       |                |               |
+       |                v               v
+       |         +--------------+ +------------------------------+
+       |         | 2.2.4 Log    | | 2.2.5 Trigger System Freeze  |
+       |         | Minor Overage| |       Request Supervisor PIN |
+       |         +------+-------+ +--------------+---------------+
+       |                |                        |
+       +--------+-------+                        v
+                |                      +--------------------+
+                v                      | Route Out-of-Bounds|
+  [To Process 2.3: Formatted Payload]  | Cartons to Bay Q-01|
+                                       +--------------------+
+            </div>
+
+            <div class="mt-8 pt-8 border-t-2 border-slate-800 text-center">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Confidential & Proprietary • Tryphene Murugat Consultancy</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Hub | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; }
+        
+        /* Modal Background */
+        #kycModal { background-color: rgba(11, 19, 37, 0.85); backdrop-filter: blur(4px); }
+        
+        .dashboard-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 12px; transition: all 0.2s; }
+        .dashboard-card:hover { border-color: #CBD5E1; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        
+        .raci-badge { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+        .raci-responsible { background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; } /* Action Required */
+        .raci-informed { background: #E0E7FF; color: #4F46E5; border: 1px solid #C7D2FE; } /* FYI */
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="w-full bg-[#0B1325] text-white px-6 py-4 flex justify-between items-center shadow-md z-10 relative">
+        <div class="text-xl font-bold tracking-tight">
+            Tryphene<span class="font-light">Murugat</span> <span class="text-indigo-400 text-sm ml-2 font-semibold">| Client Hub</span>
+        </div>
+        <div class="flex items-center space-x-6">
+            <span class="text-sm text-slate-300"><i class="fa-solid fa-building mr-2"></i> Acme Corp</span>
+            <button onclick="logout()" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+        
+        <!-- Left Column: Projects -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="flex justify-between items-end mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-[#0B1325]">Active Engagements</h1>
+                    <p class="text-slate-500 mt-1">Select a project to view SDLC progress and documentation.</p>
+                </div>
+                <button onclick="window.location.href='start-project.html'" class="px-4 py-2 bg-white border border-slate-300 rounded text-sm font-bold shadow-sm hover:bg-slate-50 transition-colors">
+                    <i class="fa-solid fa-plus mr-2"></i>New Request
+                </button>
+            </div>
+
+            <div id="project-list" class="space-y-6"></div>
+        </div>
+
+        <!-- Right Column: RACI Action Center -->
+        <div class="space-y-6">
+            <h2 class="text-xl font-bold text-[#0B1325] mb-4 border-b border-slate-200 pb-2">RACI Action Center</h2>
+            
+            <div class="dashboard-card overflow-hidden">
+                <div class="p-4 border-b border-slate-100 bg-slate-50">
+                    <h3 class="font-semibold text-sm text-slate-700"><i class="fa-solid fa-bell mr-2"></i>Pending Notifications</h3>
+                </div>
+                
+                <div class="divide-y divide-slate-100">
+                    
+                    <!-- RACI: Responsible / Action Required -->
+                    <div class="p-4 hover:bg-slate-50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="raci-badge raci-responsible">Action Required</span>
+                            <span class="text-xs text-slate-400">2h ago</span>
+                        </div>
+                        <p class="text-sm font-bold text-[#0B1325] mb-1">Phase 1 Sign-off Required</p>
+                        <p class="text-xs text-slate-600 mb-3">The Architecture Feasibility report for Payment Gateway Redux is ready for your signature.</p>
+                        <button onclick="viewLegalDoc('feasibility')" class="text-xs font-bold text-indigo-600 hover:underline">Review Document <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                    </div>
+
+                    <!-- RACI: Informed -->
+                    <div class="p-4 hover:bg-slate-50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="raci-badge raci-informed">Informed</span>
+                            <span class="text-xs text-slate-400">1d ago</span>
+                        </div>
+                        <p class="text-sm font-bold text-[#0B1325] mb-1">DevOps Pipeline Provisioned</p>
+                        <p class="text-xs text-slate-600 mb-3">Staging environments have been successfully deployed. No action required.</p>
+                        <button onclick="viewLogs()" class="text-xs font-bold text-slate-500 hover:underline">View Logs</button>
+                    </div>
+                    
+                    <!-- RACI: Informed (Invoice) -->
+                    <div class="p-4 hover:bg-slate-50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="raci-badge raci-informed">Informed</span>
+                            <span class="text-xs text-slate-400">3d ago</span>
+                        </div>
+                        <p class="text-sm font-bold text-[#0B1325] mb-1">Invoice INV-004 Paid</p>
+                        <p class="text-xs text-slate-600 mb-3">Payment for Phase 1 mobilization was received successfully.</p>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Expand Your Project -->
+            <div class="dashboard-card p-4 bg-gradient-to-br from-slate-50 to-indigo-50 border-indigo-100">
+                <h3 class="font-semibold text-sm text-[#0B1325] mb-2"><i class="fa-solid fa-compass text-indigo-600 mr-2"></i>Explore Services</h3>
+                <p class="text-xs text-slate-600 mb-3">Discover add-ons, off-the-shelf microservices, or request a new SDLC phase.</p>
+                <a href="services.html" class="block text-center w-full py-2 bg-white border border-indigo-200 text-indigo-700 text-xs font-bold rounded shadow-sm hover:bg-indigo-600 hover:text-white transition-colors">
+                    View Solution Catalog
+                </a>
+            </div>
+            
+            <!-- Support & Contacts -->
+            <div class="dashboard-card p-4">
+                <h3 class="font-semibold text-sm text-slate-700 mb-3"><i class="fa-solid fa-headset mr-2"></i>Support & Contact</h3>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="mailto:admin@tryphenemurugat.com" class="flex items-center text-slate-600 hover:text-indigo-600 transition-colors"><div class="w-6"><i class="fa-solid fa-envelope text-slate-400"></i></div> Email Architect</a></li>
+                    <li><a href="tel:+254700000000" class="flex items-center text-slate-600 hover:text-indigo-600 transition-colors"><div class="w-6"><i class="fa-solid fa-phone text-slate-400"></i></div> Direct Line</a></li>
+                    <li><a href="https://wa.me/254700000000" target="_blank" class="flex items-center text-slate-600 hover:text-emerald-600 transition-colors"><div class="w-6"><i class="fa-brands fa-whatsapp text-slate-400"></i></div> WhatsApp Message</a></li>
+                    <li class="pt-2 border-t border-slate-100"><a href="javascript:void(0)" onclick="openProfileUpdate()" class="flex items-center text-slate-600 hover:text-indigo-600 transition-colors"><div class="w-6"><i class="fa-solid fa-building-user text-slate-400"></i></div> Update Corporate Profile</a></li>
+                    <li><a href="javascript:void(0)" onclick="alert('Redirecting to secure QuickBooks payment portal...')" class="flex items-center text-slate-600 hover:text-indigo-600 transition-colors"><div class="w-6"><i class="fa-solid fa-file-invoice text-slate-400"></i></div> Billing & Invoices</a></li>
+                    <li><a href="javascript:void(0)" onclick="viewLegalDoc('msa')" class="flex items-center text-slate-600 hover:text-indigo-600 transition-colors"><div class="w-6"><i class="fa-solid fa-file-contract text-slate-400"></i></div> View Signed MSA</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- KYC / ONBOARDING MODAL -->
+    <div id="kycModal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+            
+            <div class="bg-[#0B1325] text-white p-6">
+                <h2 class="text-2xl font-bold">Welcome to Tryphene Murugat</h2>
+                <p class="text-slate-300 text-sm mt-1">Please complete your corporate profile to unlock the workspace.</p>
+            </div>
+            
+            <form id="kycForm" class="p-8 space-y-6">
+                
+                <div>
+                    <h3 class="text-lg font-bold border-b border-slate-200 pb-2 mb-4">1. Corporate Entity</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Legal Company Name</label>
+                            <input type="text" value="Acme Corp" required class="w-full p-2 border border-slate-300 rounded focus:border-[#0B1325] outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Industry</label>
+                            <select class="w-full p-2 border border-slate-300 rounded focus:border-[#0B1325] outline-none text-sm">
+                                <option>Fintech</option>
+                                <option>Media & Entertainment</option>
+                                <option>Healthcare</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold border-b border-slate-200 pb-2 mb-4">2. RACI Stakeholders</h3>
+                    <p class="text-xs text-slate-500 mb-4">Define who holds accountability during the SDLC lifecycle.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Primary Approver (Sign-offs)</label>
+                            <input type="text" placeholder="e.g. Jane Doe (CEO)" required class="w-full p-2 border border-slate-300 rounded focus:border-[#0B1325] outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Technical Lead (Consulted)</label>
+                            <input type="text" placeholder="e.g. John Smith (CTO)" required class="w-full p-2 border border-slate-300 rounded focus:border-[#0B1325] outline-none text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                    <label class="flex items-start space-x-3 cursor-pointer">
+                        <input type="checkbox" required class="mt-1 border-slate-300 text-[#0B1325] rounded focus:ring-[#0B1325]">
+                        <span class="text-sm text-slate-700 font-medium">I have read and agree to the <a href="javascript:void(0)" onclick="viewLegalDoc('msa')" class="text-indigo-600 underline">Master Services Agreement (MSA)</a> and <a href="javascript:void(0)" onclick="viewLegalDoc('nda')" class="text-indigo-600 underline">Non-Disclosure Agreement</a>.</span>
+                    </label>
+                </div>
+                
+                <div class="flex justify-end pt-4">
+                    <button type="submit" class="px-6 py-3 bg-[#0B1325] text-white font-bold rounded hover:bg-slate-800 transition-colors shadow">
+                        Complete Setup <i class="fa-solid fa-check ml-2"></i>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Legal Document Viewer Modal -->
+    <div id="legalDocModal" class="fixed inset-0 bg-slate-900 bg-opacity-75 hidden flex items-center justify-center z-[60]">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col h-[80vh]">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 id="legalDocTitle" class="font-bold text-slate-800 text-lg">Document</h3>
+                <button onclick="closeLegalDoc()" class="text-slate-400 hover:text-slate-600 focus:outline-none"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div class="p-8 overflow-y-auto flex-1 bg-white font-serif text-slate-700 space-y-4" id="legalDocContent">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end">
+                <button onclick="closeLegalDoc()" class="px-6 py-2 bg-[#0B1325] text-white rounded font-bold hover:bg-slate-800 transition">Close Document</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- DevOps Log Viewer Modal -->
+    <div id="logViewerModal" class="fixed inset-0 bg-slate-900 bg-opacity-75 hidden flex items-center justify-center z-[60]">
+        <div class="bg-black rounded-lg shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col h-[60vh] border border-slate-700">
+            <div class="p-3 border-b border-slate-800 flex justify-between items-center bg-slate-900">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <h3 class="font-mono text-slate-400 text-xs">Deploy_Pipeline_PRJ-17904.log</h3>
+                <button onclick="closeLogs()" class="text-slate-400 hover:text-white focus:outline-none"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 font-mono text-green-400 text-sm space-y-2" style="line-height: 1.4;">
+                <div>[08:14:02] INITIALIZING PIPELINE...</div>
+                <div>[08:14:04] Fetching docker images for tryphene-base:latest</div>
+                <div>[08:14:08] ✔ Images pulled successfully.</div>
+                <div>[08:14:09] Provisioning AWS ECS Cluster (us-east-1)...</div>
+                <div class="text-yellow-400">[08:14:15] WARN: Subnet configuration mapping took longer than expected.</div>
+                <div>[08:14:18] ✔ Cluster provisioned.</div>
+                <div>[08:14:20] Deploying PostgreSQL 15.4 RDS instance...</div>
+                <div>[08:14:45] ✔ Database ready. Running initial migrations...</div>
+                <div>[08:14:50] Migrations applied.</div>
+                <div>[08:14:52] Starting Web and API containers...</div>
+                <div>[08:14:58] Healthcheck passing on port 8080 and 80.</div>
+                <div class="text-white font-bold">[08:15:00] ✔ DEPLOYMENT SUCCESSFUL. Staging URL generated.</div>
+                <div class="mt-4 text-slate-500">EOF. Connection closed.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="api-client.js"></script>
+    <script>
+        // Check Authentication
+        const tm_api_token = localStorage.getItem('verde_api_token');
+        const userRaw = localStorage.getItem('tm_user') || '{}';
+        const user = JSON.parse(userRaw);
+        
+        if (!tm_api_token) {
+            window.location.href = 'login.html';
+        }
+
+        const kycKey = user.email ? `tm_kyc_completed_${user.email}` : 'tm_kyc_completed';
+
+        // Mock KYC Logic
+        const hasCompletedKYC = localStorage.getItem(kycKey);
+        if (!hasCompletedKYC) {
+            document.getElementById('kycModal').classList.remove('hidden');
+        }
+
+        document.getElementById('kycForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            localStorage.setItem(kycKey, 'true');
+            document.getElementById('kycModal').classList.add('hidden');
+        });
+
+        
+        async function loadProjects() {
+            try {
+                const data = await window.TMAPI.clientDashboard();
+if (!data) throw new Error('Failed to fetch projects');
+                
+                const container = document.getElementById('project-list');
+                if (!data.projects || data.projects.length === 0) {
+                    container.innerHTML = `<div class="dashboard-card p-8 text-center text-slate-500">You have no active projects yet.</div>`;
+                    return;
+                }
+
+                container.innerHTML = data.projects.map(p => `
+                    <div class="dashboard-card p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer" onclick="window.location.href='my-project.html?projectId=${p.id}'">
+                        <div>
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="px-2 py-1 ${p.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-100' : 'bg-indigo-50 text-indigo-700 border-indigo-100'} text-xs font-bold rounded border uppercase tracking-wider">${p.status || 'Active'}</span>
+                                <h2 class="text-xl font-bold">${p.name}</h2>
+                            </div>
+                            <p class="text-sm text-slate-500 mb-4">Contract ID: ${p.id} &bull; Stage: ${p.stage || 'Explore'}</p>
+                        </div>
+                        <button class="bg-[#0B1325] text-white px-6 py-2.5 rounded font-bold hover:bg-indigo-900 transition-colors shadow-sm shrink-0">
+                            Enter Workspace <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                `).join('');
+            } catch(e) {
+                console.error(e);
+                document.getElementById('project-list').innerHTML = `<div class="p-4 text-red-500">Error loading projects.</div>`;
+            }
+        }
+        
+        // Load on start
+        loadProjects();
+
+        // Function to manually reopen the KYC modal
+        function openProfileUpdate() {
+            const modalHeader = document.querySelector('#kycModal h2');
+            modalHeader.textContent = "Update Corporate Profile";
+            document.querySelector('#kycModal p').textContent = "Update your KYC and RACI details below.";
+            document.getElementById('kycModal').classList.remove('hidden');
+        }
+
+        
+        function viewLegalDoc(type) {
+            const title = document.getElementById('legalDocTitle');
+            const content = document.getElementById('legalDocContent');
+            
+            if (type === 'msa') {
+                title.textContent = "Master Services Agreement (MSA)";
+                content.innerHTML = `
+                    <h2 class="font-bold text-2xl text-center mb-6">MASTER SERVICES AGREEMENT</h2>
+                    <p><strong>1. ENGAGEMENT OF SERVICES</strong><br>
+                    Tryphene Murugat agrees to provide software engineering and consulting services as defined in individual Statements of Work (SOW) executed under this MSA.</p>
+                    <p><strong>2. INTELLECTUAL PROPERTY</strong><br>
+                    Upon full and final payment of all invoices related to a specific Phase or SOW, all custom source code, documentation, and specific deliverables developed exclusively for the Client shall become the sole property of the Client.</p>
+                    <p><strong>3. CONFIDENTIALITY</strong><br>
+                    Both parties agree to hold all proprietary or confidential information in strict confidence and to not disclose such information to any third parties without prior written consent.</p>
+                    <p><strong>4. LIMITATION OF LIABILITY</strong><br>
+                    In no event shall either party be liable for any indirect, incidental, or consequential damages. Tryphene Murugat's total liability under this MSA shall not exceed the total fees paid by the Client under the applicable SOW.</p>
+                    <p><strong>5. TERMINATION</strong><br>
+                    Either party may terminate this agreement with 30 days written notice. The Client remains responsible for all work performed and costs incurred up to the date of termination.</p>
+                `;
+            } else if (type === 'nda') {
+                title.textContent = "Non-Disclosure Agreement";
+                content.innerHTML = `
+                    <h2 class="font-bold text-2xl text-center mb-6">NON-DISCLOSURE AGREEMENT</h2>
+                    <p><strong>1. PURPOSE</strong><br>
+                    The parties intend to engage in discussions regarding a potential business relationship. During these discussions, it may be necessary to share confidential and proprietary information.</p>
+                    <p><strong>2. DEFINITION OF CONFIDENTIAL INFORMATION</strong><br>
+                    "Confidential Information" shall include all data, materials, products, technology, computer programs, specifications, manuals, business plans, software, marketing plans, financial information, and other information disclosed or submitted, orally, in writing, or by any other media.</p>
+                    <p><strong>3. OBLIGATIONS OF RECEIVING PARTY</strong><br>
+                    The Receiving Party shall hold and maintain the Confidential Information in strictest confidence for the sole and exclusive benefit of the Disclosing Party. The Receiving Party shall carefully restrict access to Confidential Information to employees, contractors, and third parties as is reasonably required.</p>
+                    <p><strong>4. TIME PERIODS</strong><br>
+                    The nondisclosure provisions of this Agreement shall survive the termination of this Agreement and Receiving Party's duty to hold Confidential Information in confidence shall remain in effect until the Confidential Information no longer qualifies as a trade secret or until Disclosing Party sends Receiving Party written notice releasing Receiving Party from this Agreement.</p>
+                `;
+
+            } else if (type === 'feasibility') {
+                title.textContent = "Architecture Feasibility Report";
+                content.innerHTML = `
+                    <h2 class="font-bold text-2xl text-center mb-6">PHASE 1: ARCHITECTURE FEASIBILITY</h2>
+                    <p><strong>1. EXECUTIVE SUMMARY</strong><br>
+                    The proposed Payment Gateway Redux architecture has been evaluated for technical feasibility, regulatory compliance (PCI-DSS), and scalability. The findings indicate that the blueprint is fully viable.</p>
+                    <p><strong>2. RISK ASSESSMENT</strong><br>
+                    - Security Risk: Low (mitigated by tokenization).<br>
+                    - Latency Risk: Medium (mitigated by Redis caching tier).<br>
+                    - Vendor Lock-in: Low (containerized deployment).</p>
+                    <p><strong>3. SIGN-OFF AUTHORIZATION</strong><br>
+                    By signing below, the Client Sponsor authorizes Tryphene Murugat to proceed to Phase 2 (Formal Systems Analysis) using the approved Phase 1 blueprints.</p>
+                `;
+            }
+            
+            document.getElementById('legalDocModal').classList.remove('hidden');
+        }
+
+        function viewLogs() {
+            document.getElementById('logViewerModal').classList.remove('hidden');
+        }
+
+        function closeLogs() {
+            document.getElementById('logViewerModal').classList.add('hidden');
+        }
+
+
+        function closeLegalDoc() {
+            document.getElementById('legalDocModal').classList.add('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('verde_api_token');
+            localStorage.removeItem('tm_user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Library | Tryphene Murugat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0B1325; }
+
+        .dashboard-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 12px; transition: all 0.2s ease; }
+        .dashboard-card:hover { border-color: #CBD5E1; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+
+        .template-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 10px; transition: all 0.2s ease; display: flex; flex-direction: column; }
+        .template-card:hover { border-color: #818CF8; box-shadow: 0 8px 20px -4px rgba(79,70,229,0.10); transform: translateY(-2px); }
+
+        .protocol-card { background: #ffffff; border: 1px solid #E2E8F0; border-radius: 10px; transition: all 0.2s ease; }
+        .protocol-card:hover { border-color: #0B1325; box-shadow: 0 8px 20px -4px rgba(11,19,37,0.10); transform: translateY(-2px); }
+
+        /* Tab styles */
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { border-bottom: 3px solid #4F46E5; color: #4F46E5; font-weight: 700; }
+        .tab-btn:not(.active) { border-bottom: 3px solid transparent; color: #64748B; }
+
+        /* Modal */
+        .modal-overlay { backdrop-filter: blur(4px); }
+        .modal-body::-webkit-scrollbar { width: 6px; }
+        .modal-body::-webkit-scrollbar-track { background: #F1F5F9; }
+        .modal-body::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+        /* Template content prose */
+        .prose-template h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B; margin-top: 1.5rem; margin-bottom: 0.5rem; padding-bottom: 0.25rem; border-bottom: 1px solid #E2E8F0; }
+        .prose-template h3:first-child { margin-top: 0; }
+        .prose-template p { font-size: 0.875rem; color: #1E293B; line-height: 1.7; margin-bottom: 0.5rem; }
+        .prose-template ul { list-style: none; padding: 0; margin: 0 0 0.75rem 0; }
+        .prose-template ul li { font-size: 0.875rem; color: #1E293B; padding: 0.25rem 0 0.25rem 1.25rem; position: relative; line-height: 1.6; }
+        .prose-template ul li::before { content: "—"; position: absolute; left: 0; color: #4F46E5; font-weight: 700; }
+        .prose-template ol { list-style: none; counter-reset: item; padding: 0; margin: 0 0 0.75rem 0; }
+        .prose-template ol li { font-size: 0.875rem; color: #1E293B; padding: 0.3rem 0 0.3rem 1.75rem; position: relative; line-height: 1.6; counter-increment: item; }
+        .prose-template ol li::before { content: counter(item) "."; position: absolute; left: 0; color: #4F46E5; font-weight: 700; }
+        .prose-template .field-row { display: flex; gap: 0.5rem; align-items: baseline; font-size: 0.875rem; padding: 0.25rem 0; }
+        .prose-template .field-label { font-weight: 700; color: #0B1325; min-width: 9rem; flex-shrink: 0; }
+        .prose-template .field-val { color: #475569; }
+        .prose-template .callout { background: #EEF2FF; border-left: 4px solid #4F46E5; border-radius: 0 6px 6px 0; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.875rem; color: #1E293B; line-height: 1.65; }
+        .prose-template .callout.warning { background: #FEF3C7; border-color: #F59E0B; }
+        .prose-template .callout.danger { background: #FEE2E2; border-color: #EF4444; }
+        .prose-template .time-row { display: flex; gap: 1rem; font-size: 0.875rem; padding: 0.4rem 0; border-bottom: 1px dashed #F1F5F9; }
+        .prose-template .time-row .time-range { font-weight: 700; color: #4F46E5; min-width: 7rem; flex-shrink: 0; font-size: 0.8rem; }
+        .prose-template .time-row .time-action { color: #1E293B; }
+        .prose-template .step-block { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 0.75rem; }
+        .prose-template .step-block .step-title { font-weight: 700; font-size: 0.8rem; color: #0B1325; margin-bottom: 0.4rem; }
+        .prose-template .step-block p { margin-bottom: 0; }
+        .prose-template .day-block { border-left: 3px solid #4F46E5; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; background: #F8FAFC; border-radius: 0 6px 6px 0; }
+        .prose-template .day-block .day-label { font-weight: 700; font-size: 0.75rem; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+        .prose-template table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 1rem; }
+        .prose-template table th { background: #0B1325; color: #fff; font-weight: 700; padding: 0.5rem 0.75rem; text-align: left; }
+        .prose-template table td { padding: 0.4rem 0.75rem; border-bottom: 1px solid #E2E8F0; color: #1E293B; vertical-align: top; }
+        .prose-template table tr:nth-child(even) td { background: #F8FAFC; }
+    </style>
+</head>
+<body class="min-h-screen flex bg-[#F8FAFC]">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#0B1325] text-slate-300 flex flex-col h-screen sticky top-0 shrink-0 border-r border-slate-800">
+        <div class="p-4 border-b border-slate-700/50 flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center text-white font-bold">TM</div>
+            <div>
+                <h1 class="text-sm font-bold text-white leading-tight">Tryphene Murugat</h1>
+                <p class="text-[10px] text-emerald-400 font-bold uppercase tracking-widest"><i class="fa-solid fa-anchor mr-1"></i> Orchestrator Mode</p>
+            </div>
+        </div>
+        
+        <div class="p-4 flex-1 overflow-y-auto space-y-6">
+            <!-- Business Dev -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Business Dev</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-chart-line w-5 text-center"></i> <span>Global HUD</span></a></li>
+                    <li><a href="admin-leads.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-funnel-dollar w-5 text-center"></i> <span>Lead Qualifiers</span></a></li>
+                    <li><a href="admin-services.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-emerald-400"><i class="fa-solid fa-layer-group w-5 text-center"></i> <span>Services Catalog</span></a></li>
+                    <li><a href="admin-portfolio.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition text-indigo-400"><i class="fa-solid fa-images w-5 text-center"></i> <span>Portfolio Matrix</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Operations -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Operations</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-analyst.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-microscope w-5 text-center"></i> <span>Systems Analyst</span></a></li>
+                    <li><a href="admin-jad-dashboard.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-users-rectangle w-5 text-center"></i> <span>JAD Facilitator</span></a></li>
+                    <li><a href="admin-engineering.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-code w-5 text-center"></i> <span>Engineering Portal</span></a></li>
+                    <li><a href="admin-finance.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-vault w-5 text-center"></i> <span>Financial Ledger</span></a></li>
+                </ul>
+            </div>
+
+            <!-- System -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">System</h2>
+                <ul class="space-y-1">
+                    <li><a href="admin-templates.html" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition"><i class="fa-solid fa-folder-tree w-5 text-center"></i> <span>Template Library</span></a></li>
+                    <li><a href="#" class="flex items-center space-x-2 px-3 py-2 rounded text-sm hover:bg-slate-800 transition opacity-50"><i class="fa-solid fa-shield-halved w-5 text-center"></i> <span>QA Gatekeeper</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-700/50">
+            <button onclick="localStorage.removeItem('tm_role'); window.location.href='index.html'" class="flex items-center space-x-2 text-sm text-slate-400 hover:text-white transition w-full">
+                <i class="fa-solid fa-sign-out-alt w-5 text-center"></i> <span>Exit System</span>
+            </button>
+        </div>
+    </aside>
+
+
+    <!-- Auth Check -->
+    <script>
+        const verde_api_token = localStorage.getItem('verde_api_token');
+        const verde_role = localStorage.getItem('verde_role');
+        if (!verde_api_token ) window.location.href = 'login.html';
+        
+        if (verde_role !== 'Admin') window.location.href = 'login.html';
+    </script>
+
+    <!-- Sidebar Navigation -->
+        <!-- Sidebar -->
+    
+
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-grow flex flex-col h-screen overflow-y-auto">
+
+        <!-- Top Header -->
+        <header class="w-full bg-white px-8 py-5 flex justify-between items-center shadow-sm border-b border-slate-200 sticky top-0 z-10">
+            <div>
+                <h1 class="text-2xl font-bold text-[#0B1325]">Template Library</h1>
+                <p class="text-slate-500 text-sm mt-0.5">Master repository of client-facing templates and internal operating protocols.</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <i class="fa-solid fa-bell text-slate-400 text-xl cursor-pointer hover:text-indigo-600 transition-colors"></i>
+                    <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl w-full mx-auto p-6 pb-20">
+
+            <!-- Internal Protocol Warning Banner -->
+            <div class="bg-[#0B1325] border border-slate-700 rounded-xl px-6 py-4 mb-6 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 flex-shrink-0">
+                    <i class="fa-solid fa-lock text-lg"></i>
+                </div>
+                <div>
+                    <p class="text-white font-bold text-sm">Admin &amp; Consultant Access Only</p>
+                    <p class="text-slate-400 text-xs mt-0.5">This library is never visible to clients. The <span class="text-indigo-300 font-semibold">Internal Protocols</span> tab contains director-level operating intelligence and must not be shared externally under any circumstances.</p>
+                </div>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="border-b border-slate-200 mb-6 flex gap-0">
+                <button id="tab-client" onclick="switchTab('client')" class="tab-btn active px-6 py-3 text-sm font-semibold bg-transparent border-0 cursor-pointer">
+                    <i class="fa-solid fa-users mr-2"></i>Client Templates
+                    <span class="ml-2 bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full">13</span>
+                </button>
+                <button id="tab-internal" onclick="switchTab('internal')" class="tab-btn px-6 py-3 text-sm font-semibold bg-transparent border-0 cursor-pointer">
+                    <i class="fa-solid fa-shield-halved mr-2"></i>Internal Protocols
+                    <span class="ml-2 bg-slate-200 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-full">4</span>
+                </button>
+            </div>
+
+            <!-- ===== CLIENT TEMPLATES TAB ===== -->
+            <div id="panel-client">
+
+                <!-- Search & Filter Bar -->
+                <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                    <div class="relative flex-grow">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input id="templateSearch" type="text" placeholder="Search templates by title, category, or keyword…" oninput="filterTemplates()" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-indigo-500 bg-white">
+                    </div>
+                    <select id="categoryFilter" onchange="filterTemplates()" class="border border-slate-300 rounded-lg text-sm px-4 py-2.5 focus:outline-none focus:border-indigo-500 bg-white text-slate-700 font-medium">
+                        <option value="">All Categories</option>
+                        <option value="Onboarding">Onboarding</option>
+                        <option value="Communications">Communications</option>
+                        <option value="Discovery">Discovery</option>
+                        <option value="Workshops">Workshops</option>
+                        <option value="Governance">Governance</option>
+                        <option value="QA">QA</option>
+                    </select>
+                </div>
+
+                <!-- Template Grid -->
+                <div id="templateGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+                    <!-- Card: Welcome Email & Portal Orientation -->
+                    <div class="template-card p-5" data-title="Welcome Email & Portal Orientation" data-category="Onboarding">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                                <i class="fa-solid fa-envelope-open-text"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Welcome Email &amp; Portal Orientation</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">Onboarding</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Formally welcomes the client sponsor after contract signing, provisions workspace access, and establishes the sole communication channel protocol.</p>
+                        <button onclick="openModal('welcome-email')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Client Kickoff Framing Script -->
+                    <div class="template-card p-5" data-title="Client Kickoff Framing Script" data-category="Onboarding">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Client Kickoff Framing Script</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">Onboarding</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Word-for-word facilitation script for opening the first working session — positions scope protection, phased delivery, and the sign-off trigger from the outset.</p>
+                        <button onclick="openModal('kickoff-script')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Post-Signing Kickoff Agenda -->
+                    <div class="template-card p-5" data-title="Post-Signing Kickoff Agenda" data-category="Onboarding">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Post-Signing Kickoff Agenda</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">Onboarding</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Structured 45-minute session agenda covering workspace orientation, phase roadmap review, communication SLAs, QA protocol, and stakeholder mapping.</p>
+                        <button onclick="openModal('kickoff-agenda')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Friday Status Memo & Blocker Log -->
+                    <div class="template-card p-5" data-title="Friday Status Memo & Blocker Log" data-category="Communications">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600 flex-shrink-0">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Friday Status Memo &amp; Blocker Log</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-sky-50 text-sky-700 px-2 py-0.5 rounded">Communications</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Weekly governance communication sent every Friday covering deliverables completed, next-sprint plan, active blockers with owner/deadline, and milestone burn status.</p>
+                        <button onclick="openModal('friday-memo')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Stakeholder Discovery — Standard -->
+                    <div class="template-card p-5" data-title="Stakeholder Discovery Intake Questionnaire Standard" data-category="Discovery">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-violet-600 flex-shrink-0">
+                                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Stakeholder Discovery Intake Questionnaire — Standard</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-violet-50 text-violet-700 px-2 py-0.5 rounded">Discovery</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">General-purpose 12-question intake form covering organisation operations, technical environment, and commercial governance. Suitable for all industry verticals.</p>
+                        <button onclick="openModal('discovery-standard')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Stakeholder Discovery — Fintech -->
+                    <div class="template-card p-5" data-title="Stakeholder Discovery Intake Questionnaire Fintech" data-category="Discovery">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-violet-600 flex-shrink-0">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Stakeholder Discovery Intake Questionnaire — Fintech</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-violet-50 text-violet-700 px-2 py-0.5 rounded">Discovery</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Fintech-vertical variant covering CBK/regulatory compliance, payment rail integrations (M-Pesa, Stripe, PesaLink), KYC/AML workflows, and reconciliation engine requirements.</p>
+                        <button onclick="openModal('discovery-fintech')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Stakeholder Discovery — Logistics -->
+                    <div class="template-card p-5" data-title="Stakeholder Discovery Intake Questionnaire Logistics" data-category="Discovery">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-violet-600 flex-shrink-0">
+                                <i class="fa-solid fa-truck-ramp-box"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Stakeholder Discovery Intake Questionnaire — Logistics</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-violet-50 text-violet-700 px-2 py-0.5 rounded">Discovery</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Logistics-vertical variant covering fleet management, route optimisation, warehouse inventory systems, last-mile tracking, and third-party carrier API integrations.</p>
+                        <button onclick="openModal('discovery-logistics')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: JAD Workshop Facilitation Protocol -->
+                    <div class="template-card p-5" data-title="JAD Workshop Facilitation Protocol" data-category="Workshops">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <i class="fa-solid fa-people-arrows"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">JAD Workshop Facilitation Protocol</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Workshops</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">End-to-end facilitation protocol for Joint Application Development sessions: pre-session prep, session rules, facilitation flow with time-boxes, and post-session lock-in procedures.</p>
+                        <button onclick="openModal('jad-facilitation')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Joint Application Development Session Agenda -->
+                    <div class="template-card p-5" data-title="Joint Application Development Session Agenda" data-category="Workshops">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <i class="fa-solid fa-table-list"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Joint Application Development Session Agenda</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Workshops</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Shareable client-facing agenda distributed 48 hours before the JAD session, with explicit time-boxes, attendee roles, pre-read requirements, and session objectives.</p>
+                        <button onclick="openModal('jad-agenda')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Post-JAD Documentation & Output Register -->
+                    <div class="template-card p-5" data-title="Post-JAD Documentation & Output Register" data-category="Workshops">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Post-JAD Documentation &amp; Output Register</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 px-2 py-0.5 rounded">Workshops</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Formal post-session register capturing locked decisions, open items requiring client input, CORs raised, agreed future-state process narrative, and next steps with owners.</p>
+                        <button onclick="openModal('post-jad')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Change Order Request Form -->
+                    <div class="template-card p-5" data-title="Change Order Request COR Form 1 Page" data-category="Governance">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
+                                <i class="fa-solid fa-code-pull-request"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Change Order Request (COR) Form — 1 Page</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-red-50 text-red-700 px-2 py-0.5 rounded">Governance</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Single-page formal instrument for capturing out-of-scope client requests. Includes scope delta description, schedule impact, financial impact, and client acknowledgment fields.</p>
+                        <button onclick="openModal('cor-form')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Defect Severity Matrix SLA Poster -->
+                    <div class="template-card p-5" data-title="Defect Severity Matrix SLA Poster" data-category="QA">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                                <i class="fa-solid fa-bug-slash"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Defect Severity Matrix SLA Poster</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">QA</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">P1–P4 defect classification matrix with SLA response and resolution times, escalation paths, and client communication obligations for each severity level.</p>
+                        <button onclick="openModal('defect-matrix')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                    <!-- Card: Pre-UAT Test Plan Template -->
+                    <div class="template-card p-5" data-title="Pre-UAT Test Plan Template" data-category="QA">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                                <i class="fa-solid fa-flask-vial"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Pre-UAT Test Plan Template</h3>
+                                <span class="inline-block mt-1 text-[10px] font-bold uppercase tracking-wide bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">QA</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed flex-grow">Structured test plan for client UAT execution: scope, test environment, acceptance criteria, tester assignments, and pass/fail sign-off procedure mapped to the signed SRS.</p>
+                        <button onclick="openModal('uat-plan')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-eye"></i> View / Download
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- No results message -->
+                <div id="noResults" class="hidden text-center py-16 text-slate-400">
+                    <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                    <p class="font-semibold">No templates match your search.</p>
+                    <p class="text-sm mt-1">Try a different keyword or clear the category filter.</p>
+                </div>
+            </div>
+
+            <!-- ===== INTERNAL PROTOCOLS TAB ===== -->
+            <div id="panel-internal" class="hidden">
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg px-5 py-4 mb-6 flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5"></i>
+                    <div>
+                        <p class="font-bold text-amber-800 text-sm">Director-Level Intelligence — Strictly Internal</p>
+                        <p class="text-amber-700 text-xs mt-0.5">These protocols govern how Tryphene Murugat and the analyst team operate internally. They are never distributed to clients, subcontractors, or third parties. Treat as confidential proprietary methodology.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- Protocol: Internal Synthesis Protocol -->
+                    <div class="protocol-card p-5 border-l-4 border-l-indigo-600">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Internal Synthesis Protocol</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Director &amp; Analyst · 8-Step Process</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Governs conversion of raw JAD session input and stakeholder notes into formal engineering specifications — business rules, Use Cases, and DFD sets.</p>
+                        <div class="flex gap-2">
+                            <span class="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded uppercase">Post-JAD</span>
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase">3-Day Protocol</span>
+                        </div>
+                        <button onclick="openModal('synthesis-protocol')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> View Protocol
+                        </button>
+                    </div>
+
+                    <!-- Protocol: Conflict Resolution Framework -->
+                    <div class="protocol-card p-5 border-l-4 border-l-red-500">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Conflict Resolution Framework</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Director Level · 4-Level Escalation Ladder</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Defines the decision-making authority and escalation tools for four conflict archetypes: competing stakeholder priorities, scope baseline disputes, sponsor vs. end-user conflicts, and subcontractor deviations.</p>
+                        <div class="flex gap-2">
+                            <span class="text-[10px] font-bold bg-red-50 text-red-700 px-2 py-0.5 rounded uppercase">Governance</span>
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase">4 Levels</span>
+                        </div>
+                        <button onclick="openModal('conflict-resolution')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> View Protocol
+                        </button>
+                    </div>
+
+                    <!-- Protocol: Post-JAD Rules into DFDs -->
+                    <div class="protocol-card p-5 border-l-4 border-l-amber-500">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <i class="fa-solid fa-diagram-project"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Step-by-Step: Post-JAD Rules into Formal DFDs</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Analyst Reference · 7-Step Guide</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Precise methodology for translating the Post-JAD Output Register's agreed future-state process into balanced, client-ready Data Flow Diagrams at Level-0 and Level-1.</p>
+                        <div class="flex gap-2">
+                            <span class="text-[10px] font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded uppercase">DFD</span>
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase">Specs Work</span>
+                        </div>
+                        <button onclick="openModal('jad-to-dfd')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> View Protocol
+                        </button>
+                    </div>
+
+                    <!-- Protocol: Phase 1 Playbook -->
+                    <div class="protocol-card p-5 border-l-4 border-l-emerald-500">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
+                                <i class="fa-solid fa-rocket"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-[#0B1325] text-sm leading-snug">Phase 1 (Planning) Operations &amp; Logistics Playbook</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Director Level · Day-by-Day Execution Plan</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-4">Complete 10-business-day operational playbook from deposit receipt to Phase 1 Binder submission. Governs workspace provisioning, kickoff, JAD session, internal synthesis, deliverable assembly, and invoice trigger.</p>
+                        <div class="flex gap-2">
+                            <span class="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded uppercase">Phase 1</span>
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase">10 Days</span>
+                        </div>
+                        <button onclick="openModal('phase1-playbook')" class="mt-4 w-full py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> View Protocol
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- =====================================================
+         MODAL OVERLAY
+    ====================================================== -->
+    <div id="templateModal" class="fixed inset-0 z-50 hidden flex items-center justify-center modal-overlay bg-slate-900/60">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[90vh]">
+
+            <!-- Modal Header -->
+            <div class="flex justify-between items-start p-6 border-b border-slate-200 bg-[#0B1325] rounded-t-xl">
+                <div class="flex-grow pr-4">
+                    <p id="modalCategory" class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1"></p>
+                    <h2 id="modalTitle" class="text-white font-bold text-lg leading-snug"></h2>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors flex-shrink-0 mt-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div id="modalBody" class="modal-body flex-grow overflow-y-auto p-6 prose-template">
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-200 bg-slate-50 rounded-b-xl flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-semibold"><i class="fa-solid fa-lock mr-1"></i> Tryphene Murugat — Proprietary</span>
+                <button onclick="closeModal()" class="px-5 py-2 bg-[#0B1325] text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SCRIPTS
+    ====================================================== -->
+    <script>
+        // Tab Switching
+        function switchTab(tab) {
+            const tabs = ['client', 'internal'];
+            tabs.forEach(t => {
+                document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+                document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+            });
+        }
+
+        // Template Search & Filter
+        function filterTemplates() {
+            const query = document.getElementById('templateSearch').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value.toLowerCase();
+            const cards = document.querySelectorAll('#templateGrid .template-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title').toLowerCase();
+                const cat = card.getAttribute('data-category').toLowerCase();
+                const matchesQuery = query === '' || title.includes(query);
+                const matchesCategory = category === '' || cat === category.toLowerCase();
+                const visible = matchesQuery && matchesCategory;
+                card.style.display = visible ? '' : 'none';
+                if (visible) visibleCount++;
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+        }
+
+        // Modal control
+        function openModal(templateKey) {
+            const data = templateContent[templateKey];
+            if (!data) return;
+            document.getElementById('modalCategory').textContent = data.category;
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalBody').innerHTML = data.content;
+            document.getElementById('templateModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('templateModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.getElementById('templateModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // =====================================================
+        // TEMPLATE CONTENT REGISTRY
+        // =====================================================
+        const templateContent = {
+
+            'welcome-email': {
+                title: 'Welcome Email & Portal Orientation',
+                category: 'Onboarding',
+                content: `
+                    <div class="callout">This email is sent immediately after the signed contract and deposit are confirmed. Personalise the bracketed fields before dispatch.</div>
+
+                    <h3>Email Header</h3>
+                    <div class="field-row"><span class="field-label">Subject:</span><span class="field-val">Your Project Workspace Is Ready — [Project Name]</span></div>
+                    <div class="field-row"><span class="field-label">To:</span><span class="field-val">[Client Sponsor Email]</span></div>
+                    <div class="field-row"><span class="field-label">CC:</span><span class="field-val">[Project Email Thread]</span></div>
+
+                    <h3>Salutation</h3>
+                    <p>Dear [Client Sponsor Name],</p>
+                    <p>Thank you for formalising our engagement. Your secure project workspace has been provisioned and is accessible at the link below.</p>
+
+                    <h3>Workspace Contents</h3>
+                    <p>Your workspace is your single source of truth for this engagement. Inside you will find:</p>
+                    <ul>
+                        <li><strong>Live Phase Roadmap</strong> — showing current progress and upcoming milestones.</li>
+                        <li><strong>Artifact Vault</strong> — with read-only access to all signed deliverables.</li>
+                        <li><strong>Decision &amp; Sign-Off Log</strong> — for full governance transparency.</li>
+                        <li><strong>Change Request Portal</strong> — to formally submit scope adjustments.</li>
+                        <li><strong>Sprint Memos &amp; Communication Log</strong> — updated every Friday.</li>
+                    </ul>
+
+                    <h3>Access Details</h3>
+                    <div class="field-row"><span class="field-label">Portal URL:</span><span class="field-val">[Project URL]</span></div>
+                    <p>Your login credentials were sent in a separate secure email. If you have not received them, reply to this message and we will resend within one business hour.</p>
+
+                    <h3>Communication Protocol Notice</h3>
+                    <div class="callout warning">Please note: All project inquiries must be routed through the workspace Communication Log or your dedicated project email thread. Phone calls and WhatsApp messages cannot be tracked as formal project records and will not constitute binding instructions.</div>
+
+                    <h3>Sign-Off</h3>
+                    <p>Warm regards,<br><strong>Tryphene Murugat</strong><br>Engagement Director<br>Tryphene Murugat Consulting</p>
+                `
+            },
+
+            'kickoff-script': {
+                title: 'Client Kickoff Framing Script',
+                category: 'Onboarding',
+                content: `
+                    <div class="callout">Purpose: Open the first working session so the client feels heard, in control, and aligned with the delivery framework — without creating scope creep. Read this script aloud, adapting naturally. Do not deviate from the scope fence language.</div>
+
+                    <h3>Opening — 2 Minutes</h3>
+                    <div class="step-block">
+                        <div class="step-title">Facilitator Script</div>
+                        <p>"Thank you for choosing to partner with us. Before we open any technical discussion, I want to orient you to how we work and why. Everything we do is designed to protect two things: your investment and the quality of your deliverable."</p>
+                    </div>
+
+                    <h3>Framing the Phases — 5 Minutes</h3>
+                    <div class="step-block">
+                        <div class="step-title">Walk through the phase roadmap on screen</div>
+                        <p>Emphasise: "We do not build until we have signed specifications. The value you receive from each phase is the decision-making clarity it creates — not just the document. Each phase produces a binder that protects your commercial interests and ours."</p>
+                    </div>
+
+                    <h3>Scope Fence — 3 Minutes</h3>
+                    <div class="step-block">
+                        <div class="step-title">Introduce the COR mechanism</div>
+                        <p>"We will capture everything you tell us today. Items that fall outside the agreed scope will be formally logged as Change Order Requests. This protects you from hidden cost inflation and protects us from scope creep. Nothing extra is built without your written approval and a cost assessment."</p>
+                    </div>
+
+                    <h3>Communication Protocol — 2 Minutes</h3>
+                    <div class="step-block">
+                        <div class="step-title">Establish the formal channel</div>
+                        <p>"From today, all requests, feedback, and decisions flow through your workspace. This ensures nothing is lost, nothing is informal, and everything is traceable. If it is not in the system, it did not happen."</p>
+                    </div>
+
+                    <h3>Sign-Off Milestone Reminder — 2 Minutes</h3>
+                    <div class="step-block">
+                        <div class="step-title">Make the invoice trigger explicit</div>
+                        <p>"At the end of Phase 1, you will receive a formal deliverable binder. Your sign-off on that binder is the trigger for Phase 2 to begin and for the Phase 2 invoice to be issued. No sign-off means no advancement — this is our mutual quality gate."</p>
+                    </div>
+
+                    <h3>Close — 1 Minute</h3>
+                    <div class="step-block">
+                        <div class="step-title">Open the floor before discovery begins</div>
+                        <p>"Do you have any questions about how we work before we begin the discovery session?"</p>
+                        <p style="margin-top:0.5rem; color:#64748B; font-size:0.8rem;">[Pause. Answer questions. Then proceed to the Discovery Intake Questionnaire.]</p>
+                    </div>
+
+                    <div class="callout">Total running time: 15 minutes. The remaining session time is allocated to the Stakeholder Discovery Intake Questionnaire.</div>
+                `
+            },
+
+            'kickoff-agenda': {
+                title: 'Post-Signing Kickoff Agenda (45-Minute Session)',
+                category: 'Onboarding',
+                content: `
+                    <div class="callout">Distribute this agenda to all attendees 24 hours before the session. Confirm attendance of at least one operational decision-maker and the primary client sponsor before proceeding.</div>
+
+                    <h3>Session Details</h3>
+                    <div class="field-row"><span class="field-label">Session Type:</span><span class="field-val">Post-Signing Engagement Kickoff</span></div>
+                    <div class="field-row"><span class="field-label">Duration:</span><span class="field-val">45 Minutes (strictly enforced)</span></div>
+                    <div class="field-row"><span class="field-label">Facilitator:</span><span class="field-val">Tryphene Murugat, Engagement Director</span></div>
+                    <div class="field-row"><span class="field-label">Required Attendees:</span><span class="field-val">Client Sponsor, IT Lead / CTO (if applicable)</span></div>
+
+                    <h3>Agenda Timeline</h3>
+                    <div class="time-row"><span class="time-range">00:00 – 05:00</span><span class="time-action"><strong>Welcome &amp; Introductions</strong> — Session objectives, housekeeping, introductions of all attendees and their roles.</span></div>
+                    <div class="time-row"><span class="time-range">05:00 – 10:00</span><span class="time-action"><strong>Workspace Orientation Walkthrough</strong> — Client logs in live; navigates the portal sections: Phase Roadmap, Artifact Vault, Decision Log, Change Request Portal, Communication Log.</span></div>
+                    <div class="time-row"><span class="time-range">10:00 – 20:00</span><span class="time-action"><strong>Phase Roadmap Review</strong> — Detailed walkthrough of all phases, milestone dates, deliverable descriptions, and sign-off triggers. Q&amp;A on timeline.</span></div>
+                    <div class="time-row"><span class="time-range">20:00 – 25:00</span><span class="time-action"><strong>Communication Protocol Agreement</strong> — Formal confirmation of how requests are submitted, response SLAs (business hours), and escalation paths.</span></div>
+                    <div class="time-row"><span class="time-range">25:00 – 30:00</span><span class="time-action"><strong>QA Protocol Walkthrough</strong> — P1–P4 Defect Severity SLA matrix review; UAT team composition confirmed; testing environment requirements noted.</span></div>
+                    <div class="time-row"><span class="time-range">30:00 – 40:00</span><span class="time-action"><strong>Stakeholder Mapping</strong> — Identify and document all decision-makers, approvers, and subject matter experts. Assign RACI roles provisionally.</span></div>
+                    <div class="time-row" style="border-bottom:none;"><span class="time-range">40:00 – 45:00</span><span class="time-action"><strong>Action Items &amp; Next Steps</strong> — Confirm action owners. Schedule the Phase 1 Discovery Workshop date. Confirm pre-read materials to be distributed.</span></div>
+
+                    <h3>Post-Session Actions (within 24 hours)</h3>
+                    <ul>
+                        <li>Upload stakeholder map to workspace.</li>
+                        <li>Issue Stakeholder Discovery Intake Questionnaire.</li>
+                        <li>Confirm Discovery Workshop date in writing to all attendees.</li>
+                    </ul>
+                `
+            },
+
+            'friday-memo': {
+                title: 'Friday Status Memo & Blocker Log',
+                category: 'Communications',
+                content: `
+                    <div class="callout">Issue this memo every Friday by 17:00. It must be uploaded to the workspace Communication Log AND emailed to the client sponsor directly. Do not send casually — this is a formal governance record.</div>
+
+                    <h3>Memo Header</h3>
+                    <div class="field-row"><span class="field-label">Memo #:</span><span class="field-val">[Auto-generated: e.g. PRJ-9942-MEMO-07]</span></div>
+                    <div class="field-row"><span class="field-label">Project:</span><span class="field-val">[Project Name]</span></div>
+                    <div class="field-row"><span class="field-label">Phase:</span><span class="field-val">[Current Phase: e.g. Phase 2 — System Design]</span></div>
+                    <div class="field-row"><span class="field-label">Reporting Period:</span><span class="field-val">[Monday Date] – [Friday Date]</span></div>
+                    <div class="field-row"><span class="field-label">Date Issued:</span><span class="field-val">[Friday Date]</span></div>
+                    <div class="field-row"><span class="field-label">Prepared by:</span><span class="field-val">Tryphene Murugat, Engagement Director</span></div>
+
+                    <h3>Section 1 — Deliverables Completed This Week</h3>
+                    <p>List each completed item with the specific artifact name or milestone. Be precise — avoid vague language like "worked on system design."</p>
+                    <ul>
+                        <li>[Artifact name / milestone — e.g. Level-0 Context Diagram — Finalised and uploaded to Artifact Vault]</li>
+                        <li>[Artifact name / milestone]</li>
+                        <li>[Artifact name / milestone]</li>
+                    </ul>
+
+                    <h3>Section 2 — Planned Sprint Deliverables (Next Week)</h3>
+                    <p>What will be delivered or completed by the following Friday.</p>
+                    <ul>
+                        <li>[Planned deliverable — e.g. Level-1 DFD decomposition of all 5 major processes]</li>
+                        <li>[Planned deliverable]</li>
+                        <li>[Planned deliverable]</li>
+                    </ul>
+
+                    <h3>Section 3 — Blockers &amp; Client Dependencies</h3>
+                    <div class="callout warning">Each blocker must be formally logged. If a client-owned blocker is not resolved by its deadline, the Engagement Director will issue a formal delay notice and the project timeline will be extended accordingly at no cost to Tryphene Murugat.</div>
+                    <p>Format each blocker as follows:</p>
+                    <div class="step-block">
+                        <div class="step-title">Blocker Template Row</div>
+                        <p><strong>BLOCKER:</strong> [Description of what is blocking progress]<br>
+                        <strong>OWNER:</strong> [Client / Tryphene Murugat / Subcontractor]<br>
+                        <strong>DEADLINE:</strong> [Date by which it must be resolved]<br>
+                        <strong>RISK:</strong> [Impact on project if not resolved — e.g. Phase 2 delayed by 3 business days]</p>
+                    </div>
+
+                    <h3>Section 4 — Milestone Burn Status</h3>
+                    <div class="field-row"><span class="field-label">Budget Used:</span><span class="field-val">[X]% — KES [amount used] of KES [total contracted value]</span></div>
+                    <div class="field-row"><span class="field-label">Timeline Status:</span><span class="field-val">[On Track / At Risk / Delayed by X business days]</span></div>
+                    <div class="field-row"><span class="field-label">Next Invoice Trigger:</span><span class="field-val">[Phase sign-off / Milestone name — e.g. Phase 2 Sign-Off → KES 450,000 invoice]</span></div>
+                `
+            },
+
+            'discovery-standard': {
+                title: 'Stakeholder Discovery Intake Questionnaire — Standard',
+                category: 'Discovery',
+                content: `
+                    <div class="callout">Issue this questionnaire immediately after the kickoff session. Request return within 3 business days. Use responses as the primary input for the JAD Workshop facilitation.</div>
+
+                    <h3>Section A — Organisation &amp; Operations</h3>
+                    <ol>
+                        <li>What is the primary business problem you are solving with this system? (Be specific — describe the current operational pain.)</li>
+                        <li>Who are the end-users of the system being built? (Describe by role, not by name. Estimate user volume.)</li>
+                        <li>What are the 3 most critical operational bottlenecks in your current process that this system must resolve?</li>
+                        <li>What manual processes will this system replace? Describe each process step-by-step.</li>
+                    </ol>
+
+                    <h3>Section B — Technical Environment</h3>
+                    <ol start="5">
+                        <li>Describe your current technology stack. (Front-end, back-end, hosting, current databases.)</li>
+                        <li>What third-party systems must this new system integrate with? (e.g., ERP, payment gateways, government APIs.)</li>
+                        <li>Do you have an existing database? If yes, what RDBMS is in use and what is the approximate data volume?</li>
+                        <li>What are your security and compliance requirements? (e.g., ISO 27001, PCI-DSS, data residency laws.)</li>
+                    </ol>
+
+                    <h3>Section C — Commercial &amp; Governance</h3>
+                    <ol start="9">
+                        <li>Who has final sign-off authority on deliverables? Name and title. Who is their backup if unavailable?</li>
+                        <li>What is the maximum acceptable system downtime for your operations? (e.g., 99.9% uptime SLA.)</li>
+                        <li>What is your UAT team composition? How many testers? Are they technically literate?</li>
+                        <li>Who owns the system post-delivery? Will there be an internal IT team for maintenance, or is ongoing support required?</li>
+                    </ol>
+
+                    <div class="callout">All responses are treated as confidential pre-contractual material. Tryphene Murugat does not share questionnaire responses with third parties without explicit written consent.</div>
+                `
+            },
+
+            'discovery-fintech': {
+                title: 'Stakeholder Discovery Intake Questionnaire — Fintech',
+                category: 'Discovery',
+                content: `
+                    <div class="callout">Fintech-vertical variant. Use when the client operates in financial services, payments, lending, or insurance. Complements the Standard questionnaire — issue both together or substitute where applicable.</div>
+
+                    <h3>Section A — Regulatory &amp; Compliance Environment</h3>
+                    <ol>
+                        <li>Is your company regulated by the Central Bank of Kenya (CBK), Capital Markets Authority (CMA), or any other financial regulator? Specify license type.</li>
+                        <li>What KYC (Know Your Customer) and AML (Anti-Money Laundering) obligations apply to your platform? How are they currently managed?</li>
+                        <li>Are you required to file Suspicious Transaction Reports (STRs)? Who is your AML Compliance Officer?</li>
+                        <li>What data localisation requirements govern your customer financial records?</li>
+                    </ol>
+
+                    <h3>Section B — Payment Rails &amp; Integrations</h3>
+                    <ol start="5">
+                        <li>Which payment rails must the system support? (M-Pesa/Daraja API, PesaLink, Stripe, Flutterwave, bank RTGs, card acquiring.)</li>
+                        <li>What is the expected peak transaction volume per day (TPS — Transactions Per Second at peak)?</li>
+                        <li>Is float/wallet management required? Describe the float reconciliation process currently in use.</li>
+                        <li>What is the chargeback and refund workflow? Who approves refunds and what is the SLA?</li>
+                    </ol>
+
+                    <h3>Section C — Reconciliation &amp; Reporting</h3>
+                    <ol start="9">
+                        <li>How is end-of-day reconciliation currently performed? What data sources are reconciled?</li>
+                        <li>What financial reports must the system generate? (e.g., CBK prudential returns, daily settlement reports, tax reports.)</li>
+                        <li>Who are the external auditors and what system-level audit trail requirements do they impose?</li>
+                        <li>What is the disaster recovery and business continuity requirement for the payment engine?</li>
+                    </ol>
+
+                    <div class="callout warning">Fintech systems carry heightened regulatory risk. Any ambiguity in compliance requirements discovered during discovery must be escalated to the Engagement Director immediately — do not proceed to specification without resolution.</div>
+                `
+            },
+
+            'discovery-logistics': {
+                title: 'Stakeholder Discovery Intake Questionnaire — Logistics',
+                category: 'Discovery',
+                content: `
+                    <div class="callout">Logistics-vertical variant. Use when the client operates in transportation, fleet management, warehousing, supply chain, or last-mile delivery. Complements the Standard questionnaire.</div>
+
+                    <h3>Section A — Fleet &amp; Operations</h3>
+                    <ol>
+                        <li>How many vehicles are in your fleet? How are they currently tracked? (GPS provider, manual logbooks, mixed.)</li>
+                        <li>Describe the full trip lifecycle: from order creation to delivery confirmation. Where do handoffs occur?</li>
+                        <li>What is your average daily trip volume? What is peak-day volume?</li>
+                        <li>How are driver assignments made today? What criteria determine the optimal driver-to-route assignment?</li>
+                    </ol>
+
+                    <h3>Section B — Warehouse &amp; Inventory</h3>
+                    <ol start="5">
+                        <li>How many warehouses or depots does the system need to manage? What is the SKU count?</li>
+                        <li>What is the current inventory management system in use? What are its critical gaps?</li>
+                        <li>Are there cold chain or hazardous material handling requirements? Describe the compliance obligations.</li>
+                        <li>How are stock replenishment decisions made? Is there an existing reorder point logic?</li>
+                    </ol>
+
+                    <h3>Section C — Last-Mile &amp; Customer Interface</h3>
+                    <ol start="9">
+                        <li>How are customers currently notified of delivery status? What channel (SMS, app, email) is preferred?</li>
+                        <li>What is the proof-of-delivery process? (Electronic signature, photo, PIN, none.)</li>
+                        <li>What third-party carrier or boda-boda aggregator APIs must the system interface with?</li>
+                        <li>What is the failed-delivery handling process? How many re-attempts are allowed and at what cost?</li>
+                    </ol>
+
+                    <div class="callout">Route optimisation algorithms (e.g., VRP) and real-time tracking infrastructure carry significant build complexity. Clarify early whether this is a build or a licensed-component integration to manage budget expectations.</div>
+                `
+            },
+
+            'jad-facilitation': {
+                title: 'JAD Workshop Facilitation Protocol',
+                category: 'Workshops',
+                content: `
+                    <div class="callout">This protocol governs every Joint Application Development session run by Tryphene Murugat Consulting. Adherence is mandatory. Deviations require Engagement Director sign-off before the session.</div>
+
+                    <h3>Pre-Session Preparation (48 Hours Before)</h3>
+                    <ul>
+                        <li>Distribute the session agenda with explicit time-boxes for each agenda item.</li>
+                        <li>Confirm attendee list — must include at least one operational SME and one IT decision-maker. Do not proceed without both.</li>
+                        <li>Share pre-read materials: current process flow (if available) or completed Stakeholder Discovery Intake Questionnaire responses.</li>
+                        <li>Prepare the facilitation board (virtual or physical): as-is process chart, blank future-state canvas, Case prompt cards.</li>
+                        <li>Confirm the Post-JAD Output Register template is ready to be populated live during the session.</li>
+                    </ul>
+
+                    <h3>Session Rules (Read Aloud at Opening)</h3>
+                    <div class="callout warning">
+                        1. Sessions are strictly 45–60 minutes. No overruns. The facilitator will call time.<br>
+                        2. All decisions confirmed in this session are binding and will be locked in the Post-JAD Output Register. Revisions require a formal COR.<br>
+                        3. Requests raised that fall outside the agreed scope will be logged as Change Order Requests — not actioned in this session.<br>
+                        4. The facilitator (Engagement Director) has authority to table any discussion that exceeds its timebox and move to the next agenda item.
+                    </div>
+
+                    <h3>Facilitation Flow</h3>
+                    <div class="time-row"><span class="time-range">Step 1 — 5 min</span><span class="time-action"><strong>Review objectives and session rules.</strong> Confirm all attendees understand that decisions made today are binding.</span></div>
+                    <div class="time-row"><span class="time-range">Step 2 — 10 min</span><span class="time-action"><strong>Walk through current-state process (as-is).</strong> The client narrates their existing process. Facilitator maps it on the facilitation board without correction or interruption.</span></div>
+                    <div class="time-row"><span class="time-range">Step 3 — 20 min</span><span class="time-action"><strong>Structured elicitation of requirements.</strong> Use Case prompts drawn from the Intake Questionnaire. Ask: "What must the system do in this scenario?" — not "What do you want?"</span></div>
+                    <div class="time-row"><span class="time-range">Step 4 — 10 min</span><span class="time-action"><strong>Conflict arbitration.</strong> Competing stakeholder priorities resolved by Business Impact Score (Revenue Impact 1-5 + Operational Risk 1-5). Highest score wins. Documented immediately.</span></div>
+                    <div class="time-row"><span class="time-range">Step 5 — 10 min</span><span class="time-action"><strong>Agreed future-state process confirmed aloud by sponsor.</strong> Facilitator reads back the agreed process. Sponsor confirms verbally. Recorded in the Output Register.</span></div>
+                    <div class="time-row" style="border-bottom:none;"><span class="time-range">Step 6 — 5 min</span><span class="time-action"><strong>Confirm action items and Output Register ownership.</strong> Assign each open item an owner and deadline before closing the session.</span></div>
+
+                    <h3>Post-Session (Within 24 Hours)</h3>
+                    <ul>
+                        <li>Circulate the completed Post-JAD Output Register to all session attendees.</li>
+                        <li>Request written email confirmation from the client sponsor that the Output Register is accurate.</li>
+                        <li>Lock all confirmed decisions in the workspace Decision Log — mark as LOCKED.</li>
+                        <li>Begin Internal Synthesis Protocol (Day 1) immediately upon sponsor confirmation.</li>
+                    </ul>
+                `
+            },
+
+            'jad-agenda': {
+                title: 'Joint Application Development Session Agenda',
+                category: 'Workshops',
+                content: `
+                    <div class="callout">This is the client-shareable version of the JAD agenda. Distribute 48 hours before the session. It is concise and non-technical — clients do not need to see the internal facilitation protocol.</div>
+
+                    <h3>Session Details</h3>
+                    <div class="field-row"><span class="field-label">Session Title:</span><span class="field-val">Joint Application Development Workshop — [Phase] — [Sequence]</span></div>
+                    <div class="field-row"><span class="field-label">Date &amp; Time:</span><span class="field-val">[Date], [Time] — [Timezone]</span></div>
+                    <div class="field-row"><span class="field-label">Location:</span><span class="field-val">[Virtual / Physical address]</span></div>
+                    <div class="field-row"><span class="field-label">Facilitator:</span><span class="field-val">Tryphene Murugat, Engagement Director</span></div>
+                    <div class="field-row"><span class="field-label">Required Attendees:</span><span class="field-val">Client Sponsor, Operational SME, IT Lead</span></div>
+                    <div class="field-row"><span class="field-label">Session Duration:</span><span class="field-val">60 Minutes (strictly enforced)</span></div>
+
+                    <h3>Session Objectives</h3>
+                    <ul>
+                        <li>Document and agree on the current-state (as-is) business process.</li>
+                        <li>Elicit and formally confirm future-state (to-be) system requirements.</li>
+                        <li>Resolve competing stakeholder priorities using the Business Impact Score method.</li>
+                        <li>Lock all confirmed decisions into the Post-JAD Output Register.</li>
+                    </ul>
+
+                    <h3>Pre-Read Required</h3>
+                    <div class="callout warning">All attendees must review the completed Stakeholder Discovery Intake Questionnaire responses before attending. The session will not recap basic discovery data — it builds directly on it.</div>
+
+                    <h3>Agenda</h3>
+                    <div class="time-row"><span class="time-range">00:00 – 05:00</span><span class="time-action">Objectives, session rules, and introductions.</span></div>
+                    <div class="time-row"><span class="time-range">05:00 – 15:00</span><span class="time-action">Current-state process walkthrough (client-led narration).</span></div>
+                    <div class="time-row"><span class="time-range">15:00 – 35:00</span><span class="time-action">Structured requirements elicitation (facilitator-led with Case prompts).</span></div>
+                    <div class="time-row"><span class="time-range">35:00 – 45:00</span><span class="time-action">Priority conflict resolution and Business Impact Scoring.</span></div>
+                    <div class="time-row"><span class="time-range">45:00 – 55:00</span><span class="time-action">Future-state process confirmation by client sponsor.</span></div>
+                    <div class="time-row" style="border-bottom:none;"><span class="time-range">55:00 – 60:00</span><span class="time-action">Action items, owner assignment, and Output Register preview.</span></div>
+
+                    <h3>What Happens After the Session</h3>
+                    <ul>
+                        <li>The Post-JAD Output Register will be shared within 24 hours for your written confirmation.</li>
+                        <li>All confirmed decisions will be locked in the workspace Decision Log.</li>
+                        <li>Internal synthesis begins upon your confirmation — DFDs and Use Cases to follow.</li>
+                    </ul>
+                `
+            },
+
+            'post-jad': {
+                title: 'Post-JAD Documentation & Output Register',
+                category: 'Workshops',
+                content: `
+                    <div class="callout">Complete this register within 24 hours of the JAD session. Circulate to all attendees. Obtain written email confirmation from the client sponsor before beginning Internal Synthesis. All decisions marked LOCKED are binding.</div>
+
+                    <h3>Register Header</h3>
+                    <div class="field-row"><span class="field-label">Session Reference:</span><span class="field-val">JAD-[Phase]-[Sequence] — e.g. JAD-P1-001</span></div>
+                    <div class="field-row"><span class="field-label">Date of Session:</span><span class="field-val">[Date]</span></div>
+                    <div class="field-row"><span class="field-label">Facilitator:</span><span class="field-val">Tryphene Murugat, Engagement Director</span></div>
+                    <div class="field-row"><span class="field-label">Attendees:</span><span class="field-val">[Name — Role], [Name — Role], [Name — Role]</span></div>
+                    <div class="field-row"><span class="field-label">Register Status:</span><span class="field-val">DRAFT (pending client sponsor confirmation)</span></div>
+
+                    <h3>Section 1 — Locked Decisions</h3>
+                    <p>List each binding decision confirmed during the session. Number sequentially. These decisions may only be changed via a formal Change Order Request.</p>
+                    <div class="step-block">
+                        <div class="step-title">Decision #1 — [Decision Title]</div>
+                        <p><strong>Decision:</strong> [Full text of the confirmed decision]<br>
+                        <strong>Confirmed by:</strong> [Client Sponsor Name]<br>
+                        <strong>Status:</strong> LOCKED</p>
+                    </div>
+                    <div class="step-block">
+                        <div class="step-title">Decision #2 — [Decision Title]</div>
+                        <p><strong>Decision:</strong> [Full text of the confirmed decision]<br>
+                        <strong>Confirmed by:</strong> [Client Sponsor Name]<br>
+                        <strong>Status:</strong> LOCKED</p>
+                    </div>
+
+                    <h3>Section 2 — Open Items (Requiring Client Input)</h3>
+                    <p>Items raised but not resolved in the session. Each has an owner, deadline, and escalation path.</p>
+                    <div class="step-block">
+                        <div class="step-title">Open Item #1</div>
+                        <p><strong>Item:</strong> [Description]<br>
+                        <strong>Owner:</strong> [Client Name / Role]<br>
+                        <strong>Deadline:</strong> [Date]<br>
+                        <strong>Escalation:</strong> [Impact if not resolved by deadline]</p>
+                    </div>
+
+                    <h3>Section 3 — Change Order Requests Raised</h3>
+                    <p>Out-of-scope requests surfaced during the session. Each becomes a formal COR — they are not actioned until assessed and approved.</p>
+                    <div class="step-block">
+                        <div class="step-title">COR #1</div>
+                        <p><strong>Request:</strong> [Description of out-of-scope request]<br>
+                        <strong>Raised by:</strong> [Name]<br>
+                        <strong>Status:</strong> Pending Assessment — COR will be issued within 3 business days.</p>
+                    </div>
+
+                    <h3>Section 4 — Agreed Future-State Process Summary</h3>
+                    <p>Written narrative of the agreed business process as confirmed aloud by the client sponsor at the close of the session. This becomes the primary input for the Level-0 Context Diagram.</p>
+                    <div class="step-block">
+                        <div class="step-title">Future-State Process Narrative</div>
+                        <p>[Full written description of the agreed to-be process. Include all actors, data flows, decision points, and system interactions as confirmed by the sponsor.]</p>
+                    </div>
+
+                    <h3>Section 5 — Next Steps</h3>
+                    <ol>
+                        <li>[Action] — Owner: [Name] — Deadline: [Date]</li>
+                        <li>[Action] — Owner: [Name] — Deadline: [Date]</li>
+                        <li>Client sponsor to confirm this register in writing by [Date].</li>
+                        <li>Internal Synthesis to begin upon confirmation — DFD set and Use Cases due by [Date].</li>
+                    </ol>
+                `
+            },
+
+            'cor-form': {
+                title: 'Change Order Request (COR) Form — 1 Page',
+                category: 'Governance',
+                content: `
+                    <div class="callout">Issue a COR whenever a client request falls outside the locked Scope Freeze Agreement. Do not verbally negotiate on scope. Every change is formally documented and assessed before any work begins.</div>
+
+                    <h3>COR Header</h3>
+                    <div class="field-row"><span class="field-label">COR Reference:</span><span class="field-val">[PRJ-XXXX-COR-001]</span></div>
+                    <div class="field-row"><span class="field-label">Project:</span><span class="field-val">[Project Name]</span></div>
+                    <div class="field-row"><span class="field-label">Date Raised:</span><span class="field-val">[Date]</span></div>
+                    <div class="field-row"><span class="field-label">Raised by:</span><span class="field-val">[Client Name / Role or Internal]</span></div>
+                    <div class="field-row"><span class="field-label">Assessed by:</span><span class="field-val">Tryphene Murugat, Engagement Director</span></div>
+                    <div class="field-row"><span class="field-label">Status:</span><span class="field-val">Pending Client Decision — Fund / Backlog / Reject</span></div>
+
+                    <h3>Section 1 — Scope Delta Description</h3>
+                    <p>Describe precisely what is being requested and how it differs from the locked scope baseline. Attach the relevant section of the Scope Freeze Agreement for reference.</p>
+                    <div class="step-block">
+                        <div class="step-title">Original Scope (Locked)</div>
+                        <p>[Exact wording from the Scope Freeze Agreement describing the original requirement.]</p>
+                    </div>
+                    <div class="step-block">
+                        <div class="step-title">Requested Change</div>
+                        <p>[Full description of what the client is requesting beyond the locked scope.]</p>
+                    </div>
+
+                    <h3>Section 2 — Impact Assessment</h3>
+                    <div class="field-row"><span class="field-label">Schedule Impact:</span><span class="field-val">+ [X] business days added to current phase timeline.</span></div>
+                    <div class="field-row"><span class="field-label">Financial Impact:</span><span class="field-val">KES [Amount] (Fixed price) / KES [Rate]/hour × [Estimated hours] (T&amp;M)</span></div>
+                    <div class="field-row"><span class="field-label">Technical Notes:</span><span class="field-val">[Brief description of what must be built, modified, or integrated.]</span></div>
+                    <div class="field-row"><span class="field-label">Risk if Rejected:</span><span class="field-val">[Operational or commercial risk to the client if this change is not made.]</span></div>
+
+                    <h3>Section 3 — Client Decision</h3>
+                    <div class="callout warning">Work on this change order does NOT begin until the client has made a written decision below. Verbal approvals are not binding.</div>
+                    <div class="field-row"><span class="field-label">Decision:</span><span class="field-val">☐ Fund &amp; Proceed &nbsp;&nbsp; ☐ Backlog for Future Phase &nbsp;&nbsp; ☐ Reject</span></div>
+                    <div class="field-row"><span class="field-label">Client Signature:</span><span class="field-val">___________________________</span></div>
+                    <div class="field-row"><span class="field-label">Name &amp; Title:</span><span class="field-val">___________________________</span></div>
+                    <div class="field-row"><span class="field-label">Date:</span><span class="field-val">___________________________</span></div>
+                `
+            },
+
+            'defect-matrix': {
+                title: 'Defect Severity Matrix SLA Poster',
+                category: 'QA',
+                content: `
+                    <div class="callout">This matrix governs all defect triage and resolution during UAT and post-deployment support. Share with the client UAT team at the start of UAT. The SLAs are contractually binding from the point of system handover.</div>
+
+                    <h3>Severity Classification Matrix</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Priority</th>
+                                <th>Definition</th>
+                                <th>Response SLA</th>
+                                <th>Resolution SLA</th>
+                                <th>Escalation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong style="color:#EF4444;">P1 — Critical</strong></td>
+                                <td>System is completely down, data is corrupted, or a financial transaction is failing. No workaround exists.</td>
+                                <td>1 hour (business hours)</td>
+                                <td>4 business hours</td>
+                                <td>Immediate escalation to Engagement Director. Client sponsor notified within 30 minutes.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color:#F97316;">P2 — High</strong></td>
+                                <td>Core business function is impaired but a workaround exists. Significant user impact.</td>
+                                <td>2 business hours</td>
+                                <td>1 business day</td>
+                                <td>Engagement Director notified. Status update every 4 hours until resolved.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color:#EAB308;">P3 — Medium</strong></td>
+                                <td>Non-core feature is broken or behaving unexpectedly. Workaround available. Limited user impact.</td>
+                                <td>4 business hours</td>
+                                <td>3 business days</td>
+                                <td>Logged in workspace defect tracker. Analyst assigned. Client updated daily.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color:#22C55E;">P4 — Low</strong></td>
+                                <td>Cosmetic issue, UI inconsistency, or documentation gap. No operational impact.</td>
+                                <td>1 business day</td>
+                                <td>Next sprint / agreed release</td>
+                                <td>Logged in workspace. Batched with next scheduled maintenance release.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>SLA Clock Rules</h3>
+                    <ul>
+                        <li><strong>Business hours</strong> are defined as 08:00–18:00 EAT, Monday–Friday, excluding public holidays.</li>
+                        <li>The SLA clock starts when the defect is formally logged in the workspace defect tracker — not when it is verbally reported.</li>
+                        <li>If a defect requires client-provided data, test credentials, or environment access to reproduce, the SLA clock is paused until the client delivers the requested information.</li>
+                        <li>P1 defects that occur outside business hours are responded to within 2 hours of the next business day's opening — unless a 24/7 support SLA has been separately contracted.</li>
+                    </ul>
+
+                    <h3>Client Responsibilities During UAT</h3>
+                    <ul>
+                        <li>All defects must be logged in the workspace defect tracker with: Steps to reproduce, Expected result, Actual result, Screenshot or video evidence.</li>
+                        <li>Defects reported via WhatsApp, phone, or email without a corresponding workspace log will be acknowledged but not tracked as formal defects.</li>
+                        <li>UAT sign-off is obtained only after zero open P1 and P2 defects. P3 and P4 items may be accepted with a written waiver.</li>
+                    </ul>
+                `
+            },
+
+            'uat-plan': {
+                title: 'Pre-UAT Test Plan Template',
+                category: 'QA',
+                content: `
+                    <div class="callout">Complete and share this plan with the client UAT team 5 business days before UAT begins. Obtain written acknowledgment that the team has reviewed it. Do not open UAT without a confirmed test plan.</div>
+
+                    <h3>Plan Header</h3>
+                    <div class="field-row"><span class="field-label">Plan Reference:</span><span class="field-val">[PRJ-XXXX-UAT-PLAN-01]</span></div>
+                    <div class="field-row"><span class="field-label">Project:</span><span class="field-val">[Project Name]</span></div>
+                    <div class="field-row"><span class="field-label">UAT Window:</span><span class="field-val">[Start Date] to [End Date] — [X] business days</span></div>
+                    <div class="field-row"><span class="field-label">Prepared by:</span><span class="field-val">Tryphene Murugat, Engagement Director</span></div>
+                    <div class="field-row"><span class="field-label">UAT Lead (Client):</span><span class="field-val">[Name, Title]</span></div>
+
+                    <h3>Section 1 — UAT Scope</h3>
+                    <p>The following modules and features are included in this UAT cycle. Only items explicitly listed here are in scope. Features not listed are NOT subject to UAT at this stage.</p>
+                    <ul>
+                        <li>[Module / Feature 1 — mapped to SRS Section X.X]</li>
+                        <li>[Module / Feature 2 — mapped to SRS Section X.X]</li>
+                        <li>[Module / Feature 3 — mapped to SRS Section X.X]</li>
+                    </ul>
+
+                    <h3>Section 2 — Test Environment</h3>
+                    <div class="field-row"><span class="field-label">UAT URL:</span><span class="field-val">[staging.project-url.com]</span></div>
+                    <div class="field-row"><span class="field-label">Test Accounts:</span><span class="field-val">[Provided in separate credentials email]</span></div>
+                    <div class="field-row"><span class="field-label">Sample Data:</span><span class="field-val">[Pre-seeded UAT data set / Client must provide own]</span></div>
+                    <div class="callout warning">Do not test on the production environment. Any changes made to production during UAT are outside the contracted scope and will be subject to a COR.</div>
+
+                    <h3>Section 3 — Acceptance Criteria</h3>
+                    <p>UAT is considered passed when ALL of the following criteria are met:</p>
+                    <ol>
+                        <li>Zero open P1 (Critical) defects.</li>
+                        <li>Zero open P2 (High) defects.</li>
+                        <li>All use cases listed in the SRS have been executed and passed by the client UAT team.</li>
+                        <li>Client UAT Lead has signed the UAT Sign-Off Certificate.</li>
+                    </ol>
+
+                    <h3>Section 4 — Tester Assignments</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Tester Name</th><th>Role</th><th>Modules Assigned</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>[Name]</td><td>[Role]</td><td>[Module(s)]</td></tr>
+                            <tr><td>[Name]</td><td>[Role]</td><td>[Module(s)]</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Section 5 — Defect Logging Protocol</h3>
+                    <ul>
+                        <li>All defects must be logged in the workspace defect tracker within 2 business hours of discovery.</li>
+                        <li>Required fields: Steps to reproduce, Expected vs. Actual result, Severity (P1–P4), Screenshot or video.</li>
+                        <li>Testers must not attempt to fix or work around defects themselves — log and report only.</li>
+                    </ul>
+
+                    <h3>Section 6 — Sign-Off Procedure</h3>
+                    <p>Upon completion of UAT with zero P1/P2 defects: the client UAT Lead submits the signed UAT Sign-Off Certificate via the workspace portal. This sign-off triggers the production deployment milestone and the final phase invoice.</p>
+                    <div class="callout">UAT sign-off is irreversible once submitted. Defects discovered post-sign-off are subject to the post-delivery support SLA terms, not the development contract.</div>
+                `
+            },
+
+            // ===========================
+            // INTERNAL PROTOCOLS
+            // ===========================
+
+            'synthesis-protocol': {
+                title: 'Internal Synthesis Protocol — Director & Analyst',
+                category: 'Internal Protocol',
+                content: `
+                    <div class="callout danger">INTERNAL DOCUMENT — DIRECTOR & ANALYST USE ONLY. Do not share with clients, subcontractors, or third parties. This is Tryphene Murugat Consulting's core proprietary methodology.</div>
+
+                    <h3>Purpose</h3>
+                    <p>After a JAD session or Discovery Workshop, this protocol governs how the Engagement Director and any analyst convert raw stakeholder input into formal engineering specifications. Adherence is non-negotiable — shortcuts in synthesis produce defective specifications and expose the firm to scope dispute liability.</p>
+
+                    <h3>Step 1 — Input Collection (Day 0)</h3>
+                    <div class="step-block">
+                        <div class="step-title">Do not begin synthesis from memory.</div>
+                        <p>Gather all session recordings, handwritten notes, whiteboard photographs, and the completed Stakeholder Discovery Intake Questionnaire. Confirm the Post-JAD Output Register has received written sponsor confirmation before proceeding to Step 2.</p>
+                    </div>
+
+                    <h3>Step 2 — Raw Transcription (Day 1)</h3>
+                    <div class="step-block">
+                        <div class="step-title">Create a verbatim requirements log.</div>
+                        <p>Transcribe all requirements mentioned across all inputs. Categorise into three buckets:</p>
+                        <ul>
+                            <li><strong>(a) Explicit Requirements</strong> — Clearly stated by a stakeholder. Verbatim quotation preferred.</li>
+                            <li><strong>(b) Implicit Requirements</strong> — Logically inferred from context. Must be flagged and verified before locking.</li>
+                            <li><strong>(c) Out-of-Scope Requests</strong> — Flagged for COR. Do not include in the specification.</li>
+                        </ul>
+                    </div>
+
+                    <h3>Step 3 — Business Rule Extraction (Day 1)</h3>
+                    <div class="step-block">
+                        <div class="step-title">For each explicit requirement, extract the governing business rule.</div>
+                        <p>Format: <strong>IF [trigger condition] THEN [system response] ELSE [exception handling]</strong></p>
+                        <p>Example: IF a payment transaction exceeds KES 500,000 THEN trigger KYC verification ELSE proceed to confirmation screen.</p>
+                        <p>Every business rule must map to at least one explicit requirement. Rules without a source are not valid — they require stakeholder verification.</p>
+                    </div>
+
+                    <h3>Step 4 — Use Case Mapping (Day 2)</h3>
+                    <div class="step-block">
+                        <div class="step-title">Map each business rule to a named Use Case.</div>
+                        <p>Each Use Case must contain all five elements:</p>
+                        <ul>
+                            <li><strong>Actor</strong> — Who initiates the interaction.</li>
+                            <li><strong>Precondition</strong> — What must be true before this Use Case can execute.</li>
+                            <li><strong>Main Flow</strong> — Step-by-step happy path.</li>
+                            <li><strong>Alternate Flow</strong> — Valid variations from the main flow.</li>
+                            <li><strong>Exception Flow</strong> — What happens when the system fails or input is invalid.</li>
+                        </ul>
+                    </div>
+
+                    <h3>Step 5 — DFD Level-0 Draft (Day 2)</h3>
+                    <div class="step-block">
+                        <div class="step-title">Draft the Context Diagram using the confirmed future-state process.</div>
+                        <p>Source: Post-JAD Output Register — Section 4 (Agreed Future-State Process). The Level-0 diagram shows: one central process bubble labelled [System Name], all external entities, and all primary data flows. Rule: No data stores appear at Level-0.</p>
+                    </div>
+
+                    <h3>Step 6 — DFD Level-1 Decomposition (Day 3)</h3>
+                    <div class="step-block">
+                        <div class="step-title">Decompose each major process bubble from Level-0.</div>
+                        <p>Break the central bubble into 3–7 numbered sub-processes (1.0, 2.0, 3.0…). Introduce data stores (D1, D2…) between processes that need to persist data. Every data flow entering a process at Level-0 must appear at Level-1 (DFD balancing rule).</p>
+                    </div>
+
+                    <h3>Step 7 — Validation Review (Day 3)</h3>
+                    <div class="step-block">
+                        <div class="step-title">Internal review before client sharing.</div>
+                        <p>Present the DFD set and Use Cases to the Engagement Director. Walk through each Use Case against the Level-1 DFD to confirm coverage. Flag any ambiguous flows or missing processes. Resolve all flags before packaging for client submission.</p>
+                    </div>
+
+                    <h3>Step 8 — Client Submission</h3>
+                    <div class="step-block">
+                        <div class="step-title">Package and route for sign-off.</div>
+                        <p>Package the Use Cases, DFD set, and Data Dictionary into the Phase Deliverable Binder. Upload to the client's Artifact Vault. Trigger the Sign-Off Request in the workspace portal. Engineering work does NOT begin until the signed binder is returned.</p>
+                    </div>
+                `
+            },
+
+            'conflict-resolution': {
+                title: 'Conflict Resolution Framework',
+                category: 'Internal Protocol',
+                content: `
+                    <div class="callout danger">INTERNAL DOCUMENT — DIRECTOR USE ONLY. This framework is never shared with clients or subcontractors. Apply it silently — the client sees the outcome (a decision), not the framework.</div>
+
+                    <h3>Overview</h3>
+                    <p>Four types of conflict arise in consulting engagements. Each has a designated tool. The Engagement Director applies the appropriate tool immediately — do not let conflicts fester or become informal. Unresolved conflict is the primary cause of scope creep and relationship breakdown.</p>
+
+                    <h3>Level 1 — Competing Stakeholder Priorities</h3>
+                    <div class="step-block">
+                        <div class="step-title">Tool: Business Impact Score</div>
+                        <p>Score each competing requirement on two dimensions:</p>
+                        <ul>
+                            <li><strong>Revenue Impact (1–5):</strong> How directly does this requirement generate or protect revenue?</li>
+                            <li><strong>Operational Risk if Not Built (1–5):</strong> How severely does the absence of this feature impact daily operations?</li>
+                        </ul>
+                        <p>Highest combined score wins. In the event of a tie, the client sponsor makes the final call. Document the scoring in the JAD Output Register — Section 1 (Locked Decisions). The client never sees the scoring methodology, only the outcome.</p>
+                    </div>
+
+                    <h3>Level 2 — Client vs. Scope Baseline Conflict</h3>
+                    <div class="step-block">
+                        <div class="step-title">Tool: COR Process</div>
+                        <p>Any client request that contradicts or expands the locked Scope Freeze Agreement is routed through a Change Order Request — immediately, without exception. The Engagement Director does not negotiate verbally on scope under any circumstances. Script: <em>"That is an interesting idea — it falls outside our current baseline, so I will issue a Change Order Request with a formal assessment. You will have that within 3 business days."</em></p>
+                        <div class="callout warning">Never say yes or no to a scope change verbally. Issue the COR and let the written process carry the decision.</div>
+                    </div>
+
+                    <h3>Level 3 — Sponsor vs. End-User Conflict</h3>
+                    <div class="step-block">
+                        <div class="step-title">Tool: RACI Escalation</div>
+                        <p>If an end-user SME contradicts a project sponsor's confirmed decision, the sponsor's decision is always binding. The Engagement Director does not arbitrate between them — that is an internal client governance matter. Action: Document the dissent in the meeting record (verbatim if possible) and proceed with the sponsor's instruction. If the sponsor later wishes to change the decision, a formal COR is required.</p>
+                    </div>
+
+                    <h3>Level 4 — Tryphene vs. Subcontractor Conflict</h3>
+                    <div class="step-block">
+                        <div class="step-title">Tool: SOW Arbitration</div>
+                        <p>The signed Statement of Work between Tryphene Murugat and the subcontractor is the binding document. If a subcontractor deviates from the agreed deliverable format, timeline, or quality standard:</p>
+                        <ol>
+                            <li>Issue a formal written notice (email) citing the specific SOW clause violated.</li>
+                            <li>Withhold the corresponding milestone payment until the deviation is remedied.</li>
+                            <li>If not remedied within 5 business days, engage the backup subcontractor (always maintain one pre-qualified alternative).</li>
+                        </ol>
+                        <p>Do not absorb subcontractor failures into the client timeline without issuing a formal delay notice to the client and a corresponding COR if the delay triggers a scope or cost impact.</p>
+                    </div>
+                `
+            },
+
+            'jad-to-dfd': {
+                title: 'Step-by-Step: Post-JAD Rules into Formal DFDs',
+                category: 'Internal Protocol',
+                content: `
+                    <div class="callout danger">INTERNAL — ANALYST REFERENCE. This is the operational guide for translating JAD session outputs into submission-ready Data Flow Diagrams. Keep open alongside the Post-JAD Output Register during synthesis work.</div>
+
+                    <h3>Purpose</h3>
+                    <p>The Post-JAD Output Register contains the agreed future-state process narrative. This guide translates that narrative into formally structured, balanced Data Flow Diagrams at Level-0 (Context Diagram) and Level-1 (Process Decomposition) using the Yourdon/DeMarco DFD notation standard.</p>
+
+                    <h3>Step 1 — Extract the Data Flows</h3>
+                    <div class="step-block">
+                        <div class="step-title">From the Output Register Section 4 — Future-State Process</div>
+                        <p>Read the agreed process narrative and answer these questions for every process step:</p>
+                        <ul>
+                            <li>What data is entered into the system? By whom?</li>
+                            <li>Into what data store is it saved?</li>
+                            <li>How is it transformed or processed?</li>
+                            <li>What data is output, and to whom or where?</li>
+                        </ul>
+                        <p>List every answer as a named data flow: <strong>[Data Name] → [Destination]</strong></p>
+                    </div>
+
+                    <h3>Step 2 — Identify External Entities</h3>
+                    <div class="step-block">
+                        <div class="step-title">Who touches the system but lives outside it?</div>
+                        <p>List every actor who provides data to or receives data from the system but is not part of the system itself. Examples: Customer, Payment Gateway, KRA, Auditor, Partner Bank, Delivery Driver. These become the external rectangles (terminators) on your Context Diagram. If an actor only interacts with another actor and never directly with the system, they are NOT an external entity at this level.</p>
+                    </div>
+
+                    <h3>Step 3 — Build the Context Diagram (Level-0)</h3>
+                    <div class="step-block">
+                        <div class="step-title">One bubble. Named arrows. No data stores.</div>
+                        <p>Draw one central process bubble labelled '[System Name]'. Connect all external entities to it with named directional arrows (data flows). The Context Diagram defines the system boundary. Rule: Data stores do not appear at Level-0 — all storage is internal to the single process bubble at this level.</p>
+                        <p>Validate: Every external entity should have at least one inbound and one outbound data flow. An entity that only receives data (e.g., Auditor) may have only an outbound flow — document the rationale.</p>
+                    </div>
+
+                    <h3>Step 4 — Decompose to Level-1</h3>
+                    <div class="step-block">
+                        <div class="step-title">Break the central bubble into 3–7 major sub-processes.</div>
+                        <p>Number them 1.0, 2.0, 3.0, etc. (e.g., 1.0 Process Order, 2.0 Validate Payment, 3.0 Generate Report). Introduce data stores (D1, D2…) between processes that need to persist or retrieve data. Name each data store precisely (e.g., D1: Customer Records, D2: Transaction Ledger).</p>
+                    </div>
+
+                    <h3>Step 5 — Balance the DFD</h3>
+                    <div class="step-block">
+                        <div class="step-title">Every Level-0 flow must appear at Level-1.</div>
+                        <p>Trace each data flow from the Context Diagram through the Level-1 processes. If a flow from Level-0 cannot be found at Level-1, a process is missing — add it. If a flow appears at Level-1 but not Level-0, it is internal and correct — it should not appear at Level-0. If a flow cannot be traced in either direction, a business rule is missing — return to the Post-JAD Output Register for clarification.</p>
+                    </div>
+
+                    <h3>Step 6 — Validate Against Use Cases</h3>
+                    <div class="step-block">
+                        <div class="step-title">Trace every Use Case through the DFD.</div>
+                        <p>For each Use Case produced in Step 4 of the Synthesis Protocol, trace its main flow through the Level-1 DFD step by step. If any step in a Use Case has no corresponding process bubble in the DFD, a DFD gap exists. Add the missing process bubble and name it. Document each validation in a DFD-Use Case Traceability Matrix for inclusion in the Deliverable Binder.</p>
+                    </div>
+
+                    <h3>Step 7 — Freeze and Formal Submission</h3>
+                    <div class="step-block">
+                        <div class="step-title">Package with legend, data dictionary, and submission checklist.</div>
+                        <p>Present the DFD set with:</p>
+                        <ul>
+                            <li><strong>DFD Legend</strong> — explaining notation (process bubble, external entity, data store, data flow arrow).</li>
+                            <li><strong>Data Dictionary</strong> — defining each named data store and data flow (field names, types, constraints).</li>
+                            <li><strong>Traceability Matrix</strong> — mapping each Use Case to its DFD processes.</li>
+                        </ul>
+                        <p>Include the complete DFD set in the Phase Deliverable Binder. Require written client sign-off before engineering begins. The DFDs are the contract between the consulting firm and the development team — no ambiguity is acceptable.</p>
+                    </div>
+                `
+            },
+
+            'phase1-playbook': {
+                title: 'Phase 1 (Planning) Operations & Logistics Playbook',
+                category: 'Internal Protocol',
+                content: `
+                    <div class="callout danger">INTERNAL — DIRECTOR USE ONLY. This playbook governs the complete operational execution of Phase 1 from deposit receipt to binder submission. Follow it day-by-day without exception. Phase 1 failures cascade into every subsequent phase.</div>
+
+                    <h3>Objective</h3>
+                    <p>Complete Phase 1 in <strong>≤10 business days</strong> from deposit receipt. Produce the following five deliverables: System Request Document, Project Charter, Work Breakdown Structure (WBS), DCF Financial Model, and Risk Register.</p>
+
+                    <div class="day-block">
+                        <div class="day-label">Day 0 — Deposit Confirmed</div>
+                        <ul style="margin:0; padding:0; list-style:none;">
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Verify receipt in bank statement. Do not begin any billable work until deposit is confirmed.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Provision client workspace in the portal system. Test all access links.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Send Welcome Email &amp; Portal Orientation (use Welcome Email Template).</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Issue KYC data request if not already complete. Do not proceed to kickoff without KYC.</li>
+                        </ul>
+                    </div>
+
+                    <div class="day-block">
+                        <div class="day-label">Day 1–2 — Kickoff Session</div>
+                        <ul style="margin:0; padding:0; list-style:none;">
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Schedule and conduct the 45-minute Post-Signing Kickoff (use Kickoff Framing Script and Post-Signing Kickoff Agenda).</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Issue Stakeholder Discovery Intake Questionnaire immediately after kickoff. Request return within 3 business days.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Confirm stakeholder availability for the JAD Workshop. Book the session for Day 4 or Day 5.</li>
+                        </ul>
+                    </div>
+
+                    <div class="day-block">
+                        <div class="day-label">Day 3–5 — JAD Discovery Workshop</div>
+                        <ul style="margin:0; padding:0; list-style:none;">
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Facilitate the 60-minute JAD session (use JAD Facilitation Protocol in full).</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Complete the Post-JAD Output Register within 24 hours of the session.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Obtain written sponsor confirmation of the Output Register before Day 6.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Begin Internal Synthesis Protocol (Day 1 of synthesis) on the day of confirmation.</li>
+                        </ul>
+                    </div>
+
+                    <div class="day-block">
+                        <div class="day-label">Day 6–7 — Internal Synthesis</div>
+                        <ul style="margin:0; padding:0; list-style:none;">
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Extract all business rules from the JAD Output Register and map to a minimum of 12 Use Cases.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Draft the Level-0 Context Diagram (follow Post-JAD Rules into DFDs guide, Steps 1–3).</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Internal review by Engagement Director — validate all Use Cases and the Context Diagram before proceeding.</li>
+                        </ul>
+                    </div>
+
+                    <div class="day-block">
+                        <div class="day-label">Day 8–9 — Deliverable Assembly</div>
+                        <ul style="margin:0; padding:0; list-style:none;">
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ <strong>System Request Document:</strong> Problem statement, business case, proposed solution summary, constraints.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ <strong>Project Charter:</strong> Scope statement, RACI matrix, milestone schedule, phase deliverable list, escalation contacts.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ <strong>WBS:</strong> To 3 levels of decomposition. Level 1: Phases. Level 2: Deliverables. Level 3: Tasks.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ <strong>DCF Financial Model:</strong> 3-year projection, ROI calculation, payback period, NPV at 10% discount rate.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ <strong>Risk Register:</strong> Minimum 8 risks with: Risk ID, Description, Probability (H/M/L), Impact (H/M/L), Mitigation Strategy, Contingency, Owner.</li>
+                        </ul>
+                    </div>
+
+                    <div class="day-block" style="border-left-color: #22C55E;">
+                        <div class="day-label" style="color:#22C55E;">Day 10 — Phase 1 Binder Submission</div>
+                        <ul style="margin:0; padding:0; list-style:none;">
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Upload all five deliverables to the client's Artifact Vault in the workspace portal.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Issue the Friday Status Memo with delivery confirmation (even if Day 10 is not a Friday — send it on Day 10 regardless).</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ Trigger the Phase 1 Sign-Off Request in the workspace portal. Send the client sponsor a direct notification.</li>
+                            <li style="font-size:0.875rem; color:#1E293B; padding:0.2rem 0 0.2rem 1.25rem; position:relative;">→ <strong>Upon sign-off received: Issue Phase 2 invoice immediately. Same business day. No delay.</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="callout">Phase 1 sign-off received without the Phase 2 invoice issued on the same day is a revenue protection failure. The invoice is non-negotiable. The signed binder is the contractual trigger.</div>
+                `
+            }
+        };
+    </script>
+
+</body>
+</html>

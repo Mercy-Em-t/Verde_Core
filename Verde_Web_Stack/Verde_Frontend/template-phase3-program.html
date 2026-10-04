@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3: Data Storage & Program Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mono-doc { font-family: "Courier New", Courier, monospace; font-size: 12px; }
+        .header-block { font-weight: bold; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 20px; text-align: center; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans h-screen flex flex-col">
+    <header class="bg-[#0B1325] text-white p-4 shadow-md flex justify-between items-center">
+        <div><h1 class="text-xl font-bold"><i class="fa-solid fa-database mr-2 text-fuchsia-400"></i> Phase 3: Data Storage & Program Design</h1></div>
+        <button onclick="window.print()" class="bg-fuchsia-600 px-4 py-2 rounded text-sm font-bold shadow hover:bg-fuchsia-700">Print</button>
+    </header>
+    <div class="flex-1 overflow-auto p-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white border shadow-xl p-12 mono-doc">
+            <div class="header-block">PHASE 3 TECHNICAL SPECIFICATION<br>PART 3: DATA STORAGE & PROGRAM LOGIC</div>
+            
+            <h3 class="font-bold bg-slate-200 p-1 mb-2 uppercase">1. Data Storage Design</h3>
+            <p class="ml-4 mb-4">Translates the Phase 2 Logical 3NF ERD into a physical PostgreSQL implementation.</p>
+            <div class="bg-slate-100 p-4 font-mono text-xs whitespace-pre border mb-6">
+CREATE TABLE TBL_RCV_LINES (
+    ReceiptID UUID NOT NULL,
+    SKUID VARCHAR(32) NOT NULL,
+    QtyReceived INT NOT NULL CHECK (QtyReceived >= 0),
+    StatusFlag VARCHAR(15) DEFAULT 'MATCHED',
+    PRIMARY KEY (ReceiptID, SKUID),
+    CONSTRAINT fk_receipt FOREIGN KEY (ReceiptID) REFERENCES TBL_RECEIPT(ReceiptID)
+);
+-- Indexing Strategy
+CREATE INDEX idx_rcv_sku ON TBL_RCV_LINES(SKUID);
+            </div>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">2. Program Structure Chart</h3>
+            <p class="ml-4 mb-4">Maps the modular backend architecture and microservice call hierarchy.</p>
+            <div class="bg-slate-100 p-4 font-mono text-xs whitespace-pre border mb-6">
+[ Main Gateway Controller ]
+        |
+        +---> [ Auth Middleware (JWT Verifier) ]
+        |
+        +---> [ Receiving Service ]
+                 |
+                 +---> Validate Tolerance (qty > limit?)
+                 +---> Write to TBL_RCV_LINES (Transaction)
+                 +---> Append to D3_AUDIT_LOG
+            </div>
+
+            <h3 class="font-bold bg-slate-200 p-1 mt-6 mb-2 uppercase">3. Program Specifications</h3>
+            <div class="ml-4 space-y-4">
+                <p><strong>Language / Framework:</strong> Node.js (TypeScript 5.x) using Express.</p>
+                <p><strong>Transaction Rules:</strong> All multi-table updates (e.g., updating Inventory Balances and Audit Logs simultaneously) must be strictly wrapped in PostgreSQL <code>BEGIN ... COMMIT;</code> blocks. If any step fails, <code>ROLLBACK</code> must be executed to prevent data corruption.</p>
+                <p><strong>Code Contracts:</strong> Engineers must strictly adhere to the explicitly defined JSON payloads and HTTP Status Codes defined in the Master API Endpoint Specification artifact.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
