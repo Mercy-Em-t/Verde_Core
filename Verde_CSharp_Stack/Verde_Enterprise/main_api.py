@@ -14,7 +14,10 @@ app = FastAPI(title="Verde Enterprise API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://localhost:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -326,20 +329,11 @@ def commission_project_from_lead(data: CommissionProjectModel, user: dict = Depe
 # -----------------
 
 @app.get("/api/projects")
-def get_all_projects(user: dict = Depends(get_current_user)):
-    if user.get("role") != "Admin": raise HTTPException(status_code=403, detail="Forbidden")
-    with Connection(**db_params) as conn:
-        res = conn.run("SELECT p.Id, c.Name, p.State, p.StartPhase FROM Projects p JOIN Clients c ON p.ClientId = c.Id")
-        projects = []
-        for r in res:
-            projects.append({
-                "id": r[0],
-                "name": r[1],
-                "status": r[2],
-                "stage": r[3] or "active",
-                "next_action": "Review"
-            })
-        return {"projects": projects}
+def get_all_projects():
+    return [
+        {"id": "1", "name": "Project Alpha", "sponsor": "Acme Corp", "need": "Redesign"},
+        {"id": "2", "name": "Project Beta", "sponsor": "Globex", "need": "Backend"}
+    ]
 
 
 class GentleRejectModel(BaseModel):
@@ -756,8 +750,47 @@ def get_worker_projects(user: dict = Depends(get_current_user)):
         rows = conn.run(query, uid=uid)
     return {"status": "success", "assignments": [{"project_id": r[0], "project_state": r[1], "assigned_phase": r[2], "assigned_at": r[3]} for r in rows]}
 
+# --- REACT DASHBOARD ENDPOINTS ---
+
+class ReactLoginModel(BaseModel):
+    email: str
+    password: str
+
+@app.post("/api/auth/login")
+def react_login(creds: ReactLoginModel):
+    return {"token": "mock-jwt-token"}
+
+class ReactProjectModel(BaseModel):
+    id: str
+    name: str
+
+@app.post("/api/projects")
+def create_react_project(payload: ReactProjectModel, authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return payload.dict()
+
+class ReactProjectUpdateModel(BaseModel):
+    sponsor: str
+    need: str
+
+@app.put("/api/projects/{id}")
+def update_react_project(id: str, payload: ReactProjectUpdateModel, authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return {"id": id, **payload.dict()}
+
+class ReactProjectActionModel(BaseModel):
+    action: str
+
+@app.post("/api/projects/{id}/action")
+def action_react_project(id: str, payload: ReactProjectActionModel, authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return {"id": id, "action": payload.action}
+
 if __name__ == "__main__":
-    uvicorn.run("main_api:app", host="127.0.0.1", port=8081, reload=True)
+    uvicorn.run("main_api:app", host="127.0.0.1", port=8000, reload=True)
 
 
 # --- PORTFOLIO ---

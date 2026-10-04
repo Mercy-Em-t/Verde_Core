@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
 export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,16 +21,16 @@ export default function Dashboard() {
   const [editNeed, setEditNeed] = useState('');
 
   const fetchProjects = () => {
-    axios.get('/api/projects')
+    axios.get(`${API_BASE_URL}/projects`)
       .then(res => setProjects(res.data))
       .catch(console.error);
   };
 
   useEffect(() => {
-    axios.post('/api/auth/login', { email: 'pm@verde.com', password: 'pm123' })
+    axios.post(`${API_BASE_URL}/auth/login`, { email: 'pm@verde.com', password: 'pm123' })
       .then(authRes => {
         setToken(authRes.data.token);
-        return axios.get('/api/projects');
+        return axios.get(`${API_BASE_URL}/projects`);
       })
       .then(response => {
         setProjects(response.data);
@@ -49,7 +51,7 @@ export default function Dashboard() {
   const submitCreate = () => {
     if (!createId || !createName) return alert('ID and Name are required');
     setIsSubmitting(true);
-    axios.post('/api/projects', { id: createId, name: createName }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.post(`${API_BASE_URL}/projects`, { id: createId, name: createName }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setShowCreateModal(false);
         fetchProjects();
@@ -67,7 +69,7 @@ export default function Dashboard() {
   const submitEdit = () => {
     if (!editSponsor || !editNeed) return alert("Please fill in both fields.");
     setIsSubmitting(true);
-    axios.put(`/api/projects/${editTargetId}`, { sponsor: editSponsor, need: editNeed }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.put(`${API_BASE_URL}/projects/${editTargetId}`, { sponsor: editSponsor, need: editNeed }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         fetchProjects();
         setShowEditModal(false);
@@ -78,7 +80,7 @@ export default function Dashboard() {
 
   const handleAction = (id, action) => {
     setIsSubmitting(true);
-    axios.post(`/api/projects/${id}/action`, { action }, { headers: { Authorization: `Bearer ${token}` } })
+    axios.post(`${API_BASE_URL}/projects/${id}/action`, { action }, { headers: { Authorization: `Bearer ${token}` } })
       .then(fetchProjects).catch(err => alert("Failed: " + err.message))
       .finally(() => setIsSubmitting(false));
   };
